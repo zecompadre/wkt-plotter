@@ -1,4 +1,5 @@
-//document.addEventListener('DOMContentLoaded', ready)
+document.addEventListener('DOMContentLoaded', ready);
+
 var savedShapesChildren = null,
 	selectedLayer = null,
 	input = null,
@@ -11,14 +12,14 @@ function ready() {
 	document.getElementById('btnClear').addEventListener('click', clearShapes)
 	document.getElementById('btnZoomToFit').addEventListener('click', zoomToFit)
 
+	return;
+
+
 	savedShapesChildren = document.getElementById('savedShapesChildrenContainer')
 	map.addEventListener('baselayerchange', function (_0x26e608) {
 		selectedLayer = _0x26e608.layer
 	})
 	input = document.getElementById('txtInputGeometry')
-
-
-
 
 	let _0x1a430e = document.querySelector('.tab-page'),
 		_0x31e26d = _0x1a430e.querySelectorAll('.tab')
