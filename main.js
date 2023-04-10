@@ -14,6 +14,10 @@ function ready() {
 		selectedLayer = _0x26e608.layer
 	})
 	input = document.getElementById('txtInputGeometry')
+
+
+	return;
+
 	let _0x1a430e = document.querySelector('.tab-page'),
 		_0x31e26d = _0x1a430e.querySelectorAll('.tab')
 	_0x31e26d.forEach(function (_0x235275) {
