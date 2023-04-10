@@ -1,16 +1,15 @@
-document.addEventListener('DOMContentLoaded', ready)
+//document.addEventListener('DOMContentLoaded', ready)
 var savedShapesChildren = null,
 	selectedLayer = null,
 	input = null,
 	userPickedColor = document.querySelector('#color>option').value,
 	autoChangeColor = false,
 	userPickedCoordinateSystem = null
+
 function ready() {
 	document.getElementById('btnImport').addEventListener('click', importShape)
 	document.getElementById('btnClear').addEventListener('click', clearShapes)
 	document.getElementById('btnZoomToFit').addEventListener('click', zoomToFit)
-
-	return;
 
 	savedShapesChildren = document.getElementById('savedShapesChildrenContainer')
 	map.addEventListener('baselayerchange', function (_0x26e608) {
@@ -73,8 +72,8 @@ function ready() {
 				_0x5d6d96.options[_0x5d6d96.selectedIndex].value
 		})
 }
-let tabsContainer = document.querySelector('.tab-page'),
-	tabTogglers = tabsContainer.querySelectorAll('.tab')
+
+let tabsContainer = document.querySelector('.tab-page'), tabTogglers = tabsContainer.querySelectorAll('.tab')
 function switchTab(_0x147138) {
 	_0x147138.preventDefault()
 	let _0x5e2926 = this.getAttribute('href'),
