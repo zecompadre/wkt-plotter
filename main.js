@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', ready)
+//document.addEventListener('DOMContentLoaded', ready)
 var savedShapesChildren = null,
 	selectedLayer = null,
 	input = null,
