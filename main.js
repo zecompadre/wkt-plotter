@@ -9,6 +9,9 @@ function ready() {
 	document.getElementById('btnImport').addEventListener('click', importShape)
 	document.getElementById('btnClear').addEventListener('click', clearShapes)
 	document.getElementById('btnZoomToFit').addEventListener('click', zoomToFit)
+
+	return;
+
 	savedShapesChildren = document.getElementById('savedShapesChildrenContainer')
 	map.addEventListener('baselayerchange', function (_0x26e608) {
 		selectedLayer = _0x26e608.layer
@@ -16,7 +19,7 @@ function ready() {
 	input = document.getElementById('txtInputGeometry')
 
 
-	return;
+
 
 	let _0x1a430e = document.querySelector('.tab-page'),
 		_0x31e26d = _0x1a430e.querySelectorAll('.tab')
@@ -401,46 +404,46 @@ async function addFeatureToList(_0x2c41f2, _0x1dacdb) {
 	})
 }
 const createMapImage = async (_0x4dd0ae) => {
-	const _0x20ab7a = document.getElementById('map'),
-		_0x152441 = _0x20ab7a.offsetWidth,
-		_0x3b58bd = _0x20ab7a.offsetHeight,
-		_0x11180d = new Promise((_0x4a5778) =>
-			selectedLayer.on('load', () => _0x4a5778())
+	const _map = document.getElementById('map'),
+		_width = _map.offsetWidth,
+		_height = _map.offsetHeight,
+		_p_onload = new Promise((_onload) =>
+			selectedLayer.on('load', () => _onload())
 		),
-		_0x1d3be0 = new Promise((_0x4f5bae) =>
-			setTimeout(() => _0x4f5bae('p2'), 2000)
+		_p_settimeout = new Promise((_settimeout) =>
+			setTimeout(() => _settimeout('p2'), 2000)
 		),
-		_0x2cc14c = new Promise((_0x29bd8e) =>
-			document.addEventListener('onscroll', () => _0x29bd8e())
+		_p_onscroll = new Promise((_onscroll) =>
+			document.addEventListener('onscroll', () => _onscroll())
 		),
-		_0x4f7d37 = new Promise((_0x3af904) =>
-			document.addEventListener('onMouseOver', () => _0x3af904())
+		_p_onmouseover = new Promise((_onmouseover) =>
+			document.addEventListener('onMouseOver', () => _onmouseover())
 		),
-		_0x357b09 = new Promise((_0x1a14f8) =>
-			document.addEventListener('onkeydown', () => _0x1a14f8())
+		_p_onkeydown = new Promise((_onkeydown) =>
+			document.addEventListener('onkeydown', () => _onkeydown())
 		),
-		_0x1867b8 = new Promise((_0x4d1e90) =>
-			document.addEventListener('click', () => _0x4d1e90())
+		_p_onclick = new Promise((_onclick) =>
+			document.addEventListener('click', () => _onclick())
 		)
 	await Promise.race([
-		_0x11180d,
-		_0x1d3be0,
-		_0x2cc14c,
-		_0x4f7d37,
-		_0x357b09,
-		_0x1867b8,
+		_p_onload,
+		_p_settimeout,
+		_p_onscroll,
+		_p_onmouseover,
+		_p_onkeydown,
+		_p_onclick,
 	])
-	const _0x5c88b3 = await domtoimage.toPng(_0x20ab7a, {
-		width: _0x152441,
-		height: _0x3b58bd,
+	const _png = await domtoimage.toPng(_map, {
+		width: _width,
+		height: _height,
 	}),
-		_0x5b6792 = document.createElement('img')
-	_0x4dd0ae.src = _0x5c88b3
+		_img = document.createElement('img')
+	_0x4dd0ae.src = _png
 }
-function getActivelayer(_0x475a2a) {
-	var _0x8ae387 = _0x475a2a.currentTarget.layerId,
-		_0x105e30 = this['_layers'][_0x8ae387]
-	return _0x105e30
+function getActivelayer(_ele) {
+	var _layerId = _ele.currentTarget.layerId,
+		_layer = this['_layers'][_layerId]
+	return _layer
 }
 function sleep(_0xd863da) {
 	return new Promise((_0xbcb96b) => setTimeout(_0xbcb96b, _0xd863da))
@@ -456,6 +459,7 @@ var types = {
 	Feature: 'feature',
 	FeatureCollection: 'featurecollection',
 }
+
 function normalize(_0x3ee1dc) {
 	if (!_0x3ee1dc || !_0x3ee1dc.type) {
 		return null
