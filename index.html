@@ -17,8 +17,8 @@
 	<script src="http://cdn-geoweb.s3.amazonaws.com/terraformer/1.0.4/terraformer.min.js"></script>
 	<script src="http://cdn-geoweb.s3.amazonaws.com/terraformer-wkt-parser/1.0.0/terraformer-wkt-parser.min.js"></script>
 
-	<link rel="stylesheet" href="main.css" />
-	<script src="main.js"></script>
+	<link rel="stylesheet" href="main.css?v=1" />
+	<script src="main.js?v=1"></script>
 
 </head>
 
@@ -30,12 +30,12 @@
 			</div>
 			<div class="form-container">
 				<form>
-					<textarea rows="8" ng-model="form.text" placeholder="Enter WKT or GeoJSON ..."></textarea>
-					<button class="btn btn-danger" ng-click="form.text=''" ng-disabled="form.text.length===0">Clear</button>
-					<button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">Add</button>
-					<button ng-if="form.curId!=null" class="btn btn-primary" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">Update</button>
-					<button class="btn btn-default" ng-click="zoomToFeatures()">Zoom to fit</button>
-					<input type="checkbox" ng-model="form.autoZoom">Auto fit
+					<textarea rows="8" ng-model="form.text" placeholder="Digite um WKT ou GeoJSON ..."></textarea>
+					<button class="btn btn-danger" ng-click="form.text=''" ng-disabled="form.text.length===0">Limpar</button>
+					<button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">Adicionar</button>
+					<button ng-if="form.curId!=null" class="btn btn-primary" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">Actualizar</button>
+					<button class="btn btn-default" ng-click="zoomToFeatures()">Zoom para caber</button>
+					<input type="checkbox" ng-model="form.autoZoom">Ajuste automático
 				</form>
 			</div>
 			<div class="feature-container">
