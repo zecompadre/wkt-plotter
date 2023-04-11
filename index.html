@@ -25,30 +25,32 @@
 <body>
 	<div ng-app="myapp">
 		<div ng-controller="MapController">
-			<div class="map-container">
+			<div class="map-container" style="width: 75%;">
 				<leaflet id="map" defaults="map.defaults" geojson="features.geojson" center="map.center"></leaflet>
 			</div>
-			<div class="form-container">
-				<form>
-					<textarea rows="8" ng-model="form.text" placeholder="Digite um WKT ou GeoJSON ..."></textarea>
-					<button class="btn btn-danger" ng-click="form.text=''" ng-disabled="form.text.length===0">Limpar</button>
-					<button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">Adicionar</button>
-					<button ng-if="form.curId!=null" class="btn btn-primary" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">Actualizar</button>
-					<button class="btn btn-default" ng-click="zoomToFeatures()">Zoom</button>
-					<input type="checkbox" ng-model="form.autoZoom">Auto
-				</form>
-			</div>
-			<div class="feature-container">
-				<ul class="list-unstyled">
-					<li ng-repeat="f in features.original | orderBy:'id'" title={{f.text}}>
-						<input type="checkbox" ng-model="f.visible" ng-change="updateLayers()" ng-disabled="form.curId!=null"> <span class="name">[{{f.id+1}}] {{f.name}}</span>
+			<div style="width: 75%;">
+				<div class="form-container">
+					<form>
+						<textarea rows="8" ng-model="form.text" placeholder="Digite um WKT ou GeoJSON ..."></textarea>
+						<button class="btn btn-danger" ng-click="form.text=''" ng-disabled="form.text.length===0">Limpar</button>
+						<button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">Adicionar</button>
+						<button ng-if="form.curId!=null" class="btn btn-primary" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">Actualizar</button>
+						<button class="btn btn-default" ng-click="zoomToFeatures()">Zoom</button>
+						<input type="checkbox" ng-model="form.autoZoom">Auto
+					</form>
+				</div>
+				<div class="feature-container">
+					<ul class="list-unstyled">
+						<li ng-repeat="f in features.original | orderBy:'id'" title={{f.text}}>
+							<input type="checkbox" ng-model="f.visible" ng-change="updateLayers()" ng-disabled="form.curId!=null"> <span class="name">[{{f.id+1}}] {{f.name}}</span>
 
-						<button class="btn btn-info btn-xs" ng-disabled="form.curId!=null || !f.visible" ng-click="editFeature(f)"><i class="glyphicon glyphicon-pencil"></i>
+							<button class="btn btn-info btn-xs" ng-disabled="form.curId!=null || !f.visible" ng-click="editFeature(f)"><i class="glyphicon glyphicon-pencil"></i>
 
-						</button>
-						<button class="btn btn-danger btn-xs" ng-disabled="form.curId!=null" ng-click="deleteFeature(f)">&times;</button>
-					</li>
-				</ul>
+							</button>
+							<button class="btn btn-danger btn-xs" ng-disabled="form.curId!=null" ng-click="deleteFeature(f)">&times;</button>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
