@@ -47,7 +47,7 @@ body {
 
 form textarea {
 	width: 100%;
-	resize: horizontal;
+	resize: vertical;
 }
 
 ul>li {
