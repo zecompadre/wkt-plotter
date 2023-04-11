@@ -25,10 +25,10 @@
 <body>
 	<div ng-app="myapp">
 		<div ng-controller="MapController">
-			<div class="map-container" style="width: 75%;">
+			<div class="map-container">
 				<leaflet id="map" defaults="map.defaults" geojson="features.geojson" center="map.center"></leaflet>
 			</div>
-			<div style="width: 75%;">
+			<div class="tools-container">
 				<div class="form-container">
 					<form>
 						<textarea rows="8" ng-model="form.text" placeholder="Digite um WKT ou GeoJSON ..."></textarea>

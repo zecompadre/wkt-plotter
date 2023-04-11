@@ -10,14 +10,22 @@ body {
 	bottom: 0;
 	left: 0;
 	position: absolute;
-	right: 300px;
+	top: 0;
+	width: 75%
+}
+
+.tools-container {
+	width: 25%;
+	bottom: 0;
+	right: 0;
+	position: absolute;
 	top: 0;
 }
 
 .form-container {
 	height: 200px;
 	padding: 5px;
-	position: absolute;
+	position: relative;
 	right: 0;
 	top: 0;
 	width: 100%;
@@ -26,7 +34,7 @@ body {
 .feature-container {
 	bottom: 0;
 	padding: 5px;
-	position: absolute;
+	position: relative;
 	right: 0;
 	top: 220px;
 	width: 100%;
