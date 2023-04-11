@@ -9,139 +9,48 @@
 	<title>WKT Plotter</title>
 
 
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="http://tombatossals.github.io/angular-leaflet-directive/dist/angular-leaflet-directive.min.js"></script>
+	<script src="http://cdn-geoweb.s3.amazonaws.com/terraformer/1.0.4/terraformer.min.js"></script>
+	<script src="http://cdn-geoweb.s3.amazonaws.com/terraformer-wkt-parser/1.0.0/terraformer-wkt-parser.min.js"></script>
+
 	<link rel="stylesheet" href="main.css" />
-	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/wicket/1.3.8/wicket.min.js" integrity="sha512-aaiN+QIXD0N9Id865vSDEfttZJV9v8ZGh7jXMnYI2zbZhkSYOulS4IH0u4pC61/KXT20UedYzL5xi5siIg6mlw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/geojson2svg/1.2.2/geojson2svg.js"></script>
-	<script src="https://unpkg.com/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
-
-
 	<script src="main.js"></script>
 
 </head>
 
 <body>
-	<div id="wrapper" class="map">
-		<div id="map" style="width: 1920; height: 1080;"></div>
-
-		<div id="controls" class="flex flex-col "><!--add: overflow-hidden-->
-			<div id="header flex-none grow-0">
-				<h1 class=" ml-4 m-2 text-xl leading-none tracking-tight text-blue-200 md:text-5xl lg:text-3xl dark:text-white">WKT <span class="font-bold">Polygon Plotter</span> </h1>
-				<p class=" ml-4 font-normal text-gray-500 lg:text-l dark:text-gray-400">View & plot WKT Polygons and Points on online Map.</p>
+	<div ng-app="myapp">
+		<div ng-controller="MapController">
+			<div class="map-container">
+				<leaflet id="map" defaults="map.defaults" geojson="features.geojson" center="map.center"></leaflet>
 			</div>
-
-			<ul class="tab-page flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
-				<li class="mr-2">
-					<a id="triggerImportPage" href="importContainer" aria-current="page" class="tab inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">Import</a>
-				</li>
-				<li class="mr-2">
-					<a id="triggerSettingsPage" href="settingsContainer" class="tab inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Settings</a>
-				</li>
-				<li class="mr-2">
-					<a id="triggerCsvFileUpload" href="" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Upload CSV File (Coming soon)</a>
-				</li>
-				<!--li>
-                    <a class="inline-block p-4 text-gray-400 rounded-t-lg cursor-not-allowed dark:text-gray-500">Coming soon</a>
-                </li-->
-			</ul>
-			<div id="importContainer" class="tabPage form-container flex-none grow-0">
-				<form><textarea
-						class="
-                    form-control
-                    block
-                    w-full
-                    px-3
-                    py-1.5
-                    text-base
-                    font-normal
-                    text-gray-700
-                    bg-white
-                    border border-solid border-gray-300
-                    rounded
-                    transition
-                    ease-in-out
-                    m-0
-                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none
-                "
-						id="txtInputGeometry"
-						rows="3"
-						placeholder="Enter your WKT or GeoJson Geometry here
-                
-wkt: POLYGON(....., ..... , ....)
-geojson: { 'type':'feature', 'geometry':..... }
-"></textarea>
-					<!-- POLYGON((4.399001547368399 50.68188710099807,4.398996798529925 50.68187358168731,4.398689905698438 50.68191917771667,4.398741631180521 50.68206097086127,4.398768370035305 50.68214292434023,4.399075560950701 50.68209847870128,4.399067424844716 50.68207527834427,4.399001547368399 50.68188710099807))"
-  -->
-					<button style="margin-bottom: 4px;" class="bg-transparent hover:bg-blue-600 text-white font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" id="btnImport">Import</button>
-					<button style="margin-bottom: 4px;" class="bg-transparent hover:bg-red-700 text-white font-semibold hover:text-white py-2 px-4 border border-red-700 hover:border-transparent rounded" id="btnClear">Clear</button>
-					<!--button class="btn btn-primary" >Update</button-->
-
-					<button style="margin-bottom: 4px;" class="bg-transparent text-white font-semibold hover:text-white-100 py-2 px-4 border border-black-700 rounded" class="btn btn-default" id="btnZoomToFit">Zoom to fit</button>
-					<!--input type="checkbox" ng-model="form.autoZoom">Auto fit</form-->
-
-					<input type="color" style="margin-bottom: 4px;" class="bg-transparent text-white font-semibold hover:text-white-100 border border-black-700 rounded">
-					<!--input type="checkbox" ng-model="form.autoZoom">Auto fit</form-->
-
-					<div id="notification-banner" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" data-style="smooth" style="--duration: 5; display: none;" role="alert">
-						<strong class="font-bold">Bummer!</strong>
-						<span class="block sm:inline">Failed to import 1 shape.</span>
-						<!--div></div-->
-					</div>
-
+			<div class="form-container">
+				<form>
+					<textarea rows="8" ng-model="form.text" placeholder="Enter WKT or GeoJSON ..."></textarea>
+					<button class="btn btn-danger" ng-click="form.text=''" ng-disabled="form.text.length===0">Clear</button>
+					<button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">Add</button>
+					<button ng-if="form.curId!=null" class="btn btn-primary" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">Update</button>
+					<button class="btn btn-default" ng-click="zoomToFeatures()">Zoom to fit</button>
+					<input type="checkbox" ng-model="form.autoZoom">Auto fit
+				</form>
 			</div>
-			<div id="settingsContainer" class="settings-page tabPage flex-none grow-0 hidden">
-				<!--input name="Color Picker" type="color"/-->
+			<div class="feature-container">
+				<ul class="list-unstyled">
+					<li ng-repeat="f in features.original | orderBy:'id'" title={{f.text}}>
+						<input type="checkbox" ng-model="f.visible" ng-change="updateLayers()" ng-disabled="form.curId!=null"> <span class="name">[{{f.id+1}}] {{f.name}}</span>
 
-				<div class="ml-4">
-					<p class="text-white">Want a feature? Found a bug? <a class="ml-1 text-white  border-b border-blue-500 hover:text-blue-400 t rounded p-1" href="https://github.com/vannieuwenhovej/wkt-geometry-plotter/issues" target="_blank">Submit it at GitHub!</a></p>
-					<hr class="ml-0 m-4">
-					<span class="mr-3 text-sm font-medium text-white dark:text-gray-300">Automatically shift to different color</span>
-					<label class="mb-4 relative inline-flex items-center cursor-pointer">
-						<input id="chckAutoChangeColor" type="checkbox" value="" class="sr-only peer">
-						<div class="mb-4 w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-					</label>
+						<button class="btn btn-info btn-xs" ng-disabled="form.curId!=null || !f.visible" ng-click="editFeature(f)"><i class="glyphicon glyphicon-pencil"></i>
 
-					<br />
-
-					<label id="labelForColor" for="color" class=" mr-2 text-sm font-medium text-white dark:text-gray-300e">Color of geometry</label>
-					<select id="color" class="mb-4 bg-blue-400 text-black font-semibold hover:text-white-100 py-2 px-3 border border-black-700 rounded dark:placeholder-gray-400 dark:text-white" data-te-select-init>
-						<option class="bg-blue-400 text-white-100" value="#3388ff">Blue</option>
-						<option class="bg-red-400 text-white-100" value="#d10d23">Red</option>
-						<option class="bg-orange-400 text-black-100" value="#eb8f0e">Orange</option>
-						<option class="bg-pink-400 text-black-100" value="#fb05ff">Pink</option>
-					</select>
-
-					<br />
-
-					<label id="labelForCoordinateSystem" for="color" class=" mr-2 text-sm font-medium text-white dark:text-gray-300e">Coordinate System</label>
-					<select id="coordinateSystem" class="mb-4 text-black font-semibold hover:text-white-100 py-2 px-3 border border-black-700 rounded dark:placeholder-gray-400 dark:text-white" data-te-select-init>
-						<option class="text-black-100" value="epsg4326">WGS84 (EPSG:4326)</option>
-						<option class="text-black-100" value="epsg31370">Lambert72 (EPSG:31370)</option>
-					</select>
-
-				</div>
-			</div>
-
-			<div id="hiddenFileUploadContainer" class="file-page flex-none grow-0 hidden">
-				<!-- This is the hidden file uploa d input -->
-
-				<input disabled type="file" name="fileUpload">
-			</div>
-
-			<div id="savedShapes" class="w-100 h-100 grow grid place-items-center h-screen">
-				<div id="savedShapesChildren" class="overflow-y-auto dark:bg-slate-800 shadow-lg ring-1 ring-black/5 flex  justify-start flex-col divide-y dark:divide-slate-200/5">
-					<div id="savedShapesChildrenContainer" class="overflow-auto w-100 relative bg-white dark:bg-slate-800 dark:highlight-white/5 shadow-lg ring-1 ring-black/5 rounded-xl flex flex-col divide-y dark:divide-slate-200/5">
-					</div>
-				</div>
+						</button>
+						<button class="btn btn-danger btn-xs" ng-disabled="form.curId!=null" ng-click="deleteFeature(f)">&times;</button>
+					</li>
+				</ul>
 			</div>
 		</div>
-
-
-	</div>
-
 	</div>
 
 
