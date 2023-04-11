@@ -59,3 +59,13 @@ ul>li {
 	align-items: center;
 	display: flex;
 }
+
+ul>li>button:first-of-type {
+	position: absolute;
+	right: 35px;
+}
+
+ul>li>button:last-of-type {
+	position: absolute;
+	right: 5px;
+}
