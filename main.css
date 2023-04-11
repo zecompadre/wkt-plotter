@@ -51,6 +51,11 @@ form textarea {
 }
 
 ul>li {
-	padding-bottom: 5px;
 	white-space: nowrap;
+	background-color: rgba(109, 115, 120, .1);
+	border-radius: 5px;
+	padding: 1rem;
+	gap: 1rem;
+	align-items: center;
+	display: flex;
 }
