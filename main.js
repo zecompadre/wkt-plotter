@@ -27,11 +27,11 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 			},
 			options: {
 				style: {
-					fillColor: 'green',
+					fillColor: '#005baa',
 					weight: 2,
 					opacity: 1,
-					color: 'black',
-					fillOpacity: 0.7
+					color: '#005baa',
+					fillOpacity: 0.5
 				},
 				onEachFeature: function (f, l) {
 					$scope.featureGroup.addLayer(l);
