@@ -96,6 +96,7 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 	};
 
 	$scope.copyFeature = function (feature) {
+		/*
 		var textarea = document.createElement("textarea");
 		textarea.textContent = feature.text;
 		textarea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge.
@@ -103,6 +104,7 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		textarea.select();
 		document.execCommand("copy");
 		document.body.removeChild(textarea);
+		*/
 	};
 
 	$scope.editFeature = function (feature) {
