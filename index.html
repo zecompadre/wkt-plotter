@@ -30,7 +30,7 @@
 			<div class="tools-container">
 				<div class="form-container">
 					<form>
-						<textarea rows="8" ng-model="form.text" placeholder="Digite um WKT ou GeoJSON ..."></textarea>
+						<textarea rows="15" ng-model="form.text" placeholder="Digite um WKT ou GeoJSON ..."></textarea>
 						<button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">
 							<i class="glyphicon glyphicon-plus"></i>
 						</button>
