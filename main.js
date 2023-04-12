@@ -3,6 +3,7 @@ var app = angular.module('myapp', ['leaflet-directive']);
 app.controller('MapController', function ($scope, $timeout, $window, leafletBoundsHelpers, leafletData) {
 
 	$scope.map = {
+		editable: true,
 		defaults: {},
 		center: {
 			lat: 0,
