@@ -34,11 +34,11 @@
 						<button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">
 							<i class="glyphicon glyphicon-plus"></i>
 						</button>
+						<button ng-if="form.curId!=null" class="btn btn-success" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">
+							<i class="glyphicon glyphicon-floppy-disk"></i>
+						</button>
 						<button class="btn btn-danger" ng-click="form.text=''" ng-disabled="form.text.length===0">
 							<i class="glyphicon glyphicon-erase"></i>
-						</button>
-						<button ng-if="form.curId!=null" class="btn btn-primary" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">
-							<i class="glyphicon glyphicon-floppy-disk"></i>
 						</button>
 						<button class="btn btn-default" ng-click="zoomToFeatures()">
 							<i class="glyphicon glyphicon-fullscreen"></i>
