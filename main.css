@@ -60,7 +60,7 @@ ul>li {
 	display: flex;
 }
 
-ul>li>button:nth-of-type(1) {
+ul>li>button:first-of-type {
 	position: absolute;
 	right: 65px;
 }
