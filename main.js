@@ -95,8 +95,7 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		$scope.refreshMap(zoom);
 	};
 
-	$scope.copyFeature(feature)
-	{
+	$scope.copyFeature = function (feature) {
 		var textarea = document.createElement("textarea");
 		textarea.textContent = feature.text;
 		textarea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge.
