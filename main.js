@@ -95,6 +95,17 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		$scope.refreshMap(zoom);
 	};
 
+	$scope.copyFeature(feature)
+	{
+		var textarea = document.createElement("textarea");
+		textarea.textContent = feature.text;
+		textarea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge.
+		document.body.appendChild(textarea);
+		textarea.select();
+		document.execCommand("copy");
+		document.body.removeChild(textarea);
+	}
+
 	$scope.editFeature = function (feature) {
 		$scope.form.curId = feature.id;
 		$scope.form.text = feature.text;
