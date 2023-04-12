@@ -60,12 +60,17 @@ ul>li {
 	display: flex;
 }
 
-ul>li>button:first-of-type {
+ul>li>button:nth-of-type(2) {
+	position: absolute;
+	right: 70px;
+}
+
+ul>li>button:nth-of-type(2) {
 	position: absolute;
 	right: 35px;
 }
 
-ul>li>button:last-of-type {
+ul>li>button:nth-of-type(3) {
 	position: absolute;
 	right: 5px;
 }
