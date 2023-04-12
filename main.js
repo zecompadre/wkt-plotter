@@ -103,7 +103,7 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		textarea.select();
 		document.execCommand("copy");
 		document.body.removeChild(textarea);
-	}
+	};
 
 	$scope.editFeature = function (feature) {
 		$scope.form.curId = feature.id;
