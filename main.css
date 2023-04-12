@@ -48,6 +48,8 @@ body {
 form textarea {
 	width: 100%;
 	resize: vertical;
+	height: 50vh;
+	min-height: 25vh;
 }
 
 ul>li {
