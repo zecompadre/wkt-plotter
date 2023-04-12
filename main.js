@@ -31,7 +31,7 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 					weight: 2,
 					opacity: 1,
 					color: '#005baa',
-					fillOpacity: 0.5
+					fillOpacity: 0.4
 				},
 				onEachFeature: function (f, l) {
 					$scope.featureGroup.addLayer(l);
