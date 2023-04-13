@@ -41,13 +41,14 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		}
 	};
 
-	$scope.makeFeature = function (text) {
+	$scope.makeFeature = function (text, id) {
 		try {
 			if (text.indexOf('{') < 0) {
 				return Terraformer.WKT.parse(text);
 			}
 
 			var geoJson = JSON.parse(text);
+			geoJson.id = id;
 			Terraformer.WKT.convert(geoJson);
 			return geoJson;
 		} catch (Exception) {
@@ -62,12 +63,12 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 
 		$scope.featureGroup = L.featureGroup();
 		$scope.features.geojson.data.features = visibleFeatures.map(function (f) {
-			return $scope.makeFeature(f.text);
+			return $scope.makeFeature(f.text, f.id);
 		});
 	};
 
-	$scope.validate = function (text) {
-		var feature = $scope.makeFeature(text);
+	$scope.validate = function (text, id) {
+		var feature = $scope.makeFeature(text, id);
 		if (!feature) {
 			$window.alert('Invalid geometry, try again');
 			return;
@@ -86,9 +87,12 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 	};
 
 	$scope.addFeature = function (text, zoom) {
-		var feature = $scope.validate(text);
+
+		var id = $scope.form.counter++;
+
+		var feature = $scope.validate(text, id);
 		$scope.features.original.push({
-			id: $scope.form.counter++,
+			id: id,
 			visible: true,
 			text: text,
 			name: feature.type || 'Feature'
