@@ -110,6 +110,8 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		$scope.form.curId = feature.id;
 		$scope.form.text = feature.text;
 
+		console.log(feature)
+
 		if (selectedFeature) {
 			selectedFeature.editing.disable();
 		}
