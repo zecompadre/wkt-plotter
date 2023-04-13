@@ -37,12 +37,14 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 				onEachFeature: function (f, l) {
 					$scope.featureGroup.addLayer(l);
 					l.on('click', function (e) {
-						if (selectedFeature) {
-							selectedFeature.editing.disable();
-							// and Here I'll add the code to store my edited polygon in the DB or whatever I want to do with it
+						if ($scope.form.curId === null) {
+							if (selectedFeature) {
+								selectedFeature.editing.disable();
+								// and Here I'll add the code to store my edited polygon in the DB or whatever I want to do with it
+							}
+							selectedFeature = e.target;
+							e.target.editing.enable();
 						}
-						selectedFeature = e.target;
-						e.target.editing.enable();
 					});
 				}
 			}
