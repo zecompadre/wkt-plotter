@@ -129,7 +129,7 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 			return f.id === feature.id;
 		})[0];
 
-		console.log(current, leafletData)
+		console.log(current, leafletData.getLayers())
 
 		if (selectedFeature) {
 			selectedFeature.editing.disable();
