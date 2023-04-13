@@ -48,8 +48,10 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 			}
 
 			var geoJson = JSON.parse(text);
-			geoJson.id = id;
 			Terraformer.WKT.convert(geoJson);
+			geoJson.id = id;
+
+			console.log(geoJson)
 			return geoJson;
 		} catch (Exception) {
 			return;
