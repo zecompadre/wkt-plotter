@@ -123,9 +123,13 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		$scope.form.curId = feature.id;
 		$scope.form.text = feature.text;
 
+		console.log($scope.features.geojson.data.features)
+
 		var current = $scope.features.geojson.data.features.filter(function (f) {
 			return f.id === feature.id;
 		})[0];
+
+		console.log(current)
 
 		if (selectedFeature) {
 			selectedFeature.editing.disable();
