@@ -110,13 +110,15 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		$scope.form.curId = feature.id;
 		$scope.form.text = feature.text;
 
-		console.log(feature)
+		var current = $scope.features.original.filter(function (f) {
+			return f.id === feature.id;
+		})[0];
 
 		if (selectedFeature) {
 			selectedFeature.editing.disable();
 		}
-		selectedFeature = feature;
-		feature.editing.enable();
+		selectedFeature = current;
+		current.editing.enable();
 	};
 
 	$scope.updateFeature = function (text, zoom, id) {
