@@ -44,6 +44,8 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 	$scope.makeFeature = function (text, id) {
 		try {
 			if (text.indexOf('{') < 0) {
+
+				console.log("geoJson", Terraformer.WKT.parse(text))
 				return Terraformer.WKT.parse(text);
 			}
 
@@ -51,7 +53,8 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 			Terraformer.WKT.convert(geoJson);
 			geoJson.id = id;
 
-			console.log(geoJson)
+			console.log("geoJson", geoJson)
+
 			return geoJson;
 		} catch (Exception) {
 			return;
