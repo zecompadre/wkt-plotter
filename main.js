@@ -120,11 +120,6 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 			return f.id === feature.id;
 		})[0];
 
-
-
-
-		console.log(current, $scope.features.geojson.data.features)
-
 		if (selectedFeature) {
 			selectedFeature.editing.disable();
 		}
