@@ -123,7 +123,7 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		$scope.form.curId = feature.id;
 		$scope.form.text = feature.text;
 
-		var current = $scope.features.original.filter(function (f) {
+		var current = $scope.features.geojson.data.features.filter(function (f) {
 			return f.id === feature.id;
 		})[0];
 
