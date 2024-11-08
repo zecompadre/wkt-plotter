@@ -103,7 +103,6 @@ app.controller('MapController', function ($scope, $timeout, $window, leafletBoun
 		$scope.features.original.push({
 			id: id,
 			visible: true,
-			editable: true,
 			text: text,
 			name: feature.type || 'Feature'
 		});
