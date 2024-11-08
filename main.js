@@ -1,4 +1,4 @@
-var app = angular.module('myapp', ['leaflet-directive']);
+var app = angular.module('myapp', ['leaflet-directive', 'leaflet-editable']);
 
 app.controller('MapController', function ($scope, $timeout, $window, leafletBoundsHelpers, leafletData) {
 
