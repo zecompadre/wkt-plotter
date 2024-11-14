@@ -140,11 +140,11 @@ var app = (function () {
 			const checksum = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 			return checksum;
 		},
-		plotWKT: function () {
+		plotWKT: function (wkt) {
 
 			var new_feature;
 
-			wkt_string = textarea.value;
+			wkt_string = wkt || textarea.value;
 			if (wkt_string == "") {
 				textarea.style.borderColor = "red";
 				textarea.style.backgroundColor = "#F7E8F3";
@@ -296,11 +296,15 @@ var app = (function () {
 
 				if (item.id === checksum)
 					exists = true;
+
+				self.plotWKT(item.wkt);
 			});
 
 			if (!exists) {
 
 				self.crateTabs(idx, checksum, wkt);
+
+				self.plotWKT(wkt);
 
 				wkts.push({ id: checksum, wkt: wkt });
 			}
