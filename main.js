@@ -27,9 +27,6 @@ var app = (function () {
 	var defaultele = document.querySelector("#wktdefault");
 	var tofocus = document.querySelector("#wktdefault textarea");
 	var textarea = document.querySelector("#wktdefault textarea");
-	var btncopy = document.getElementById("btn-copy");
-	var btnclear = document.getElementById("btn-clear");
-	var btnplot = document.getElementById("btn-plot");
 
 	function hexToRgbA(hex) {
 		// Remove the "#" if present
@@ -71,6 +68,10 @@ var app = (function () {
 
 	return {
 		translateBtns: function () {
+			var btncopy = document.getElementById("btn-copy");
+			var btnclear = document.getElementById("btn-clear");
+			var btnplot = document.getElementById("btn-plot");
+
 			switch (language) {
 				case "pt-PT":
 				case "pt":
@@ -278,6 +279,12 @@ var app = (function () {
 
 				clonedElement.id = item.id;
 				clonedElement.querySelector("textarea").value = item.wkt;
+				clonedElement.querySelector("textarea").addEventListener("click", app, restoreDefaultColors);
+
+				var buttons = clonedElement.querySelectorAll("button");
+				buttons[0].addEventListener("click", app.clearMap);
+				buttons[1].addEventListener("click", app.copyWKT);
+				buttons[2].addEventListener("click", app.plotWKT);
 
 				if (item.id === checksum)
 					exists = true;
@@ -293,7 +300,7 @@ var app = (function () {
 				wkts.push({ id: checksum, wkt: wkt });
 			}
 
-			wktdefault.style.display = "none";
+			defaultele.style.display = "none";
 
 			$(ul).tabs();
 		},
