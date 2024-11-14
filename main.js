@@ -277,6 +277,8 @@ var app = (function () {
 
 			var self = this;
 
+			console.log("wkts", wkts);
+
 			var wktdefault = tofocus;
 			wktdefault.focus();
 
@@ -293,6 +295,8 @@ var app = (function () {
 			wkts.forEach(item => {
 
 				self.crateTabs(idx, item.id, item.wkt);
+
+				console.log("wkts.item", item);
 
 				if (item.id === checksum)
 					exists = true;
