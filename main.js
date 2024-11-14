@@ -248,6 +248,29 @@ var app = (function () {
 
 			self.plotWKT();
 		},
+		crateTabs: function (idx, id, wkt) {
+
+			var ul = tabs.querySelector("ul");
+
+			var tabLI = document.createElement("li");
+			var tabA = document.createElement("a");
+			tabA.href = "#" + id;
+			tabA.innerText = "WKT " + idx++;
+			tabLI.appendChild(tabA);
+			ul.appendChild(tabLI);
+
+			const clonedElement = defaultele.cloneNode(true);
+			defaultele.parentNode.insertBefore(clonedElement, defaultele.nextSibling);
+
+			clonedElement.id = id;
+			clonedElement.querySelector("textarea").value = wkt;
+			clonedElement.querySelector("textarea").addEventListener("click", app, restoreDefaultColors);
+
+			var buttons = clonedElement.querySelectorAll("button");
+			buttons[0].addEventListener("click", app.clearMap);
+			buttons[1].addEventListener("click", app.copyWKT);
+			buttons[2].addEventListener("click", app.plotWKT);
+		},
 		loadWKTs: async function (wkts) {
 
 			var self = this;
@@ -264,38 +287,18 @@ var app = (function () {
 
 			var exists = false;
 			var idx = 0;
-			var ul = tabs.querySelector("ul");
+
 			wkts.forEach(item => {
 
-				var tabLI = document.createElement("li");
-				var tabA = document.createElement("a");
-				tabA.href = "#" + item.id;
-				tabA.innerText = "WKT " + idx++;
-				tabLI.appendChild(tabA);
-				ul.appendChild(tabLI);
-
-				const clonedElement = defaultele.cloneNode(true);
-				defaultele.parentNode.insertBefore(clonedElement, defaultele.nextSibling);
-
-				clonedElement.id = item.id;
-				clonedElement.querySelector("textarea").value = item.wkt;
-				clonedElement.querySelector("textarea").addEventListener("click", app, restoreDefaultColors);
-
-				var buttons = clonedElement.querySelectorAll("button");
-				buttons[0].addEventListener("click", app.clearMap);
-				buttons[1].addEventListener("click", app.copyWKT);
-				buttons[2].addEventListener("click", app.plotWKT);
+				self.crateTabs(idx, item.id, item.wkt);
 
 				if (item.id === checksum)
 					exists = true;
 			});
 
 			if (!exists) {
-				const clonedElement = defaultele.cloneNode(true);
-				defaultele.parentNode.insertBefore(clonedElement, defaultele.nextSibling);
 
-				clonedElement.id = checksum;
-				clonedElement.querySelector("textarea").value = wkt;
+				self.crateTabs(idx, checksum, wkt);
 
 				wkts.push({ id: checksum, wkt: wkt });
 			}
