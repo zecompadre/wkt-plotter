@@ -313,7 +313,7 @@ var app = (function () {
 				wkts.push({ id: checksum, wkt: wkt });
 			}
 
-			localforage.setItem(lfkey, JSON.stringify(wkts));
+			localStorage.setItem(lfkey, JSON.stringify(wkts));
 
 			$(defaultele).hide();
 
@@ -403,13 +403,9 @@ var app = (function () {
 				this.loadWKTfromURIFragment(window.location.hash);
 			}
 
-			localforage
-				.getItem(lfkey)
-				.then(function (wkts) {
-					console.log(wkts);
-					self.loadWKTs(JSON.parse(wkts));
-				})
-				.catch((error) => console.error("Error retrieving wkts:", error));
+			var wkts = localStorage.getItem(lfkey);
+			console.log(wkts);
+			self.loadWKTs(JSON.parse(wkts));
 
 		}
 	};
