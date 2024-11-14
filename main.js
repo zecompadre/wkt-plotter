@@ -403,13 +403,9 @@ var app = (function () {
 				this.loadWKTfromURIFragment(window.location.hash);
 			}
 
-			await localforage
-				.getItem(lfkey)
-				.then(function (wkts) {
-					console.log(wkts);
-					self.loadWKTs(JSON.parse(wkts));
-				})
-				.catch((error) => console.error("Error retrieving wkts:", error));
+			var wkts = localforage.getItem(lfkey);
+			console.log(wkts);
+			self.loadWKTs(JSON.parse(wkts));
 
 		}
 	};
