@@ -264,7 +264,7 @@ var app = (function () {
 
 			clonedElement.id = id;
 			clonedElement.querySelector("textarea").value = wkt;
-			clonedElement.querySelector("textarea").addEventListener("click", app, restoreDefaultColors);
+			clonedElement.querySelector("textarea").addEventListener("click", app.restoreDefaultColors);
 
 			var buttons = clonedElement.querySelectorAll("button");
 			buttons[0].addEventListener("click", app.clearMap);
