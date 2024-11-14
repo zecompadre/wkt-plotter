@@ -319,7 +319,7 @@ var app = (function () {
 
 			$(tabs.querySelector("ul")).tabs();
 		},
-		init: function () {
+		init: async function () {
 			var self = this;
 
 			tabs = document.querySelector(".result-container");
@@ -403,7 +403,7 @@ var app = (function () {
 				this.loadWKTfromURIFragment(window.location.hash);
 			}
 
-			localforage
+			await localforage
 				.getItem(lfkey)
 				.then(function (wkts) {
 					console.log(wkts);
