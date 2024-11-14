@@ -303,9 +303,9 @@ var app = (function () {
 				wkts.push({ id: checksum, wkt: wkt });
 			}
 
-			defaultele.style.display = "none";
+			$(defaultele).hide();
 
-			$(ul).tabs();
+			$(tabs.querySelector("ul")).tabs();
 		},
 		init: function () {
 			var self = this;
