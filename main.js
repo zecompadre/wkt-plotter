@@ -294,6 +294,7 @@ var app = (function () {
 
 			wkts.forEach(item => {
 
+				idx = idx + 1;
 				self.crateTabs(idx, item.id, item.wkt);
 
 				console.log("wkts.item", item);
@@ -305,6 +306,8 @@ var app = (function () {
 			});
 
 			if (!exists) {
+
+				idx = idx + 1;
 
 				self.crateTabs(idx, checksum, wkt);
 
