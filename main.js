@@ -405,7 +405,10 @@ var app = (function () {
 
 			localforage
 				.getItem(lfkey)
-				.then((wkts) => self.loadWKTs(JSON.parse(wkts)))
+				.then(function (wkts) {
+					console.log(wkts);
+					self.loadWKTs(JSON.parse(wkts));
+				})
 				.catch((error) => console.error("Error retrieving wkts:", error));
 
 		}
