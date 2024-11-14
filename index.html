@@ -1,77 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-	<base target="_top">
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<title>WKT Plotter</title>
-
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.css" />
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.js"></script>
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
-
-	<script src="https://tombatossals.github.io/angular-leaflet-directive/dist/angular-leaflet-directive.min.js"></script>
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/terraformer/1.0.12/terraformer.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/terraformer-wkt-parser@1.2.1/terraformer-wkt-parser.min.js"></script>
-
-
-
-	<link rel="stylesheet" href="main.css?v=2" />
-	<script src="main.js?v=2"></script>
-
+	<title>WKT Playground</title>
+	<linkx rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/js-md5@2.5.0/build/md5.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+		<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+		<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+		<script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+		<script async defer src="https://buttons.github.io/buttons.js"></script>
+		<script src="main.js?v=202411142145"></script>
+		<link rel="stylesheet" href="/main.css?v=202411142145">
 </head>
 
-<body>
-	<div ng-app="myapp">
-		<div ng-controller="MapController">
-			<div class="map-container">
-				<leaflet id="map" defaults="map.defaults" geojson="features.geojson" center="map.center"></leaflet>
-			</div>
-			<div class="tools-container">
-				<div class="form-container">
-					<form>
-						<textarea rows="15" ng-model="form.text" placeholder="Digite um WKT ou GeoJSON ..."></textarea>
-						<button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">
-							<i class="glyphicon glyphicon-plus"></i>
-						</button>
-						<button ng-if="form.curId!=null" class="btn btn-success" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">
-							<i class="glyphicon glyphicon-floppy-disk"></i>
-						</button>
-						<button class="btn btn-danger" ng-click="form.text=''" ng-disabled="form.text.length===0">
-							<i class="glyphicon glyphicon-erase"></i>
-						</button>
-						<button class="btn btn-default" ng-click="zoomToFeatures()">
-							<i class="glyphicon glyphicon-fullscreen"></i>
-						</button>
-						<div style="display:none">
-							<input type="checkbox" ng-model="form.autoZoom">Auto
-						</div>
-					</form>
+<body onload="app.init()">
+	<nav class="headercontainer">
+		<img src="logo.png" title="WKT Playground" width="90" height="50">
+		<span class="title">WKT Playground</span>
+		<a class="inspired" href="https://github.com/clydedacruz/openstreetmap-wkt-playground" target="_inspired">Inspired By</a>
+	</nav>
+	<div class="maincontainer">
+		<div class="map-container">
+			<div id="overlay" class="btns row align-items-center justify-content-center">
+				<div class="btn-group-vertical ">
+					<button type="button" class="btn btn-primary" onclick="app.selectGeom('Point')">Point</button>
+					<button type="button" class="btn btn-primary" onclick="app.selectGeom('LineString')">Line String</button>
+					<button type="button" class="btn btn-primary" onclick="app.selectGeom('Polygon')">Polygon</button>
 				</div>
-				<div class="feature-container">
-					<ul class="list-unstyled">
-						<li ng-repeat="f in features.original | orderBy:'id'" title={{f.text}}>
-							<input type="checkbox" ng-model="f.visible" ng-change="updateLayers()" ng-disabled="form.curId!=null"><span class="name">[{{f.id+1}}] {{f.name}}</span>
-							<button class="btn btn-primary btn-xs" ng-disabled="form.curId!=null || !f.visible" ng-click="editFeature(f)">
-								<i class="glyphicon glyphicon-pencil"></i>
-							</button>
-							<button class="btn btn-warning btn-xs" ng-disabled="form.curId!=null" ng-click="copyFeature(f)">
-								<i class="glyphicon glyphicon-copy"></i>
-							</button>
-							<button class="btn btn-danger btn-xs" ng-disabled="form.curId!=null" ng-click="deleteFeature(f)">
-								<i class="glyphicon glyphicon-remove"></i>
-							</button>
-						</li>
-					</ul>
+			</div>
+			<div id="map" class="map" style="z-index: 0"></div>
+		</div>
+		<div class="result-container">
+			<ul>
+			</ul>
+			<div id="wktdefault" class="wkt-container">
+				<textarea class="form-control" rows="5" onclick="app,restoreDefaultColors()"></textarea>
+				<div class="btns btn-group btn-group-md">
+					<button id="btn-clear" type="button" class="btn btn-danger btn-xs" onclick="app.clearMap()">
+						<i class="glyphicon glyphicon-remove"></i>
+					</button>
+					<button id="btn-copy" type="button" class="btn btn-warning btn-xs" onclick="app.copyWKT()">
+						<i class="glyphicon glyphicon-copy"></i>
+					</button>
+					<button id="btn-plot" type="button" class="btn btn-primary btn-xs" onclick="app.plotWKT()">
+						<i class="glyphicon glyphicon-ok"></i>
+					</button>
 				</div>
 			</div>
 		</div>

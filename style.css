@@ -1,0 +1,29 @@
+@media only screen and (min-width: 1366px) {
+	.mapx {
+		height: 400px !important
+	}
+}
+
+@media only screen and (min-width: 1440px) {
+	.mapx {
+		height: 500px !important
+	}
+}
+
+@media only screen and (min-width: 1680px) {
+	.mapx {
+		height: 650px !important
+	}
+}
+
+@media only screen and (min-width: 1920px) {
+	.mapx {
+		height: 700px !important
+	}
+}
+
+@media only screen and (min-width: 2560px) {
+	.mapx {
+		height: 1050px !important
+	}
+}
