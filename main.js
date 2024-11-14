@@ -263,6 +263,7 @@ var app = (function () {
 
 			var exists = false;
 			var idx = 0;
+			var ul = tabs.querySelector("ul");
 			wkts.forEach(item => {
 
 				var tabLI = document.createElement("li");
@@ -270,7 +271,7 @@ var app = (function () {
 				tabA.href = "#" + item.id;
 				tabA.innerText = "WKT " + idx++;
 				tabLI.appendChild(tabA);
-				tabs.appendChild(tabLI);
+				ul.appendChild(tabLI);
 
 				const clonedElement = defaultele.cloneNode(true);
 				defaultele.parentNode.insertBefore(clonedElement, defaultele.nextSibling);
@@ -294,7 +295,7 @@ var app = (function () {
 
 			wktdefault.style.display = "none";
 
-			$(tabs).tabs();
+			$(ul).tabs();
 		},
 		init: function () {
 			var self = this;
