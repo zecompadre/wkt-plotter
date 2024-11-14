@@ -14,6 +14,8 @@ var app = (function () {
 	var format = new ol.format.WKT();
 	var current_shape = "polygon";
 
+	var lfkey = "zecompadre-wkt";
+
 	var normalColor = '#141414'; //'#005baa';
 	var editColor = '#ec7063';
 	var snapColor = '#34495e';
@@ -303,6 +305,8 @@ var app = (function () {
 				wkts.push({ id: checksum, wkt: wkt });
 			}
 
+			localStorage.setItem(lfkey, wkts);
+
 			$(defaultele).hide();
 
 			$(tabs.querySelector("ul")).tabs();
@@ -392,7 +396,7 @@ var app = (function () {
 			}
 
 			localforage
-				.getItem("zecompadre-wkt")
+				.getItem(lfkey)
 				.then((wkts) => self.loadWKTs(wkts))
 				.catch((error) => console.error("Error retrieving wkts:", error));
 
