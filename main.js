@@ -309,7 +309,7 @@ var app = (function () {
 				wkts.push({ id: checksum, wkt: wkt });
 			}
 
-			localStorage.setItem(lfkey, wkts);
+			localStorage.setItem(lfkey, JSON.stringify(wkts));
 
 			$(defaultele).hide();
 
@@ -401,7 +401,7 @@ var app = (function () {
 
 			localforage
 				.getItem(lfkey)
-				.then((wkts) => self.loadWKTs(wkts))
+				.then((wkts) => self.loadWKTs(JSON.parse(wkts)))
 				.catch((error) => console.error("Error retrieving wkts:", error));
 
 		}
