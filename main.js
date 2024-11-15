@@ -268,8 +268,8 @@ var app = (function () {
 				zoom: 8
 			}));
 			map.getView().fit(extent, map.getSize());
-
-			map.getView().fit(vector.getExtent(), map.getSize());
+			//map.getView().fit(vector.getExtent());
+			//map.getView().fit(vector.getExtent(), map.getSize());
 
 		},
 		clearMap: function () {
