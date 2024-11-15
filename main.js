@@ -80,7 +80,7 @@ var app = (function () {
 					item.wkt = wkt;
 			});
 
-			this.update();
+			this.save();
 		}
 
 	}
