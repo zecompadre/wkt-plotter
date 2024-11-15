@@ -51,9 +51,9 @@ body {
 	top: .5em;
 }
 
-.ol-control button,
-.ol-control button:focus,
-.ol-control button:hover {
+.ol-top-right .ol-control button,
+.ol-top-right .ol-control button:focus,
+.ol-top-right .ol-control button:hover {
 	background-color: inherit;
 	color: inherit;
 }
@@ -136,97 +136,97 @@ textarea {
 	cursor: pointer;
 }
 
-.btn-primary {
+.ol-control .btn-primary {
 	color: #fff;
 	background-color: #007bff;
 	border-color: #007bff;
 }
 
-.btn-primary:hover {
+.ol-control .btn-primary:hover {
 	color: #fff;
 	background-color: #0069d9;
 	border-color: #0062cc;
 }
 
-.btn-secondary {
+.ol-control .btn-secondary {
 	color: #fff;
 	background-color: #6c757d;
 	border-color: #6c757d;
 }
 
-.btn-secondary:hover {
+.ol-control .btn-secondary:hover {
 	color: #fff;
 	background-color: #5a6268;
 	border-color: #545b62;
 }
 
-.btn-success {
+.ol-control .btn-success {
 	color: #fff;
 	background-color: #28a745;
 	border-color: #28a745;
 }
 
-.btn-success:hover {
+.ol-control .btn-success:hover {
 	color: #fff;
 	background-color: #218838;
 	border-color: #1e7e34;
 }
 
-.btn-danger {
+.ol-control .btn-danger {
 	color: #fff;
 	background-color: #dc3545;
 	border-color: #dc3545;
 }
 
-.btn-danger:hover {
+.ol-control .btn-danger:hover {
 	color: #fff;
 	background-color: #c82333;
 	border-color: #bd2130;
 }
 
-.btn-warning {
+.ol-control .btn-warning {
 	color: #212529;
 	background-color: #ffc107;
 	border-color: #ffc107;
 }
 
-.btn-warning:hover {
+.ol-control .btn-warning:hover {
 	color: #212529;
 	background-color: #e0a800;
 	border-color: #d39e00;
 }
 
-.btn-info {
+.ol-control .btn-info {
 	color: #fff;
 	background-color: #17a2b8;
 	border-color: #17a2b8;
 }
 
-.btn-info:hover {
+.ol-control .btn-info:hover {
 	color: #fff;
 	background-color: #138496;
 	border-color: #117a8b;
 }
 
-.btn-light {
+.ol-control .btn-light {
 	color: #212529;
 	background-color: #f8f9fa;
 	border-color: #f8f9fa;
 }
 
-.btn-light:hover {
+.ol-control .btn-light:hover {
 	color: #212529;
 	background-color: #e2e6ea;
 	border-color: #dae0e5;
 }
 
-.btn-dark {
+.ol-control .btn-dark {
 	color: #fff;
 	background-color: #343a40;
 	border-color: #343a40;
 }
 
-.btn-dark:hover {
+.ol-control .btn-dark:hover {
 	color: #fff;
 	background-color: #23272b;
 	border-color: #1d2124;
