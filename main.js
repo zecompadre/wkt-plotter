@@ -224,7 +224,7 @@ var app = (function () {
 				map.removeLayer(vector);
 				//features.clear();
 				new_feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-				new_feature.id = id;
+				new_feature.setId(id);
 				features.push(new_feature);
 			}
 
@@ -447,7 +447,7 @@ var app = (function () {
 				if (evt.selected.length > 0) {
 					evt.selected.forEach(function (feature) {
 						console.log("selected", feature);
-						setCurrentTextarea(feature.id)
+						setCurrentTextarea(feature.getId())
 
 					});
 				}
