@@ -320,7 +320,7 @@ var app = (function () {
 
 			$(defaultele).hide();
 
-			$(tabs.querySelector("ul")).tabs();
+			$(tabs).tabs();
 		},
 		init: function () {
 			var self = this;
