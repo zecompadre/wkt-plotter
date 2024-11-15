@@ -424,6 +424,9 @@ var app = (function () {
 				if (evt.deselected.length > 0) {
 
 					evt.deselected.forEach(function (feature) {
+
+						console.log(feature);
+
 						self.restoreDefaultColors();
 						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 						textarea.value = format.writeGeometry(geo);
