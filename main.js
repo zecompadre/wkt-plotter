@@ -62,7 +62,7 @@ var app = (function () {
 	function setCurrentTextarea(id) {
 		tabs.querySelectorAll("li a").forEach(function (item) {
 			if (item.href.split("#")[1] === id)
-				item.click();
+				item.parentElement.click();
 		});
 	}
 
