@@ -59,6 +59,13 @@ var app = (function () {
 		return textarea;
 	}
 
+	function setCurrentTextarea() {
+		tabs.querySelectorAll("li a").forEach(function (item) {
+			if (item.href.split("#")[1] == id)
+				item.click();
+		}
+	}
+
 	class EditorControl extends ol.control.Control {
 		/**
 		 * @param {Object} [opt_options] Control options.
@@ -436,7 +443,8 @@ var app = (function () {
 						var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
 					});
 				}
-				else if (evt.selected.length > 0) {
+
+				if (evt.selected.length > 0) {
 					evt.selected.forEach(function (feature) {
 
 						console.log("selected", feature);
