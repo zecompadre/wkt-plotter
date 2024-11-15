@@ -33,8 +33,6 @@
 	--font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-/*
-
 * {
 	margin: 0;
 	padding: 0;
@@ -46,8 +44,6 @@ body {
 	height: 100%;
 	font-family: Arial, sans-serif;
 }
-	
-*/
 
 .form-control {
 	display: block;
