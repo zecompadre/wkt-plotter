@@ -373,7 +373,9 @@ var app = (function () {
 
 			var self = this;
 
-			var wkts = LS_WKTs.load();
+			LS_WKTs.load();
+
+			var wkts = current_wkts;
 
 			var wktdefault = tofocus;
 			wktdefault.focus();
