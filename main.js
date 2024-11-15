@@ -62,7 +62,7 @@ var app = (function () {
 				target: options.target,
 			});
 
-			button.addEventListener('click', this.handleRotateNorth.bind(this), false);
+			buttonClear.addEventListener('click', app.clearMap.bind(this), false);
 		}
 
 		handleRotateNorth() {
