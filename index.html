@@ -10,7 +10,7 @@
 
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 				<script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js"></script>
-				<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/themes/base/theme.min.css">
+				<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/smoothness/jquery-ui.css">
 
 				<script src="https://cdn.jsdelivr.net/npm/js-md5@2.5.0/build/md5.min.js"></script>
 
@@ -47,19 +47,19 @@
 		<div class="result-container">
 			<ul>
 			</ul>
-		</div>
-		<div id="wktdefault" class="wkt-container">
-			<textarea class="form-control" rows="5"></textarea>
-			<div class="btns btn-group btn-group-md">
-				<button type="button" class="btn btn-danger btn-xs" onclick="app.clearMap()">
-					<i class="glyphicon glyphicon-remove"></i>
-				</button>
-				<button type="button" class="btn btn-warning btn-xs" onclick="app.copyWKT()">
-					<i class="glyphicon glyphicon-copy"></i>
-				</button>
-				<button type="button" class="btn btn-primary btn-xs" onclick="app.plotWKT()">
-					<i class="glyphicon glyphicon-ok"></i>
-				</button>
+			<div id="wktdefault" class="wkt-container">
+				<textarea class="form-control" rows="5"></textarea>
+				<div class="btns btn-group btn-group-md">
+					<button type="button" class="btn btn-danger btn-xs" onclick="app.clearMap()">
+						<i class="glyphicon glyphicon-remove"></i>
+					</button>
+					<button type="button" class="btn btn-warning btn-xs" onclick="app.copyWKT()">
+						<i class="glyphicon glyphicon-copy"></i>
+					</button>
+					<button type="button" class="btn btn-primary btn-xs" onclick="app.plotWKT()">
+						<i class="glyphicon glyphicon-ok"></i>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
