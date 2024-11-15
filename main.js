@@ -183,6 +183,8 @@ var app = (function () {
 			current_shape = shape;
 			map.removeInteraction(draw);
 			this.addInteraction(shape);
+			console.log(shape);
+
 		},
 		restoreDefaultColors: function () {
 			//textarea = getCurrentTextarea();
