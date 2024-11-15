@@ -51,6 +51,10 @@ body {
 	top: .5em;
 }
 
+.ol-top-right button {
+	color: initial;
+}
+
 .ol-top-right .glyphicon {
 	top: 0;
 	line-height: .75em;
