@@ -331,7 +331,7 @@ textarea {
 	line-height: 20px;
 }
 
-.ui-tabs .ui-tabs-nav li a {
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	height: 20px;
 	line-height: 20px;
 	padding: 0 1em;
