@@ -53,6 +53,13 @@ var app = (function () {
 		return checksum;
 	}
 
+	function getCurrentTextarea() {
+
+		var activeTabIdx = tabsystem.tabs('option', 'active');
+
+		console.log(activeTabIdx);
+	}
+
 	class EditorControl extends ol.control.Control {
 		/**
 		 * @param {Object} [opt_options] Control options.
@@ -251,6 +258,7 @@ var app = (function () {
 
 			console.log(this);
 			console.log(tabsystem);
+			console.log(getCurrentTextarea());
 
 
 			textarea.select();
