@@ -2,7 +2,7 @@
 	--headerh: 60px;
 	--maph: 75%;
 	--resulth: 25%;
-	--tabsh: 43px;
+	--tabsh: 25px;
 
 
 	--indigo: #6610f2;
@@ -319,6 +319,7 @@ textarea {
 .ui-tabs .ui-tabs-nav li a {
 	height: 20px;
 	line-height: 20px;
+	padding: 0 1em;
 }
 
 .maincontainer .result-container .ui-tabs-panel {
