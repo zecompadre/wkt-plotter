@@ -350,7 +350,7 @@ var app = (function () {
 				idx = idx + 1;
 				self.crateTabs(idx, item.id, item.wkt);
 
-				console.log("wkts.item", item);
+				//console.log("wkts.item", item);
 
 				if (item.id === checksum)
 					exists = true;
