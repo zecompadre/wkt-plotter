@@ -54,10 +54,10 @@ var app = (function () {
 	}
 
 	function getCurrentTextarea() {
-
-		var activeTabIdx = tabsystem.tabs('option', 'active');
-
-		console.log(activeTabIdx);
+		var active = $(tabs).tabs("option", "active");
+		var id = active.attr('id')
+		var textarea = document.querySelector("#" + id + " textarea");
+		console.log(textarea);
 	}
 
 	class EditorControl extends ol.control.Control {
@@ -257,8 +257,8 @@ var app = (function () {
 		copyWKT: async function () {
 
 			console.log(this);
-			console.log(tabsystem);
-			console.log(getCurrentTextarea());
+
+			getCurrentTextarea();
 
 
 			textarea.select();
