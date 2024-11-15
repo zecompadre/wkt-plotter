@@ -72,10 +72,10 @@ var app = (function () {
 			current_wkts = JSON.parse(wkts);
 		},
 		save: function () {
-			localStorage.setItem(lfkey, JSON.stringify(current_shapes));
+			localStorage.setItem(lfkey, JSON.stringify(current_wkts));
 		},
 		update: function (id, wkt) {
-			current_shapes.forEach(function (item) {
+			current_wkts.forEach(function (item) {
 				if (item.id === id)
 					item.wkt = wkt;
 			});
@@ -403,7 +403,7 @@ var app = (function () {
 				wkts.push({ id: checksum, wkt: wkt });
 			}
 
-			current_shapes = wkts;
+			current_wkts = wkts;
 
 			LS_WKTs.save()
 
