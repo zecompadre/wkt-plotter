@@ -304,10 +304,27 @@ textarea {
 	font-size: 10px;
 }
 
-.maincontainer .result-container .ui-tabs .ui-tabs-nav,
+.maincontainer .result-container .ui-tabs .ui-tabs-nav {
+
+	height: 24px;
+	font-size: 12px;
+	padding: 0;
+}
+
+.ui-tabs .ui-tabs-nav li {
+	height: 20px;
+	line-height: 20px;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	height: 20px;
+	line-height: 20px;
+}
+
 .maincontainer .result-container .ui-tabs-panel {
 	padding: 0;
 }
+
 
 
 .maincontainer .result-container .btns {
