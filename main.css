@@ -51,8 +51,11 @@ body {
 	top: .5em;
 }
 
-.ol-top-right button {
-	color: initial;
+.ol-top-right button,
+.ol-top-right button:focus,
+.ol-top-right button:hover {
+	background-color: inherit;
+	color: inherit;
 }
 
 .ol-top-right .glyphicon {
