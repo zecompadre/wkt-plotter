@@ -63,7 +63,7 @@ var app = (function () {
 		tabs.querySelectorAll("li a").forEach(function (item) {
 			if (item.href.split("#")[1] == id)
 				item.click();
-		}
+		});
 	}
 
 	class EditorControl extends ol.control.Control {
