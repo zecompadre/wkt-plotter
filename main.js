@@ -420,7 +420,7 @@ var app = (function () {
 			});
 
 			map = new ol.Map({
-				controls: om.defaults.extend([new EditorControl()]),
+				controls: ol.control.defaults.extend([new EditorControl()]),
 				interactions: [mousewheelzoom, drag, select, modify],
 				layers: [raster, vector],
 				target: 'map',
