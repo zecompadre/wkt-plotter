@@ -305,9 +305,7 @@ textarea {
 }
 
 .maincontainer .result-container .ui-tabs .ui-tabs-nav {
-
 	height: 24px;
-	font-size: 12px;
 	padding: 0;
 }
 
@@ -320,6 +318,7 @@ textarea {
 	height: 20px;
 	line-height: 20px;
 	padding: 0 1em;
+	font-size: 10px;
 }
 
 .maincontainer .result-container .ui-tabs-panel {
