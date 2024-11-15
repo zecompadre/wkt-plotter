@@ -51,7 +51,7 @@ var app = (function () {
 			const options = opt_options || {};
 
 			const buttonClear = document.createElement('button');
-			buttonClear.innerHTML = '<i class="glyphicon glyphicon-remove"></i>';
+			buttonClear.innerHTML = '<i class="bi bi-remove"></i>';
 			buttonClear.classList.add('btn', 'btn-danger');
 
 			const buttonCopy = document.createElement('button');
@@ -59,7 +59,7 @@ var app = (function () {
 			buttonCopy.classList.add('btn', 'btn-warning');
 
 			const buttonPlot = document.createElement('button');
-			buttonPlot.innerHTML = '<i class="glyphicon glyphicon-ok"></i>';
+			buttonPlot.innerHTML = '<i class="fa-solid fa-check"></i>';
 			buttonPlot.classList.add('btn', 'btn-primary');
 
 			const element = document.createElement('div');
