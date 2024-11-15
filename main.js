@@ -185,15 +185,15 @@ var app = (function () {
 			this.addInteraction(shape);
 		},
 		restoreDefaultColors: function () {
-			textarea = getCurrentTextarea();
-			textarea.style.borderColor = "";
-			textarea.style.backgroundColor = "";
+			//textarea = getCurrentTextarea();
+			//textarea.style.borderColor = "";
+			//textarea.style.backgroundColor = "";
 		},
 		plotWKT: function (id, wkt) {
 
 			var new_feature;
 
-			textarea = getCurrentTextarea();
+			//textarea = getCurrentTextarea();
 
 			wkt_string = wkt || textarea.value;
 			if (wkt_string == "") {
