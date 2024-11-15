@@ -185,12 +185,15 @@ var app = (function () {
 			this.addInteraction(shape);
 		},
 		restoreDefaultColors: function () {
+			textarea = getCurrentTextarea();
 			textarea.style.borderColor = "";
 			textarea.style.backgroundColor = "";
 		},
-		plotWKT: function (wkt) {
+		plotWKT: function (id, wkt) {
 
 			var new_feature;
+
+			textarea = getCurrentTextarea();
 
 			wkt_string = wkt || textarea.value;
 			if (wkt_string == "") {
@@ -210,16 +213,16 @@ var app = (function () {
 				return;
 			} else {
 				map.removeLayer(vector);
-				features.clear();
+				//features.clear();
 				new_feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+				new_feature.id = id;
 				features.push(new_feature);
 			}
+
 			vector = new ol.layer.Vector({
 				source: new ol.source.Vector({ features: features }),
 				style: styles(normalColor)
 			});
-
-			//this.selectGeom(current_shape);
 
 			map.addLayer(vector);
 			derived_feature = features.getArray()[0];
@@ -237,6 +240,16 @@ var app = (function () {
 			map.getView().fit(extent, map.getSize());
 		},
 		clearMap: function () {
+
+			textarea = getCurrentTextarea();
+
+			map.removeLayer(vector);
+			features.clear();
+			new_feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+			new_feature.id = id;
+			features.push(new_feature);
+
+
 			map.removeLayer(vector);
 			features.clear();
 			vector = new ol.layer.Vector({
@@ -246,6 +259,7 @@ var app = (function () {
 			//this.selectGeom(current_shape);
 			map.addLayer(vector);
 			textarea.value = "";
+
 			this.restoreDefaultColors();
 		},
 		loadWKTfromURIFragment: function (fragment) {
@@ -257,8 +271,7 @@ var app = (function () {
 
 			//console.log(this);
 
-			getCurrentTextarea();
-
+			textarea = getCurrentTextarea();
 
 			textarea.select();
 			document.execCommand("copy");
@@ -352,7 +365,7 @@ var app = (function () {
 				if (item.id === checksum)
 					exists = true;
 
-				self.plotWKT(item.wkt);
+				self.plotWKT(item.id, item.wkt);
 			});
 
 			if (!exists) {
@@ -361,7 +374,7 @@ var app = (function () {
 
 				self.crateTabs(idx, checksum, wkt);
 
-				self.plotWKT(wkt);
+				self.plotWKT(checksum, wkt);
 
 				wkts.push({ id: checksum, wkt: wkt });
 			}
