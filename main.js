@@ -50,12 +50,12 @@ var app = (function () {
 		constructor(opt_options) {
 			const options = opt_options || {};
 
-			const button = document.createElement('button');
-			button.innerHTML = 'N';
+			const buttonClear = document.createElement('button');
+			buttonClear.innerHTML = '<i class="glyphicon glyphicon-remove"></i>';
 
 			const element = document.createElement('div');
 			element.className = 'ol-top-right ol-unselectable ol-control';
-			element.appendChild(button);
+			element.appendChild(buttonClear);
 
 			super({
 				element: element,
