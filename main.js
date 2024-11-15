@@ -51,15 +51,15 @@ var app = (function () {
 			const options = opt_options || {};
 
 			const buttonClear = document.createElement('button');
-			buttonClear.innerHTML = '<i class="fa-solid fa-trash"></i>';
+			buttonClear.innerHTML = '<i class="fa-solid fa-trash fa-sm"></i>';
 			buttonClear.classList.add('btn', 'btn-danger');
 
 			const buttonCopy = document.createElement('button');
-			buttonCopy.innerHTML = '<i class="fa-regular fa-clipboard"></i>';
+			buttonCopy.innerHTML = '<i class="fa-regular fa-clipboard fa-sm"></i>';
 			buttonCopy.classList.add('btn', 'btn-warning');
 
 			const buttonPlot = document.createElement('button');
-			buttonPlot.innerHTML = '<i class="fa-solid fa-check"></i>';
+			buttonPlot.innerHTML = '<i class="fa-solid fa-check fa-sm"></i>';
 			buttonPlot.classList.add('btn', 'btn-primary');
 
 			const element = document.createElement('div');
