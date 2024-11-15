@@ -51,7 +51,7 @@ var app = (function () {
 		const hashArray = Array.from(new Uint8Array(hashBuffer));
 		const checksum = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 		return checksum;
-	},
+	}
 
 	class EditorControl extends ol.control.Control {
 		/**
