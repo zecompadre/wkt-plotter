@@ -219,6 +219,8 @@ var app = (function () {
 				features.push(new_feature);
 			}
 
+			console.log("features", features);
+
 			vector = new ol.layer.Vector({
 				source: new ol.source.Vector({ features: features }),
 				style: styles(normalColor)
