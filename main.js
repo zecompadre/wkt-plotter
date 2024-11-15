@@ -54,7 +54,7 @@ var app = (function () {
 			button.innerHTML = 'N';
 
 			const element = document.createElement('div');
-			element.className = 'rotate-north ol-unselectable ol-control';
+			element.className = 'ol-top-right ol-unselectable ol-control';
 			element.appendChild(button);
 
 			super({

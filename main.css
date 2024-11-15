@@ -46,6 +46,12 @@ body {
 	font-family: Arial, sans-serif;
 }
 
+.ol-top-right {
+	right: .5em;
+	top: .5em;
+}
+
+
 .form-control {
 	display: block;
 	width: 100%;
