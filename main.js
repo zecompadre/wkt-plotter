@@ -446,8 +446,8 @@ var app = (function () {
 
 				if (evt.selected.length > 0) {
 					evt.selected.forEach(function (feature) {
-						console.log("selected", feature);
-						setCurrentTextarea(feature.getId())
+						console.log("selected", feature.getId(), feature);
+						//setCurrentTextarea(feature.getId())
 
 					});
 				}
