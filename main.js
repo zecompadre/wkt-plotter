@@ -52,7 +52,7 @@ var app = (function () {
 	}
 
 	function getCurrentTextarea() {
-		var id = tabs.querySelector("ui-state-active a").href;
+		var id = tabs.querySelector(".ui-state-active a").href;
 		console.log("id", id);
 		var textarea = document.querySelector(id + " textarea");
 		console.log("textarea", textarea);
