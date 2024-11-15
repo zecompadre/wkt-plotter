@@ -43,6 +43,33 @@ var app = (function () {
 		return `rgba(${r}, ${g}, ${b},0.2)`;
 	}
 
+	class EditorControl extends Control {
+		/**
+		 * @param {Object} [opt_options] Control options.
+		 */
+		constructor(opt_options) {
+			const options = opt_options || {};
+
+			const button = document.createElement('button');
+			button.innerHTML = 'N';
+
+			const element = document.createElement('div');
+			element.className = 'rotate-north ol-unselectable ol-control';
+			element.appendChild(button);
+
+			super({
+				element: element,
+				target: options.target,
+			});
+
+			button.addEventListener('click', this.handleRotateNorth.bind(this), false);
+		}
+
+		handleRotateNorth() {
+			this.getMap().getView().setRotation(0);
+		}
+	}
+
 	function styles(color) {
 		return [
 			new ol.style.Style({
@@ -393,6 +420,7 @@ var app = (function () {
 			});
 
 			map = new ol.Map({
+				controls: defaultControls().extend([new EditorControl()]),
 				interactions: [mousewheelzoom, drag, select, modify],
 				layers: [raster, vector],
 				target: 'map',
