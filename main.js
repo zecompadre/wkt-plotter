@@ -52,6 +52,7 @@ var app = (function () {
 
 			const buttonClear = document.createElement('button');
 			buttonClear.innerHTML = '<i class="glyphicon glyphicon-remove"></i>';
+			buttonClear.classList.add('btn', 'btn-default');
 
 			const element = document.createElement('div');
 			element.className = 'ol-top-right ol-unselectable ol-control';
