@@ -54,9 +54,19 @@ var app = (function () {
 			buttonClear.innerHTML = '<i class="glyphicon glyphicon-remove"></i>';
 			buttonClear.classList.add('btn', 'btn-danger');
 
+			const buttonCopy = document.createElement('button');
+			buttonCopy.innerHTML = '<i class="glyphicon glyphicon-copy"></i>';
+			buttonCopy.classList.add('btn', 'btn-warning');
+
+			const buttonPlot = document.createElement('button');
+			buttonPlot.innerHTML = '<i class="glyphicon glyphicon-ok"></i>';
+			buttonPlot.classList.add('btn', 'btn-primary');
+
 			const element = document.createElement('div');
 			element.className = 'ol-top-right ol-unselectable ol-control';
 			element.appendChild(buttonClear);
+			element.appendChild(buttonCopy);
+			element.appendChild(buttonPlot);
 
 			super({
 				element: element,
@@ -64,6 +74,8 @@ var app = (function () {
 			});
 
 			buttonClear.addEventListener('click', app.clearMap.bind(this), false);
+			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
+			buttonPlot.addEventListener('click', app.plotWKT.bind(this), false);
 		}
 
 		handleRotateNorth() {
