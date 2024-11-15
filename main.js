@@ -429,13 +429,11 @@ var app = (function () {
 
 			select.on('select', function (evt) {
 
-
-
 				if (evt.deselected.length > 0) {
 
 					evt.deselected.forEach(function (feature) {
 
-						console.log("deselected", feature);
+						textarea = getCurrentTextarea();
 
 						self.restoreDefaultColors();
 						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
