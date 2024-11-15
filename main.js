@@ -43,7 +43,7 @@ var app = (function () {
 		return `rgba(${r}, ${g}, ${b},0.2)`;
 	}
 
-	class EditorControl extends Control {
+	class EditorControl extends ol.control.Control {
 		/**
 		 * @param {Object} [opt_options] Control options.
 		 */
