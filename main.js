@@ -421,16 +421,26 @@ var app = (function () {
 			});
 
 			select.on('select', function (evt) {
+
+
+
 				if (evt.deselected.length > 0) {
 
 					evt.deselected.forEach(function (feature) {
 
-						console.log(feature);
+						console.log("deselected", feature);
 
 						self.restoreDefaultColors();
 						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 						textarea.value = format.writeGeometry(geo);
 						var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+					});
+				}
+				else if (evt.selected.length > 0) {
+					evt.selected.forEach(function (feature) {
+
+						console.log("selected", feature);
+
 					});
 				}
 			});
