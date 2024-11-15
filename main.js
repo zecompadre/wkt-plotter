@@ -51,11 +51,11 @@ var app = (function () {
 			const options = opt_options || {};
 
 			const buttonClear = document.createElement('button');
-			buttonClear.innerHTML = '<i class="bi bi-remove"></i>';
+			buttonClear.innerHTML = '<i class="fa-solid fa-trash"></i>';
 			buttonClear.classList.add('btn', 'btn-danger');
 
 			const buttonCopy = document.createElement('button');
-			buttonCopy.innerHTML = '<i class="bi bi-copy"></i>';
+			buttonCopy.innerHTML = '<i class="fa-regular fa-clipboard"></i>';
 			buttonCopy.classList.add('btn', 'btn-warning');
 
 			const buttonPlot = document.createElement('button');
