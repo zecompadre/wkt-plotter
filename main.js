@@ -60,12 +60,9 @@ var app = (function () {
 	}
 
 	function setCurrentTextarea(id) {
-		var idx = 0
 		tabs.querySelectorAll("li a").forEach(function (item) {
 			if (item.href.split("#")[1] === id)
-				$(tabs).tabs('select', idx);
-
-			idx++;
+				$(item).trigger("click");
 		});
 	}
 
