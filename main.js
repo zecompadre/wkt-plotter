@@ -55,7 +55,7 @@ var app = (function () {
 			buttonClear.classList.add('btn', 'btn-danger');
 
 			const buttonCopy = document.createElement('button');
-			buttonCopy.innerHTML = '<i class="glyphicon glyphicon-copy"></i>';
+			buttonCopy.innerHTML = '<i class="bi bi-copy"></i>';
 			buttonCopy.classList.add('btn', 'btn-warning');
 
 			const buttonPlot = document.createElement('button');
