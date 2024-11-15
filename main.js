@@ -52,10 +52,11 @@ var app = (function () {
 	}
 
 	function getCurrentTextarea() {
-		var id = tabs.querySelector(".ui-state-active a").href;
+		var id = tabs.querySelector(".ui-state-active a").href.split("#")[1];
 		console.log("id", id);
-		var textarea = document.querySelector(id + " textarea");
+		var textarea = document.querySelector("#" + id + " textarea");
 		console.log("textarea", textarea);
+		return textarea;
 	}
 
 	class EditorControl extends ol.control.Control {
