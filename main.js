@@ -52,13 +52,9 @@ var app = (function () {
 	}
 
 	function getCurrentTextarea() {
-		var active = $(tabs).tabs("option", "active");
-		console.log("active", active);
-
-		var id = active.attr('id')
+		var id = tabs.querySelector("ui-state-active a").href;
 		console.log("id", id);
-
-		var textarea = document.querySelector("#" + id + " textarea");
+		var textarea = document.querySelector(id + " textarea");
 		console.log("textarea", textarea);
 	}
 
