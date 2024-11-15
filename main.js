@@ -14,6 +14,8 @@ var app = (function () {
 	var format = new ol.format.WKT();
 	var current_shape = "polygon";
 
+	var current_wkts = [];
+
 	var lfkey = "zecompadre-wkt";
 
 	var normalColor = '#141414'; //'#005baa';
@@ -53,9 +55,7 @@ var app = (function () {
 
 	function getCurrentTextarea() {
 		var id = tabs.querySelector(".ui-state-active a").href.split("#")[1];
-		console.log("id", id);
 		var textarea = document.querySelector("#" + id + " textarea");
-		console.log("textarea", textarea);
 		return textarea;
 	}
 
@@ -65,6 +65,26 @@ var app = (function () {
 				$(item).trigger("click");
 		});
 	}
+
+	var LS_WKTs = {
+		load: function () {
+			var wkts = localStorage.getItem(lfkey) || "[]";
+			current_wkts = JSON.parse(wkts);
+		},
+		save: function () {
+			localStorage.setItem(lfkey, JSON.stringify(current_shapes));
+		},
+		update: function (id, wkt) {
+			current_shapes.forEach(function (item) {
+				if (item.id === id)
+					item.wkt = wkt;
+			});
+
+			this.update();
+		}
+
+	}
+
 
 	class EditorControl extends ol.control.Control {
 		/**
@@ -228,14 +248,13 @@ var app = (function () {
 				features.push(new_feature);
 			}
 
-			console.log("features", features);
-
 			vector = new ol.layer.Vector({
 				source: new ol.source.Vector({ features: features }),
 				style: styles(normalColor)
 			});
 
 			map.addLayer(vector);
+
 			derived_feature = features.getArray()[0];
 			extent = derived_feature.getGeometry().getExtent();
 			minx = derived_feature.getGeometry().getExtent()[0];
@@ -249,6 +268,9 @@ var app = (function () {
 				zoom: 8
 			}));
 			map.getView().fit(extent, map.getSize());
+
+			map.getView().fit(vector.getExtent(), map.getSize());
+
 		},
 		clearMap: function () {
 
@@ -347,11 +369,11 @@ var app = (function () {
 			clonedElement.querySelector("textarea").addEventListener("click", app.restoreDefaultColors);
 
 		},
-		loadWKTs: async function (wkts) {
+		loadWKTs: async function () {
 
 			var self = this;
 
-			console.log("wkts", wkts);
+			var wkts = LS_WKTs.load();
 
 			var wktdefault = tofocus;
 			wktdefault.focus();
@@ -367,30 +389,23 @@ var app = (function () {
 			var idx = 0;
 
 			wkts.forEach(item => {
-
 				idx = idx + 1;
 				self.crateTabs(idx, item.id, item.wkt);
-
-				//console.log("wkts.item", item);
-
 				if (item.id === checksum)
 					exists = true;
-
 				self.plotWKT(item.id, item.wkt);
 			});
 
 			if (!exists) {
-
 				idx = idx + 1;
-
 				self.crateTabs(idx, checksum, wkt);
-
 				self.plotWKT(checksum, wkt);
-
 				wkts.push({ id: checksum, wkt: wkt });
 			}
 
-			localStorage.setItem(lfkey, JSON.stringify(wkts));
+			current_shapes = wkts;
+
+			LS_WKTs.save()
 
 			$(defaultele).hide();
 
@@ -439,6 +454,9 @@ var app = (function () {
 						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 						textarea.value = format.writeGeometry(geo);
 						var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+
+						LS_WKTs.update(feature.getId(), textarea.value);
+
 					});
 				}
 
@@ -492,9 +510,7 @@ var app = (function () {
 				this.loadWKTfromURIFragment(window.location.hash);
 			}
 
-			var wkts = localStorage.getItem(lfkey);
-			//console.log(wkts);
-			self.loadWKTs(JSON.parse(wkts));
+			self.loadWKTs();
 
 		}
 	};
