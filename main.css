@@ -51,9 +51,9 @@ body {
 	top: .5em;
 }
 
-.ol-top-right .ol-control button,
-.ol-top-right .ol-control button:focus,
-.ol-top-right .ol-control button:hover {
+.ol-control button,
+.ol-control button:focus,
+.ol-control button:hover {
 	background-color: inherit;
 	color: inherit;
 }
