@@ -29,8 +29,6 @@ var app = (function () {
 	var tofocus = document.querySelector("#wktdefault textarea");
 	var textarea = document.querySelector("#wktdefault textarea");
 
-	var tabsystem = null;
-
 	function hexToRgbA(hex) {
 		// Remove the "#" if present
 		hex = hex.replace(/^#/, '');
@@ -375,7 +373,7 @@ var app = (function () {
 
 			$(defaultele).hide();
 
-			tabsystem = $(tabs).tabs();
+			$(tabs).tabs();
 		},
 		init: function () {
 			var self = this;
@@ -463,7 +461,7 @@ var app = (function () {
 			}
 
 			var wkts = localStorage.getItem(lfkey);
-			console.log(wkts);
+			//console.log(wkts);
 			self.loadWKTs(JSON.parse(wkts));
 
 		}
