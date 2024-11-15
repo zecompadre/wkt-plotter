@@ -59,9 +59,9 @@ var app = (function () {
 		return textarea;
 	}
 
-	function setCurrentTextarea() {
+	function setCurrentTextarea(id) {
 		tabs.querySelectorAll("li a").forEach(function (item) {
-			if (item.href.split("#")[1] == id)
+			if (item.href.split("#")[1] === id)
 				item.click();
 		});
 	}
@@ -447,10 +447,7 @@ var app = (function () {
 				if (evt.selected.length > 0) {
 					evt.selected.forEach(function (feature) {
 						console.log("selected", feature);
-						var id = feature.getId();
-						console.log("id", id);
-						//setCurrentTextarea(feature.getId())
-
+						setCurrentTextarea(feature.getId());
 					});
 				}
 			});
