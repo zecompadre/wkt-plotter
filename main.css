@@ -51,9 +51,9 @@ body {
 	top: .5em;
 }
 
-.ol-top-right button,
-.ol-top-right button:focus,
-.ol-top-right button:hover {
+.ol-top-right .ol-control button,
+.ol-top-right .ol-control button:focus,
+.ol-top-right .ol-control button:hover {
 	background-color: inherit;
 	color: inherit;
 }
@@ -62,8 +62,6 @@ body {
 	top: 0;
 	line-height: .75em;
 }
-
-
 
 .form-control {
 	display: block;
