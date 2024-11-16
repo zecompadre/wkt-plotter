@@ -39,23 +39,6 @@ var app = (function () {
 
 		map.getView().fit(extent, map.getSize());
 
-		return;
-
-		derived_feature = features.getArray()[0];
-		extent = derived_feature.getGeometry().getExtent();
-		minx = derived_feature.getGeometry().getExtent()[0];
-		miny = derived_feature.getGeometry().getExtent()[1];
-		maxx = derived_feature.getGeometry().getExtent()[2];
-		maxy = derived_feature.getGeometry().getExtent()[3];
-		centerx = (minx + maxx) / 2;
-		centery = (miny + maxy) / 2;
-		map.setView(new ol.View({
-			center: [centerx, centery],
-			zoom: 8
-		}));
-		map.getView().fit(extent, map.getSize());
-
-		//		map.getView().fit(vector.getExtent(), map.getSize());
 	}
 
 	function hexToRgbA(hex) {
@@ -276,7 +259,7 @@ var app = (function () {
 		removeWKT: function () {
 
 			var selected = this.get();
-			console.log("removeWKT", this, id);
+			console.log("removeWKT", this, selected, selected.id);
 
 			var count = LS_WKTs.get().length;
 
