@@ -279,13 +279,14 @@ var app = (function () {
 			textarea = CurrentTextarea.get();
 			var id = textarea.parentElement.id;
 
+			LS_WKTs.remove(id);
+
 			textarea.value = "";
 			textarea.select();
 			document.execCommand("copy");
 
-
 			$('#wktdefault').siblings().remove();
-
+			$(tabs).prepend("<ul></ul>");
 
 			var eElement = document.getElementById("wktdefault");
 			eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
