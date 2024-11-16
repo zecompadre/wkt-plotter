@@ -262,7 +262,6 @@ var app = (function () {
 				} catch (err) {
 				}
 			}
-
 			if (!new_feature) {
 				textarea.style.borderColor = "red";
 				textarea.style.backgroundColor = "#F7E8F3";
@@ -272,6 +271,7 @@ var app = (function () {
 				new_feature.setId(id);
 				features.push(new_feature);
 			}
+
 		},
 		removeWKT: function () {
 
@@ -370,7 +370,7 @@ var app = (function () {
 			var ele = clonedElement.querySelector("textarea");
 			ele.value = wkt;
 			ele.addEventListener("click", this.restoreDefaultColors);
-			ele.addEventListener("paste", this.pasteWKT(ele));
+			//ele.addEventListener("paste", this.pasteWKT(ele));
 
 		},
 		/*
@@ -422,6 +422,8 @@ var app = (function () {
 
 			LS_WKTs.save()
 
+			await self.addFeatures();
+
 			if (current_wkts.length > 0) {
 				await centerMap();
 			}
@@ -433,7 +435,6 @@ var app = (function () {
 
 			$(tabs).tabs();
 
-			self.addFeatures();
 		},
 		init: function () {
 			var self = this;
