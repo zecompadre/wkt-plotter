@@ -456,6 +456,8 @@ var app = (function () {
 
 						console.log("deselected", feature.getId(), feature);
 
+						setCurrentTextarea(feature.getId());
+
 						textarea = getCurrentTextarea();
 
 						self.restoreDefaultColors();
