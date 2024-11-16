@@ -448,7 +448,7 @@ var app = (function () {
 
 			$(defaultele).hide();
 
-			$(tabs).tabs();
+			$(tabs).tabs('destroy').tabs();
 
 		},
 		init: function () {
