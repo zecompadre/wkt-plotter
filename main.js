@@ -123,15 +123,15 @@ var app = (function () {
 			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
 			buttonPlot.addEventListener('click', app.plotWKT.bind(this), false);
 
-			this.setVisible(false);
+			this.element.style.display = "none";
 		}
 
 		hide() {
-			this.setVisible(false);
+			this.element.style.display = "none";
 		}
 
 		show() {
-			this.setVisible(true);
+			this.element.style.display = "";
 		}
 	}
 
