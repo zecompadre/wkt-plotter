@@ -278,7 +278,7 @@ var app = (function () {
 			textarea = CurrentTextarea.get();
 			var id = textarea.parentElement.id;
 
-			console.log("removeWKT", id);
+			console.log("removeWKT", this, id);
 
 			LS_WKTs.remove(id);
 
@@ -295,7 +295,7 @@ var app = (function () {
 			map.removeLayer(vector);
 			features.clear();
 
-			this.loadWKTs();
+			thisapp.loadWKTs();
 
 			/*
 						map.removeLayer(vector);
@@ -522,6 +522,8 @@ var app = (function () {
 					zoom: 4
 				})
 			});
+
+			thisapp = self;
 
 			self.loadWKTs();
 
