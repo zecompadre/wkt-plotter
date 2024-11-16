@@ -435,7 +435,6 @@ var app = (function () {
 			btnclear = document.getElementById("btn-clear");
 			btnplot = document.getElementById("btn-plot");
 
-			document.getElementById("overlay").style.display = "none";
 			this.createVector();
 			raster = new ol.layer.Tile({
 				source: new ol.source.OSM()
