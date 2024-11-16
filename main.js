@@ -32,6 +32,22 @@ var app = (function () {
 
 	async function centerMap() {
 
+		var allLayers = map.getLayers();
+		var length = allLayers.getLength();
+		var layerArray = ['Layer1', 'Layer2', ..., 'LayerN'];
+		var extent = ol.extent.createEmpty();
+		for (var i = 0; i < length; i++) {
+			var existingLayer = allLayers.item(i);
+			for (var j = 0; j < layerArray.length; j++) {
+				if (existingLayer.get('title') == layerArray[j]) {
+					ol.extent.extend(extent, existingLayer.getSource().getExtent());
+				}
+			}
+		}
+		map.getView().fit(extent, map.getSize());
+
+		return;
+
 		derived_feature = features.getArray()[0];
 		extent = derived_feature.getGeometry().getExtent();
 		minx = derived_feature.getGeometry().getExtent()[0];
