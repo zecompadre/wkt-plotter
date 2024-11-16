@@ -263,7 +263,7 @@ var app = (function () {
 
 			var count = LS_WKTs.get().length;
 
-			LS_WKTs.remove(id);
+			LS_WKTs.remove(selected.id);
 
 			console.log("LS_WKTs", count, LS_WKTs.get());
 
@@ -274,6 +274,17 @@ var app = (function () {
 				selected.tab.remove();
 				selected.container.remove();
 			}
+
+			map.getLayers().forEach(layer => {
+				if (layer.getId === selected.id) {
+					map.removeLayer(layer)
+				}
+			});
+
+			features = features.filter(function (item) {
+				return item.getId() !== selected.id;
+			});
+
 
 			/*
 						LS_WKTs.remove(id);
