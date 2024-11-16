@@ -401,8 +401,12 @@ var app = (function () {
 
 			LS_WKTs.save()
 
-			if (current_wkts.length > 0)
+			if (current_wkts.length > 0) {
 				await centerMap();
+			}
+			else {
+				self.crateTabs(idx, "empty", wkt);
+			}
 
 			$(defaultele).hide();
 
@@ -473,8 +477,6 @@ var app = (function () {
 							control.show();
 						}
 					});
-
-
 
 					evt.selected.forEach(function (feature) {
 						console.log("selected", feature.getId(), feature);
