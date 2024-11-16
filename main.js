@@ -30,6 +30,14 @@ var app = (function () {
 	var tofocus = document.querySelector("#wktdefault textarea");
 	var textarea = document.querySelector("#wktdefault textarea");
 
+	function createBaseContent() {
+		tabs = document.querySelector(".result-container");
+		tabs.innerHTML = "<ul></ul><div id='wktdefault' class='wkt-container'><textarea class='form-control' rows='5'></textarea></div>";
+		defaultele = document.querySelector("#wktdefault");
+		tofocus = document.querySelector("#wktdefault textarea");
+		textarea = document.querySelector("#wktdefault textarea");
+	}
+
 	async function centerMap() {
 
 		var extent = ol.extent.createEmpty();
@@ -90,6 +98,19 @@ var app = (function () {
 		},
 		save: function () {
 			localStorage.setItem(lfkey, JSON.stringify(current_wkts));
+		},
+		add: function (wkt) {
+			var checksum = generateChecksum(wkt);
+			if (current_wkts.length > 0) {
+				current_wkts.forEach(item => {
+					if (checksum !== "" && item.id === checksum)
+						exists = true;
+				});
+			}
+			if (wkt != "" && !exists) {
+				current_wkts.push({ id: checksum, wkt: wkt });
+			}
+			this.save();
 		},
 		get: function () {
 			return current_wkts;
@@ -242,7 +263,6 @@ var app = (function () {
 				return;
 			} else {
 				map.removeLayer(vector);
-				//features.clear();
 				new_feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
 				new_feature.setId(id);
 				features.push(new_feature);
@@ -326,21 +346,16 @@ var app = (function () {
 
 			return returnVal;
 		},
-		pasteWKT: async function (wkt) {
+		pasteWKT: async function (ele) {
 
 
-			console.log(this);
-			/*
-						tofocus.focus();
-			
-						console.error(wkt);
-						if (wkt === undefined)
-							tofocus.value = await thisapp.clipboardWKT();
-						else
-							tofocus.value = wkt;
-			
-						thisapp.plotWKT();
-			*/
+
+			console.log(this, ele);
+			LS_WKTs.add(ele.value);
+
+			createBaseContent();
+
+			this.loadWKTs();
 		},
 		crateTabs: function (idx, id, wkt) {
 
@@ -360,7 +375,7 @@ var app = (function () {
 			var ele = clonedElement.querySelector("textarea");
 			ele.value = wkt;
 			ele.addEventListener("click", this.restoreDefaultColors);
-			ele.addEventListener("paste", this.pasteWKT.bind(ele));
+			ele.addEventListener("paste", this.pasteWKT(ele));
 
 		},
 		loadWKTs: async function () {
@@ -526,6 +541,8 @@ var app = (function () {
 			});
 
 			thisapp = self;
+
+			createBaseContent();
 
 			self.loadWKTs();
 
