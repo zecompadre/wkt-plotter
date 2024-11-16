@@ -248,6 +248,10 @@ var app = (function () {
 			});
 			map.addLayer(vector);
 		},
+		resetFeatures: async function () {
+			features = new ol.Collection();
+			map.removeLayer(vector);
+		},
 		plotWKT: function (id, wkt) {
 
 			var new_feature;
@@ -282,6 +286,8 @@ var app = (function () {
 			LS_WKTs.remove(selected.id);
 
 			createBaseContent();
+
+			features = new ol.Collection();
 
 			await app.loadWKTs(false);
 
@@ -388,6 +394,8 @@ var app = (function () {
 		loadWKTs: async function (readcb) {
 
 			var self = this;
+
+			await self.resetFeatures();
 
 			LS_WKTs.load();
 
