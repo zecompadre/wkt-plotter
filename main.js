@@ -283,9 +283,10 @@ var app = (function () {
 			textarea.select();
 			document.execCommand("copy");
 
-			while (tabs.lastChild.id !== 'wktdefault') {
-				tabs.removeChild(tabs.lastChild);
-			}
+
+			$('#wktdefault').siblings().remove();
+
+
 			var eElement = document.getElementById("wktdefault");
 			eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
 			/*
