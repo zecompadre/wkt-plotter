@@ -271,7 +271,7 @@ var app = (function () {
 			map.getView().fit(extent, map.getSize());
 
 		},
-		removeWKT: function () {
+		removeWKT: async function () {
 
 			var self = this;
 
@@ -295,7 +295,7 @@ var app = (function () {
 			map.removeLayer(vector);
 			features.clear();
 
-			self.loadWKTs();
+			await self.loadWKTs();
 
 			/*
 						map.removeLayer(vector);
