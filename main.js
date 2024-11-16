@@ -277,6 +277,8 @@ var app = (function () {
 
 			self = this;
 
+			console.log("control", control)
+
 			var selected = control.get();
 			console.log("removeWKT", control, selected, selected.id);
 
