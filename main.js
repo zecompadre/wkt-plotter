@@ -284,6 +284,11 @@ var app = (function () {
 
 			LS_WKTs.remove(selected.id);
 
+			map.dispatchEvent({    //        
+				type: 'click',
+				pixel: [100, 100],
+			});
+
 			createBaseContent();
 
 			if (tabs.classList.contains("ui-tabs")) {
