@@ -122,10 +122,16 @@ var app = (function () {
 			buttonClear.addEventListener('click', app.removeWKT.bind(this), false);
 			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
 			buttonPlot.addEventListener('click', app.plotWKT.bind(this), false);
+
+			this.setVisible(false);
 		}
 
-		handleRotateNorth() {
-			this.getMap().getView().setRotation(0);
+		hide() {
+			this.setVisible(false);
+		}
+
+		show() {
+			this.setVisible(true);
 		}
 	}
 
@@ -479,19 +485,21 @@ var app = (function () {
 						LS_WKTs.update(feature.getId(), textarea.value);
 
 					});
+
+					map.getControls().forEach(function (control) {
+						if (control instanceof EditorControl) {
+							control.hide();
+						}
+					});
 				}
 
 				if (evt.selected.length > 0) {
 
 					console.log("selected evt", evt);
 
-					map.getControls().forEach(function (interaction) {
-
-						console.log("interaction", interaction);
-
-						if (interaction instanceof EditorControl) {
-							console.log("EditorControl", interaction);
-
+					map.getControls().forEach(function (control) {
+						if (control instanceof EditorControl) {
+							control.show();
 						}
 					});
 
