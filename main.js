@@ -155,9 +155,9 @@ var app = (function () {
 				target: options.target,
 			});
 
-			buttonClear.addEventListener('click', function () { app.removeWKT(this); }, false);
-			buttonCopy.addEventListener('click', function () { app.copyWKT(this); }, false);
-			//buttonPlot.addEventListener('click', app.addWKT(this), false);
+			buttonClear.addEventListener('click', app.removeWKT.bind(this), false);
+			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
+			//buttonPlot.addEventListener('click', app.addWKT.bind(this), false);
 
 			this.element.style.display = "none";
 		}
@@ -273,14 +273,11 @@ var app = (function () {
 			}
 
 		},
-		removeWKT: function (control) {
+		removeWKT: function () {
 
-			self = this;
+			var selected = this.get();
 
-			console.log("control", control)
-
-			var selected = control.get();
-			console.log("removeWKT", control, selected, selected.id);
+			console.log("removeWKT", this, selected, selected.id);
 
 			var count = LS_WKTs.get().length;
 
@@ -288,7 +285,7 @@ var app = (function () {
 
 			createBaseContent();
 
-			self.loadWKTs();
+			app.loadWKTs();
 
 			return;
 
@@ -317,7 +314,7 @@ var app = (function () {
 			map.addLayer(vector);
 
 		},
-		copyWKT: async function (control) {
+		copyWKT: async function () {
 
 			//console.log(this);
 
@@ -449,8 +446,6 @@ var app = (function () {
 		init: function () {
 			var self = this;
 
-			createBaseContent();
-
 			tabs = document.querySelector(".result-container");
 			defaultele = document.querySelector("#wktdefault");
 			tofocus = document.querySelector("#wktdefault textarea");
@@ -558,6 +553,8 @@ var app = (function () {
 			});
 
 			thisapp = self;
+
+			createBaseContent();
 
 			self.loadWKTs();
 
