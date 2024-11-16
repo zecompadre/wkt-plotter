@@ -286,7 +286,9 @@ var app = (function () {
 
 			createBaseContent();
 
-			console.log($(tabs));//.tabs('destroy');
+			if (tabs.classList.contains("ui-tabs")) {
+				$(tabs).tabs('destroy');
+			}
 
 			features = new ol.Collection();
 
