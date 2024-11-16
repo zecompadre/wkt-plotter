@@ -516,8 +516,7 @@ var app = (function () {
 				layers: [raster, vector],
 				target: 'map',
 				view: new ol.View({
-					//center: [39.6945, -8.1234],
-					center: ol.proj.transform([39.6945, -8.1234], 'EPSG:4326', 'EPSG:3857'),
+					center: ol.proj.transform([-8.1234, 39.6945], 'EPSG:4326', 'EPSG:3857'),
 					//center: [200832.30, 302913.71],
 					zoom: 8
 				})
