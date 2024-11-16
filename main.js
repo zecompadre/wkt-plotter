@@ -30,8 +30,8 @@ var app = (function () {
 	var tofocus = document.querySelector("#wktdefault textarea");
 	var textarea = document.querySelector("#wktdefault textarea");
 
-	function centerMap() {
-		/*
+	async function centerMap() {
+
 		derived_feature = features.getArray()[0];
 		extent = derived_feature.getGeometry().getExtent();
 		minx = derived_feature.getGeometry().getExtent()[0];
@@ -45,8 +45,8 @@ var app = (function () {
 			zoom: 8
 		}));
 		map.getView().fit(extent, map.getSize());
-*/
-		map.getView().fit(vector.getExtent(), map.getSize());
+
+		//		map.getView().fit(vector.getExtent(), map.getSize());
 	}
 
 	function hexToRgbA(hex) {
@@ -429,7 +429,7 @@ var app = (function () {
 
 			LS_WKTs.save()
 
-			centerMap();
+			await centerMap();
 
 			$(defaultele).hide();
 
