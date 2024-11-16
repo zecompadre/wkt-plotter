@@ -284,7 +284,7 @@ var app = (function () {
 
 			createBaseContent();
 
-			this.loadWKTs();
+			thisapp.loadWKTs();
 
 			return;
 
