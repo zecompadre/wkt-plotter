@@ -275,7 +275,7 @@ var app = (function () {
 				selected.container.remove();
 			}
 
-			var updated = [];
+			var updated = new ol.Collection();
 			features.forEach(function (feature) {
 				if (feature.getId() !== selected.id)
 					updated.push(feature);
