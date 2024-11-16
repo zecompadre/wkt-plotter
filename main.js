@@ -133,6 +133,13 @@ var app = (function () {
 		show() {
 			this.element.style.display = "";
 		}
+
+		selected() {
+
+			console.log("select", select);
+
+			return select.getFeatures().getArray();
+		}
 	}
 
 	function styles(color) {
