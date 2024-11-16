@@ -36,7 +36,6 @@ var app = (function () {
 		defaultele = document.querySelector("#wktdefault");
 		tofocus = document.querySelector("#wktdefault textarea");
 		textarea = document.querySelector("#wktdefault textarea");
-		$(tabs).tabs('destroy');
 	}
 
 	async function centerMap() {
@@ -276,7 +275,6 @@ var app = (function () {
 				new_feature.setId(id);
 				features.push(new_feature);
 			}
-
 		},
 		removeWKT: async function () {
 
@@ -287,6 +285,8 @@ var app = (function () {
 			LS_WKTs.remove(selected.id);
 
 			createBaseContent();
+
+			console.log($(tabs));//.tabs('destroy');
 
 			features = new ol.Collection();
 
