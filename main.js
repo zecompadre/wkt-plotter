@@ -119,9 +119,9 @@ var app = (function () {
 				target: options.target,
 			});
 
-			buttonClear.addEventListener('click', app.removeWKT, false);
-			buttonCopy.addEventListener('click', app.copyWKT, false);
-			buttonPlot.addEventListener('click', app.plotWKT, false);
+			buttonClear.addEventListener('click', app.removeWKT.bind(this), false);
+			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
+			buttonPlot.addEventListener('click', app.plotWKT.bind(this), false);
 		}
 
 		handleRotateNorth() {
@@ -396,9 +396,11 @@ var app = (function () {
 
 			var wkt = await self.clipboardWKT();
 
-			var checksum = await generateChecksum(wkt);
+			console.log("clipboardWKT", wkt)
 
-			if (wkts == null || wkts == undefined)
+			var checksum = wkt !== "" ? await generateChecksum(wkt) : "";
+
+			if (wkt === "" || wkts == null || wkts == undefined)
 				wkts = [];
 
 			var exists = false;
@@ -407,12 +409,12 @@ var app = (function () {
 			wkts.forEach(item => {
 				idx = idx + 1;
 				self.crateTabs(idx, item.id, item.wkt);
-				if (item.id === checksum)
+				if (checksum !== "" && item.id === checksum)
 					exists = true;
 				self.plotWKT(item.id, item.wkt);
 			});
 
-			if (!exists) {
+			if (checksum != "" && !exists) {
 				idx = idx + 1;
 				self.crateTabs(idx, checksum, wkt);
 				self.plotWKT(checksum, wkt);
