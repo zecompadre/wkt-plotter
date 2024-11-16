@@ -328,17 +328,19 @@ var app = (function () {
 		},
 		pasteWKT: async function (wkt) {
 
-			var self = this;
 
-			tofocus.focus();
-
-			console.error(wkt);
-			if (wkt === undefined)
-				tofocus.value = await self.clipboardWKT();
-			else
-				tofocus.value = wkt;
-
-			self.plotWKT();
+			console.log(this);
+			/*
+						tofocus.focus();
+			
+						console.error(wkt);
+						if (wkt === undefined)
+							tofocus.value = await thisapp.clipboardWKT();
+						else
+							tofocus.value = wkt;
+			
+						thisapp.plotWKT();
+			*/
 		},
 		crateTabs: function (idx, id, wkt) {
 
@@ -355,8 +357,10 @@ var app = (function () {
 			defaultele.parentNode.insertBefore(clonedElement, defaultele.nextSibling);
 
 			clonedElement.id = id;
-			clonedElement.querySelector("textarea").value = wkt;
-			clonedElement.querySelector("textarea").addEventListener("click", app.restoreDefaultColors);
+			var ele = clonedElement.querySelector("textarea");
+			ele.value = wkt;
+			ele.addEventListener("click", this.restoreDefaultColors);
+			ele.addEventListener("paste", this.pasteWKT.bind(ele));
 
 		},
 		loadWKTs: async function () {
@@ -427,8 +431,6 @@ var app = (function () {
 			raster = new ol.layer.Tile({
 				source: new ol.source.OSM()
 			});
-
-			$(textarea).on("paste", this.pasteWKT);
 
 			features.on("add", function (e) {
 				self.restoreDefaultColors();
