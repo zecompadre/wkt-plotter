@@ -55,11 +55,7 @@ var app = (function () {
 
 	function getCurrentTextarea(id) {
 		id = id || tabs.querySelector(".ui-state-active a").href.split("#")[1];
-
-		console.log("jquery", $("#" + id + " textarea"));
-		console.log("valina", document.querySelector("#" + id + " textarea"));
-
-		var textarea = document.querySelector("#" + id + " textarea");
+		var textarea = $("#" + id + " textarea").get(0);
 		return textarea;
 	}
 
