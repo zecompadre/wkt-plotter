@@ -119,9 +119,9 @@ var app = (function () {
 				target: options.target,
 			});
 
-			buttonClear.addEventListener('click', app.removeWKT.bind(this), false);
-			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
-			buttonPlot.addEventListener('click', app.plotWKT.bind(this), false);
+			buttonClear.addEventListener('click', app.removeWKT.bind(thisapp), false);
+			buttonCopy.addEventListener('click', app.copyWKT.bind(thisapp), false);
+			buttonPlot.addEventListener('click', app.plotWKT.bind(thisapp), false);
 		}
 
 		handleRotateNorth() {
@@ -295,7 +295,7 @@ var app = (function () {
 			map.removeLayer(vector);
 			features.clear();
 
-			thisapp.loadWKTs();
+			this.loadWKTs();
 
 			/*
 						map.removeLayer(vector);
