@@ -273,19 +273,17 @@ var app = (function () {
 			}
 
 		},
-		removeWKT: function () {
+		removeWKT: async function () {
 
 			var selected = this.get();
 
 			console.log("removeWKT", this, selected, selected.id);
 
-			var count = LS_WKTs.get().length;
-
 			LS_WKTs.remove(selected.id);
 
 			createBaseContent();
 
-			app.loadWKTs();
+			await app.loadWKTs();
 
 			return;
 
