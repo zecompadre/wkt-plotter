@@ -277,7 +277,7 @@ var app = (function () {
 
 			var updated = [];
 			features.forEach(function (feature) {
-				if (item.getId() !== selected.id)
+				if (feature.getId() !== selected.id)
 					updated.push(feature);
 			});
 			features = updated;
