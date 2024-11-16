@@ -1,10 +1,8 @@
 var app = (function () {
 
 	var raster;
-	var source;
 	var vector;
 	var map;
-	var typeSelect;
 	var draw;
 	var drag;
 	var select;
@@ -12,7 +10,6 @@ var app = (function () {
 	var mousewheelzoom;
 	var features = new ol.Collection();
 	var format = new ol.format.WKT();
-	var current_shape = "polygon";
 
 	var current_wkts = [];
 
@@ -293,6 +290,9 @@ var app = (function () {
 
 			var eElement = document.getElementById("wktdefault");
 			eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
+
+			self.loadWKTs();
+
 			/*
 						map.removeLayer(vector);
 						features.clear();
