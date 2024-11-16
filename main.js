@@ -119,9 +119,9 @@ var app = (function () {
 				target: options.target,
 			});
 
-			buttonClear.addEventListener('click', app.removeWKT.bind(thisapp), false);
-			buttonCopy.addEventListener('click', app.copyWKT.bind(thisapp), false);
-			buttonPlot.addEventListener('click', app.plotWKT.bind(thisapp), false);
+			buttonClear.addEventListener('click', app.removeWKT, false);
+			buttonCopy.addEventListener('click', app.copyWKT, false);
+			buttonPlot.addEventListener('click', app.plotWKT, false);
 		}
 
 		handleRotateNorth() {
