@@ -1,5 +1,7 @@
 var app = (function () {
 
+	var thisapp = this;
+
 	var raster;
 	var vector;
 	var map;
@@ -293,7 +295,7 @@ var app = (function () {
 			map.removeLayer(vector);
 			features.clear();
 
-			this.loadWKTs();
+			thisapp.loadWKTs();
 
 			/*
 						map.removeLayer(vector);
