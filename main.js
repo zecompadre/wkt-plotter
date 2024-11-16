@@ -485,6 +485,18 @@ var app = (function () {
 
 					console.log("selected evt", evt);
 
+					map.getInteractions().forEach(function (interaction) {
+
+						console.log("interaction", interaction);
+
+						if (interaction instanceof EditorControl) {
+							console.log("EditorControl", interaction);
+
+						}
+					});
+
+
+
 					evt.selected.forEach(function (feature) {
 						console.log("selected", feature.getId(), feature);
 						CurrentTextarea.set(feature.getId());
