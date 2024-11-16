@@ -271,9 +271,7 @@ var app = (function () {
 			map.getView().fit(extent, map.getSize());
 
 		},
-		removeWKT: async function () {
-
-			var self = this;
+		removeWKT: function () {
 
 			textarea = CurrentTextarea.get();
 			var id = textarea.parentElement.id;
@@ -295,7 +293,7 @@ var app = (function () {
 			map.removeLayer(vector);
 			features.clear();
 
-			await self.loadWKTs();
+			this.loadWKTs();
 
 			/*
 						map.removeLayer(vector);
@@ -329,7 +327,7 @@ var app = (function () {
 		clipboardWKT: async function () {
 
 			var self = this;
-			var returnVal = defaultWKT;
+			var returnVal = "";
 
 			try {
 
