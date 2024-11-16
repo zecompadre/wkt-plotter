@@ -240,7 +240,7 @@ var app = (function () {
 			//textarea.style.borderColor = "";
 			//textarea.style.backgroundColor = "";
 		},
-		addFeatures: function () {
+		addFeatures: async function () {
 			map.removeLayer(vector);
 			vector = new ol.layer.Vector({
 				source: new ol.source.Vector({ features: features }),
@@ -283,7 +283,7 @@ var app = (function () {
 
 			createBaseContent();
 
-			await app.loadWKTs();
+			await app.loadWKTs(false);
 
 			return;
 
@@ -353,9 +353,9 @@ var app = (function () {
 
 			LS_WKTs.add(ele.value);
 
-			createBaseContent();
+			await createBaseContent();
 
-			this.loadWKTs();
+			await this.loadWKTs();
 		},
 		crateTabs: function (idx, id, wkt) {
 
@@ -385,7 +385,7 @@ var app = (function () {
 			self.addFeatures();
 		},
 		*/
-		loadWKTs: async function () {
+		loadWKTs: async function (readcb) {
 
 			var self = this;
 
@@ -396,7 +396,9 @@ var app = (function () {
 			var wktdefault = tofocus;
 			wktdefault.focus();
 
-			var wkt = await self.clipboardWKT();
+			var wkt = "";
+			if (readcb)
+				wkt = await self.clipboardWKT();
 
 			var checksum = wkt !== "" ? await generateChecksum(wkt) : "";
 
@@ -554,7 +556,7 @@ var app = (function () {
 
 			createBaseContent();
 
-			self.loadWKTs();
+			self.loadWKTs(true);
 
 		}
 	};
