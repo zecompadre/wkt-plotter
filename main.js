@@ -401,7 +401,8 @@ var app = (function () {
 
 			LS_WKTs.save()
 
-			await centerMap();
+			if (current_wkts.length > 0)
+				await centerMap();
 
 			$(defaultele).hide();
 
