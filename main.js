@@ -30,6 +30,25 @@ var app = (function () {
 	var tofocus = document.querySelector("#wktdefault textarea");
 	var textarea = document.querySelector("#wktdefault textarea");
 
+	function centerMap() {
+		/*
+		derived_feature = features.getArray()[0];
+		extent = derived_feature.getGeometry().getExtent();
+		minx = derived_feature.getGeometry().getExtent()[0];
+		miny = derived_feature.getGeometry().getExtent()[1];
+		maxx = derived_feature.getGeometry().getExtent()[2];
+		maxy = derived_feature.getGeometry().getExtent()[3];
+		centerx = (minx + maxx) / 2;
+		centery = (miny + maxy) / 2;
+		map.setView(new ol.View({
+			center: [centerx, centery],
+			zoom: 8
+		}));
+		map.getView().fit(extent, map.getSize());
+*/
+		map.getView().fit(vector.getExtent(), map.getSize());
+	}
+
 	function hexToRgbA(hex) {
 		// Remove the "#" if present
 		hex = hex.replace(/^#/, '');
@@ -244,20 +263,6 @@ var app = (function () {
 
 			map.addLayer(vector);
 
-			derived_feature = features.getArray()[0];
-			extent = derived_feature.getGeometry().getExtent();
-			minx = derived_feature.getGeometry().getExtent()[0];
-			miny = derived_feature.getGeometry().getExtent()[1];
-			maxx = derived_feature.getGeometry().getExtent()[2];
-			maxy = derived_feature.getGeometry().getExtent()[3];
-			centerx = (minx + maxx) / 2;
-			centery = (miny + maxy) / 2;
-			map.setView(new ol.View({
-				center: [centerx, centery],
-				zoom: 8
-			}));
-			map.getView().fit(extent, map.getSize());
-
 		},
 		removeWKT: function () {
 
@@ -424,7 +429,7 @@ var app = (function () {
 
 			LS_WKTs.save()
 
-			map.getView().fit(vector.getExtent());
+			centerMap();
 
 			$(defaultele).hide();
 
