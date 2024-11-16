@@ -101,6 +101,7 @@ var app = (function () {
 		},
 		add: function (wkt) {
 			var checksum = generateChecksum(wkt);
+			var exists = false;
 			if (current_wkts.length > 0) {
 				current_wkts.forEach(item => {
 					if (checksum !== "" && item.id === checksum)
