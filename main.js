@@ -275,11 +275,10 @@ var app = (function () {
 
 			var self = this;
 
-			map.removeLayer(vector);
-			features.clear();
-
 			textarea = CurrentTextarea.get();
 			var id = textarea.parentElement.id;
+
+			console.log("removeWKT", id);
 
 			LS_WKTs.remove(id);
 
@@ -292,6 +291,9 @@ var app = (function () {
 
 			var eElement = document.getElementById("wktdefault");
 			eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
+
+			map.removeLayer(vector);
+			features.clear();
 
 			self.loadWKTs();
 
