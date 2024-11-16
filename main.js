@@ -273,6 +273,8 @@ var app = (function () {
 		},
 		removeWKT: function () {
 
+			var self = this;
+
 			map.removeLayer(vector);
 			features.clear();
 
