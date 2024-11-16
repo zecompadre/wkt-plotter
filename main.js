@@ -516,7 +516,8 @@ var app = (function () {
 				layers: [raster, vector],
 				target: 'map',
 				view: new ol.View({
-					center: [-8.1234, 39.6945],
+					//center: [39.6945, -8.1234],
+					center: [200832.30, 302913.71],
 					zoom: 8
 				})
 			});
