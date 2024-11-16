@@ -36,6 +36,7 @@ var app = (function () {
 		defaultele = document.querySelector("#wktdefault");
 		tofocus = document.querySelector("#wktdefault textarea");
 		textarea = document.querySelector("#wktdefault textarea");
+		$(tabs).tabs('destroy');
 	}
 
 	async function centerMap() {
@@ -448,7 +449,7 @@ var app = (function () {
 
 			$(defaultele).hide();
 
-			$(tabs).tabs('destroy').tabs();
+			$(tabs).tabs();
 
 		},
 		init: function () {
