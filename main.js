@@ -53,23 +53,30 @@ var app = (function () {
 		return checksum;
 	}
 
-	function getCurrentTextarea(id) {
-		id = id || tabs.querySelector(".ui-state-active a").href.split("#")[1];
-		var textarea = $("#" + id + " textarea").get(0);
-		return textarea;
-	}
-
-	function setCurrentTextarea(id) {
-		tabs.querySelectorAll("li a").forEach(function (item) {
-			if (item.href.split("#")[1] === id)
-				$(item).trigger("click");
-		});
-	}
+	var CurrentTextarea = {
+		get: function (id) {
+			id = id || tabs.querySelector(".ui-state-active a").href.split("#")[1];
+			var textarea = $("#" + id + " textarea").get(0);
+			return textarea;
+		},
+		set: function (id) {
+			tabs.querySelectorAll("li a").forEach(function (item) {
+				if (item.href.split("#")[1] === id)
+					$(item).trigger("click");
+			});
+		}
+	};
 
 	var LS_WKTs = {
 		load: function () {
 			var wkts = localStorage.getItem(lfkey) || "[]";
 			current_wkts = JSON.parse(wkts);
+		},
+		remove: function (id) {
+			current_wkts = current_wkts.filter(function (item) {
+				return item.id !== id;
+			});
+			this.save();
 		},
 		save: function () {
 			localStorage.setItem(lfkey, JSON.stringify(current_wkts));
@@ -79,12 +86,9 @@ var app = (function () {
 				if (item.id === id)
 					item.wkt = wkt;
 			});
-
 			this.save();
 		}
-
 	}
-
 
 	class EditorControl extends ol.control.Control {
 		/**
@@ -116,7 +120,7 @@ var app = (function () {
 				target: options.target,
 			});
 
-			buttonClear.addEventListener('click', app.clearMap.bind(this), false);
+			buttonClear.addEventListener('click', app.removeWKT.bind(this), false);
 			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
 			buttonPlot.addEventListener('click', app.plotWKT.bind(this), false);
 		}
@@ -268,32 +272,39 @@ var app = (function () {
 				zoom: 8
 			}));
 			map.getView().fit(extent, map.getSize());
-			//map.getView().fit(vector.getExtent());
-			//map.getView().fit(vector.getExtent(), map.getSize());
 
 		},
-		clearMap: function () {
+		removeWKT: function () {
 
-			textarea = getCurrentTextarea();
+			textarea = CurrentTextarea.get();
+			var id = textarea.parentElement.id;
 
-			map.removeLayer(vector);
-			features.clear();
-			new_feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-			new_feature.id = id;
-			features.push(new_feature);
-
-
-			map.removeLayer(vector);
-			features.clear();
-			vector = new ol.layer.Vector({
-				source: new ol.source.Vector({ features: features }),
-				style: styles(normalColor)
-			});
-			//this.selectGeom(current_shape);
-			map.addLayer(vector);
 			textarea.value = "";
+			textarea.select();
+			document.execCommand("copy");
 
-			this.restoreDefaultColors();
+			var parent = tabs;
+			while (cntnt.lastChild.id !== 'wktdefault') {
+				cntnt.removeChild(cntnt.lastChild);
+			}
+			var eElement = document.getElementById("wktdefault");
+			eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
+			/*
+						map.removeLayer(vector);
+						features.clear();
+						new_feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+						new_feature.id = id;
+						features.push(new_feature);
+			
+						map.removeLayer(vector);
+						features.clear();
+						vector = new ol.layer.Vector({
+							source: new ol.source.Vector({ features: features }),
+							style: styles(normalColor)
+						});
+						//this.selectGeom(current_shape);
+						map.addLayer(vector);
+			*/
 		},
 		loadWKTfromURIFragment: function (fragment) {
 			// remove first character from fragment as it contains '#'
@@ -304,7 +315,7 @@ var app = (function () {
 
 			//console.log(this);
 
-			textarea = getCurrentTextarea();
+			textarea = CurrentTextarea.get();
 
 			textarea.select();
 			document.execCommand("copy");
@@ -452,7 +463,7 @@ var app = (function () {
 
 						console.log("deselected", feature.getId(), feature);
 
-						textarea = getCurrentTextarea(feature.getId());
+						textarea = CurrentTextarea.get(feature.getId());
 
 						self.restoreDefaultColors();
 						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
@@ -467,7 +478,7 @@ var app = (function () {
 				if (evt.selected.length > 0) {
 					evt.selected.forEach(function (feature) {
 						console.log("selected", feature.getId(), feature);
-						setCurrentTextarea(feature.getId());
+						CurrentTextarea.set(feature.getId());
 					});
 				}
 			});
