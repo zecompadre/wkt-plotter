@@ -137,9 +137,14 @@ var app = (function () {
 			this.element.style.display = "";
 		}
 
-		getId() {
+		get() {
 			textarea = CurrentTextarea.get();
-			return textarea.parentElement.id;
+			return {
+				id: textarea.parentElement.id,
+				container: textarea.parentElement,
+				textarea: textarea,
+				tab: tabs.querySelector("li.ui-tabs-active")
+			};
 		}
 	}
 
@@ -256,12 +261,22 @@ var app = (function () {
 		},
 		removeWKT: function () {
 
-			var id = this.getId();
+			var selected = this.get();
 			console.log("removeWKT", this, id);
+
+			var count = LS_WKTs.get().length;
 
 			LS_WKTs.remove(id);
 
-			console.log("LS_WKTs", LS_WKTs.get());
+			console.log("LS_WKTs", count, LS_WKTs.get());
+
+			if (count === 1) {
+				selected.textarea.value = "";
+			}
+			else {
+				selected.tab.remove();
+				selected.container.remove();
+			}
 
 			/*
 						LS_WKTs.remove(id);
