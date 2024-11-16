@@ -32,13 +32,11 @@ var app = (function () {
 
 	async function centerMap() {
 
-		var allLayers = map.getLayers();
-		var length = allLayers.getLength();
 		var extent = ol.extent.createEmpty();
-		for (var i = 0; i < length; i++) {
-			var existingLayer = allLayers.item(i);
-			ol.extent.extend(extent, existingLayer.getSource().getExtent());
-		}
+		features.forEach(function (feature) {
+			ol.extent.extend(extent, feature.getGeometry().getExtent());
+		});
+
 		map.getView().fit(extent, map.getSize());
 
 		return;
