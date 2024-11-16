@@ -275,16 +275,19 @@ var app = (function () {
 				selected.container.remove();
 			}
 
-			map.getLayers().forEach(layer => {
-				if (layer.getId === selected.id) {
-					map.removeLayer(layer)
-				}
+			var updated = [];
+			features.forEach(function (feature) {
+				if (item.getId() !== selected.id)
+					updated.push(feature);
 			});
+			features = updated;
 
-			features = features.filter(function (item) {
-				return item.getId() !== selected.id;
+			map.removeLayer(vector);
+			vector = new ol.layer.Vector({
+				source: new ol.source.Vector({ features: features }),
+				style: styles(normalColor)
 			});
-
+			map.addLayer(vector);
 
 			/*
 						LS_WKTs.remove(id);
