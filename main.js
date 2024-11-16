@@ -276,6 +276,9 @@ var app = (function () {
 		},
 		removeWKT: function () {
 
+			map.removeLayer(vector);
+			features.clear();
+
 			textarea = CurrentTextarea.get();
 			var id = textarea.parentElement.id;
 
