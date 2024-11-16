@@ -283,9 +283,8 @@ var app = (function () {
 			textarea.select();
 			document.execCommand("copy");
 
-			var parent = tabs;
-			while (cntnt.lastChild.id !== 'wktdefault') {
-				cntnt.removeChild(cntnt.lastChild);
+			while (tabs.lastChild.id !== 'wktdefault') {
+				tabs.removeChild(tabs.lastChild);
 			}
 			var eElement = document.getElementById("wktdefault");
 			eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
@@ -305,11 +304,6 @@ var app = (function () {
 						//this.selectGeom(current_shape);
 						map.addLayer(vector);
 			*/
-		},
-		loadWKTfromURIFragment: function (fragment) {
-			// remove first character from fragment as it contains '#'
-			var wkt = window.location.hash.slice(1);
-			textarea.value = decodeURI(wkt);
 		},
 		copyWKT: async function () {
 
@@ -519,10 +513,6 @@ var app = (function () {
 					zoom: 4
 				})
 			});
-
-			if (window.location && window.location.hash) {
-				this.loadWKTfromURIFragment(window.location.hash);
-			}
 
 			self.loadWKTs();
 
