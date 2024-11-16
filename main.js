@@ -282,6 +282,12 @@ var app = (function () {
 
 			LS_WKTs.remove(selected.id);
 
+			createBaseContent();
+
+			this.loadWKTs();
+
+			return;
+
 			console.log("LS_WKTs", count, LS_WKTs.get());
 
 			if (count === 1) {
