@@ -450,6 +450,8 @@ var app = (function () {
 
 					evt.deselected.forEach(function (feature) {
 
+						console.log("deselected", feature.getId(), feature);
+
 						textarea = getCurrentTextarea();
 
 						self.restoreDefaultColors();
@@ -464,7 +466,7 @@ var app = (function () {
 
 				if (evt.selected.length > 0) {
 					evt.selected.forEach(function (feature) {
-						console.log("selected", feature);
+						console.log("selected", feature.getId(), feature);
 						setCurrentTextarea(feature.getId());
 					});
 				}
