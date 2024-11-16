@@ -80,6 +80,9 @@ var app = (function () {
 		save: function () {
 			localStorage.setItem(lfkey, JSON.stringify(current_wkts));
 		},
+		get: function () {
+			return current_wkts;
+		},
 		update: function (id, wkt) {
 			current_wkts.forEach(function (item) {
 				if (item.id === id)
@@ -134,11 +137,9 @@ var app = (function () {
 			this.element.style.display = "";
 		}
 
-		selected() {
-
-			console.log("select", select);
-
-			return select.getFeatures().getArray();
+		getId() {
+			textarea = CurrentTextarea.get();
+			return textarea.parentElement.id;
 		}
 	}
 
@@ -168,39 +169,6 @@ var app = (function () {
 
 
 	return {
-		translateBtns: function () {
-			var btncopy = document.getElementById("btn-copy");
-			var btnclear = document.getElementById("btn-clear");
-			var btnplot = document.getElementById("btn-plot");
-
-			switch (language) {
-				case "pt-PT":
-				case "pt":
-					btncopy.innerHTML = "Copiar";
-					btnclear.innerHTML = "Limpar";
-					btnplot.innerHTML = "Aplicar";
-					break;
-				case "fr-FR":
-				case "fr":
-					btncopy.innerHTML = "Copier";
-					btnclear.innerHTML = "Effacer";
-					btnplot.innerHTML = "Appliquer";
-					break;
-				case "es-ES":
-				case "es":
-					btncopy.innerHTML = "Copiar";
-					btnclear.innerHTML = "Limpiar";
-					btnplot.innerHTML = "Aplicar";
-					break;
-				default:
-					btncopy.innerHTML = "Copy";
-					btnclear.innerHTML = "Clear";
-					btnplot.innerHTML = "Apply";
-					break;
-			}
-			btnclear.style.display = "none";
-		},
-
 		addInteraction: function (shape) {
 			draw = new ol.interaction.Draw({
 				features: features,
@@ -288,12 +256,13 @@ var app = (function () {
 		},
 		removeWKT: function () {
 
-
-
-			textarea = CurrentTextarea.get();
-			var id = textarea.parentElement.id;
-
+			var id = this.getId();
 			console.log("removeWKT", this, id);
+
+			LS_WKTs.remove(id);
+
+			console.log("LS_WKTs", LS_WKTs.get());
+
 			/*
 						LS_WKTs.remove(id);
 			
