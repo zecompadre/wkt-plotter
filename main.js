@@ -155,8 +155,8 @@ var app = (function () {
 				target: options.target,
 			});
 
-			buttonClear.addEventListener('click', app.removeWKT(this), false);
-			buttonCopy.addEventListener('click', app.copyWKT(this), false);
+			buttonClear.addEventListener('click', function () { app.removeWKT(this); }, false);
+			buttonCopy.addEventListener('click', function () { app.copyWKT(this); }, false);
 			//buttonPlot.addEventListener('click', app.addWKT(this), false);
 
 			this.element.style.display = "none";
@@ -449,6 +449,8 @@ var app = (function () {
 		init: function () {
 			var self = this;
 
+			createBaseContent();
+
 			tabs = document.querySelector(".result-container");
 			defaultele = document.querySelector("#wktdefault");
 			tofocus = document.querySelector("#wktdefault textarea");
@@ -556,8 +558,6 @@ var app = (function () {
 			});
 
 			thisapp = self;
-
-			createBaseContent();
 
 			self.loadWKTs();
 
