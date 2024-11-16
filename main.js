@@ -53,11 +53,11 @@ var app = (function () {
 		return checksum;
 	}
 
-	function getCurrentTextarea() {
-		var id = tabs.querySelector(".ui-state-active a").href.split("#")[1];
+	function getCurrentTextarea(id) {
+		id = id || tabs.querySelector(".ui-state-active a").href.split("#")[1];
 
-		console.log("valina", document.querySelector("#" + id + " textarea"));
 		console.log("jquery", $("#" + id + " textarea"));
+		console.log("valina", document.querySelector("#" + id + " textarea"));
 
 		var textarea = document.querySelector("#" + id + " textarea");
 		return textarea;
@@ -456,9 +456,7 @@ var app = (function () {
 
 						console.log("deselected", feature.getId(), feature);
 
-						setCurrentTextarea(feature.getId());
-
-						textarea = getCurrentTextarea();
+						textarea = getCurrentTextarea(feature.getId());
 
 						self.restoreDefaultColors();
 						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
