@@ -289,40 +289,6 @@ var app = (function () {
 			});
 			map.addLayer(vector);
 
-			/*
-						LS_WKTs.remove(id);
-			
-						textarea.value = "";
-						textarea.select();
-						document.execCommand("copy");
-			
-						$('#wktdefault').siblings().remove();
-						$(tabs).prepend("<ul></ul>");
-			
-						var eElement = document.getElementById("wktdefault");
-						eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
-			
-						map.removeLayer(vector);
-						features.clear();
-			
-						thisapp.loadWKTs();
-			*/
-			/*
-						map.removeLayer(vector);
-						features.clear();
-						new_feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-						new_feature.id = id;
-						features.push(new_feature);
-			
-						map.removeLayer(vector);
-						features.clear();
-						vector = new ol.layer.Vector({
-							source: new ol.source.Vector({ features: features }),
-							style: styles(normalColor)
-						});
-						//this.selectGeom(current_shape);
-						map.addLayer(vector);
-			*/
 		},
 		copyWKT: async function () {
 
@@ -406,8 +372,6 @@ var app = (function () {
 
 			var wkt = await self.clipboardWKT();
 
-			console.log("clipboardWKT", wkt)
-
 			var checksum = wkt !== "" ? await generateChecksum(wkt) : "";
 
 			if (wkts == null || wkts == undefined)
@@ -416,15 +380,17 @@ var app = (function () {
 			var exists = false;
 			var idx = 0;
 
-			wkts.forEach(item => {
-				idx = idx + 1;
-				self.crateTabs(idx, item.id, item.wkt);
-				if (checksum !== "" && item.id === checksum)
-					exists = true;
-				self.plotWKT(item.id, item.wkt);
-			});
+			if (wkts.length > 0) {
+				wkts.forEach(item => {
+					idx = idx + 1;
+					self.crateTabs(idx, item.id, item.wkt);
+					if (checksum !== "" && item.id === checksum)
+						exists = true;
+					self.plotWKT(item.id, item.wkt);
+				});
+			}
 
-			if (checksum != "" && !exists) {
+			if (wkt != "" && !exists) {
 				idx = idx + 1;
 				self.crateTabs(idx, checksum, wkt);
 				self.plotWKT(checksum, wkt);
