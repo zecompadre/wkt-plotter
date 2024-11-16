@@ -147,7 +147,7 @@ var app = (function () {
 			element.className = 'ol-top-right ol-unselectable ol-control';
 			element.appendChild(buttonClear);
 			element.appendChild(buttonCopy);
-			element.appendChild(buttonPlot);
+			//element.appendChild(buttonPlot);
 
 			super({
 				element: element,
@@ -156,7 +156,7 @@ var app = (function () {
 
 			buttonClear.addEventListener('click', app.removeWKT.bind(this), false);
 			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
-			buttonPlot.addEventListener('click', app.plotWKT.bind(this), false);
+			//buttonPlot.addEventListener('click', app.addWKT.bind(this), false);
 
 			this.element.style.display = "none";
 		}
@@ -239,12 +239,17 @@ var app = (function () {
 			//textarea.style.borderColor = "";
 			//textarea.style.backgroundColor = "";
 		},
+		addFeatures: function () {
+			map.removeLayer(vector);
+			vector = new ol.layer.Vector({
+				source: new ol.source.Vector({ features: features }),
+				style: styles(normalColor)
+			});
+			map.addLayer(vector);
+		},
 		plotWKT: function (id, wkt) {
 
 			var new_feature;
-
-			//textarea = getCurrentTextarea();
-
 			wkt_string = wkt || textarea.value;
 			if (wkt_string == "") {
 				textarea.style.borderColor = "red";
@@ -262,19 +267,10 @@ var app = (function () {
 				textarea.style.backgroundColor = "#F7E8F3";
 				return;
 			} else {
-				map.removeLayer(vector);
 				new_feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
 				new_feature.setId(id);
 				features.push(new_feature);
 			}
-
-			vector = new ol.layer.Vector({
-				source: new ol.source.Vector({ features: features }),
-				style: styles(normalColor)
-			});
-
-			map.addLayer(vector);
-
 		},
 		removeWKT: function () {
 
@@ -347,10 +343,8 @@ var app = (function () {
 			return returnVal;
 		},
 		pasteWKT: async function (ele) {
-
-
-
 			console.log(this, ele);
+
 			LS_WKTs.add(ele.value);
 
 			createBaseContent();
@@ -378,6 +372,13 @@ var app = (function () {
 			ele.addEventListener("paste", this.pasteWKT(ele));
 
 		},
+		/*
+		addWKT: function(){
+			textarea = CurrentTextarea.get();
+			self.plotWKT(textarea.pa.id, item.wkt);
+			self.addFeatures();
+		},
+		*/
 		loadWKTs: async function () {
 
 			var self = this;
@@ -430,6 +431,8 @@ var app = (function () {
 			$(defaultele).hide();
 
 			$(tabs).tabs();
+
+			self.addFeatures();
 		},
 		init: function () {
 			var self = this;
