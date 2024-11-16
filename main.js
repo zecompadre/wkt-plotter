@@ -424,6 +424,8 @@ var app = (function () {
 
 			LS_WKTs.save()
 
+			map.getView().fit(vector.getExtent());
+
 			$(defaultele).hide();
 
 			$(tabs).tabs();
