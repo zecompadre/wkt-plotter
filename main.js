@@ -275,28 +275,30 @@ var app = (function () {
 		},
 		removeWKT: function () {
 
+
+
 			textarea = CurrentTextarea.get();
 			var id = textarea.parentElement.id;
 
 			console.log("removeWKT", this, id);
-
-			LS_WKTs.remove(id);
-
-			textarea.value = "";
-			textarea.select();
-			document.execCommand("copy");
-
-			$('#wktdefault').siblings().remove();
-			$(tabs).prepend("<ul></ul>");
-
-			var eElement = document.getElementById("wktdefault");
-			eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
-
-			map.removeLayer(vector);
-			features.clear();
-
-			thisapp.loadWKTs();
-
+			/*
+						LS_WKTs.remove(id);
+			
+						textarea.value = "";
+						textarea.select();
+						document.execCommand("copy");
+			
+						$('#wktdefault').siblings().remove();
+						$(tabs).prepend("<ul></ul>");
+			
+						var eElement = document.getElementById("wktdefault");
+						eElement.insertBefore(document.createElement("ul"), eElement.firstChild);
+			
+						map.removeLayer(vector);
+						features.clear();
+			
+						thisapp.loadWKTs();
+			*/
 			/*
 						map.removeLayer(vector);
 						features.clear();
@@ -480,6 +482,9 @@ var app = (function () {
 				}
 
 				if (evt.selected.length > 0) {
+
+					console.log("selected evt", evt);
+
 					evt.selected.forEach(function (feature) {
 						console.log("selected", feature.getId(), feature);
 						CurrentTextarea.set(feature.getId());
