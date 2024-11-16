@@ -402,7 +402,7 @@ var app = (function () {
 
 			var checksum = wkt !== "" ? await generateChecksum(wkt) : "";
 
-			if (wkt === "" || wkts == null || wkts == undefined)
+			if (wkts == null || wkts == undefined)
 				wkts = [];
 
 			var exists = false;
@@ -485,7 +485,7 @@ var app = (function () {
 
 					console.log("selected evt", evt);
 
-					map.getInteractions().forEach(function (interaction) {
+					map.getControls().forEach(function (interaction) {
 
 						console.log("interaction", interaction);
 
