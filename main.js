@@ -381,13 +381,7 @@ var app = (function () {
 			//ele.addEventListener("paste", this.pasteWKT(ele));
 
 		},
-		/*
-		addWKT: function(){
-			textarea = CurrentTextarea.get();
-			self.plotWKT(textarea.pa.id, item.wkt);
-			self.addFeatures();
-		},
-		*/
+
 		loadWKTs: async function (readcb) {
 
 			var self = this;
@@ -463,13 +457,6 @@ var app = (function () {
 			raster = new ol.layer.Tile({
 				source: new ol.source.OSM()
 			});
-
-			/*		
-								features.on("add", async function (evt) {
-									features.forEach(self.toEPSG4326);
-									features.forEach(self.toEPSG3857);
-								});
-		*/
 
 			select = new ol.interaction.Select({
 				style: styles(editColor),
@@ -549,13 +536,8 @@ var app = (function () {
 				features: features,
 				type: /** @type {ol.geom.GeometryType} */ shape
 			});
-			/*
-						draw.on('drawstart', function (evt) {
-							console.log("drawstart");
-						});
-			*/
+
 			draw.on('drawend', async function (evt) {
-				console.log("drawend", evt);
 
 				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 				var wkt = format.writeGeometry(geo);
