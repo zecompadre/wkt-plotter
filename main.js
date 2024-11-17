@@ -509,14 +509,7 @@ var app = (function () {
 				features: select.getFeatures(),
 				style: styles(snapColor),
 				insertVertexCondition: function () {
-					// prevent new vertices to be added to the polygons
 					return true;
-					return !select
-						.getFeatures()
-						.getArray()
-						.every(function (feature) {
-							return /Polygon/.test(feature.getGeometry().getType());
-						});
 				},
 			});
 
@@ -544,7 +537,7 @@ var app = (function () {
 
 				console.log("drawend", wkt);
 
-				LS_WKTs.add(wkt);
+				await LS_WKTs.add(wkt);
 
 				createBaseContent();
 
