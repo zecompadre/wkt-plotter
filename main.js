@@ -6,6 +6,7 @@ var app = (function () {
 	var vector;
 	var map;
 	var draw;
+	var snap;
 	var drag;
 	var select;
 	var modify;
@@ -316,8 +317,10 @@ var app = (function () {
 				type: /** @type {ol.geom.GeometryType} */ shape
 			});
 			map.addInteraction(draw);
+			/*
 			snap = new Snap({ sfeatures: features });
 			map.addInteraction(snap);
+			*/
 		},
 		copyWKT: async function () {
 
