@@ -34,9 +34,9 @@ var app = (function () {
 		var id = event.currentTarget.hash.replace("#", "");
 		features.forEach(function (feature) {
 			if (feature.getId() === id) {
-				feature.dispatchEvent({
-					type: 'select'
-				});
+				var aa = feature.getGeometry().getExtent();
+				var oo = ol.extent.getCenter(aa);
+				console.log("The center is :  " + oo); // voila!!!!
 			}
 		});
 		return;
