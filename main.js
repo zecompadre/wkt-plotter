@@ -424,7 +424,7 @@ var app = (function () {
 				await centerMap();
 			}
 			else {
-				self.crateTabs(idx, "empty", wkt);
+				self.crateTabs(1, "empty", wkt);
 			}
 
 			$(defaultele).hide();
