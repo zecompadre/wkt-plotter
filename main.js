@@ -80,6 +80,9 @@ var app = (function () {
 	}
 
 	async function generateChecksum(inputString) {
+		if (wkt === "")
+			return inputString;
+
 		const encoder = new TextEncoder();
 		const data = encoder.encode(inputString);
 		const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -345,6 +348,8 @@ var app = (function () {
 			document.execCommand("copy");
 			textarea.blur();
 
+			select.getFeatures().clear();
+
 			this.restoreDefaultColors();
 		},
 		clipboardWKT: async function () {
@@ -414,48 +419,48 @@ var app = (function () {
 				if (readcb)
 					wkt = await self.clipboardWKT();
 
-				var checksum = wkt !== "" ? await generateChecksum(wkt) : "";
+				await generateChecksum(wkt).then(async function (checksum) {
+					if (wkts == null || wkts == undefined)
+						wkts = [];
 
-				if (wkts == null || wkts == undefined)
-					wkts = [];
+					var exists = false;
+					var idx = 0;
 
-				var exists = false;
-				var idx = 0;
+					if (wkts.length > 0) {
+						wkts.forEach(item => {
+							idx = idx + 1;
+							self.crateTabs(idx, item.id, item.wkt);
+							if (checksum !== "" && item.id === checksum)
+								exists = true;
+							self.plotWKT(item.id, item.wkt);
+						});
+					}
 
-				if (wkts.length > 0) {
-					wkts.forEach(item => {
+					if (wkt != "" && !exists) {
 						idx = idx + 1;
-						self.crateTabs(idx, item.id, item.wkt);
-						if (checksum !== "" && item.id === checksum)
-							exists = true;
-						self.plotWKT(item.id, item.wkt);
+						self.crateTabs(idx, checksum, wkt);
+						self.plotWKT(checksum, wkt);
+						wkts.push({ id: checksum, wkt: wkt });
+					}
+
+					current_wkts = wkts;
+
+					LS_WKTs.save()
+
+					await self.addFeatures().then(async function () {
+						if (current_wkts.length > 0) {
+							main.classList.remove("nowkt");
+						}
+						else {
+							main.classList.add("nowkt");
+						}
+
+						await centerMap().then(function () { map.updateSize(); });
+
+						$(defaultele).hide();
+
+						$(tabs).tabs();
 					});
-				}
-
-				if (wkt != "" && !exists) {
-					idx = idx + 1;
-					self.crateTabs(idx, checksum, wkt);
-					self.plotWKT(checksum, wkt);
-					wkts.push({ id: checksum, wkt: wkt });
-				}
-
-				current_wkts = wkts;
-
-				LS_WKTs.save()
-
-				await self.addFeatures().then(async function () {
-					if (current_wkts.length > 0) {
-						main.classList.remove("nowkt");
-					}
-					else {
-						main.classList.add("nowkt");
-					}
-
-					await centerMap().then(function () { map.updateSize(); });
-
-					$(defaultele).hide();
-
-					$(tabs).tabs();
 				});
 			});
 		},
@@ -552,8 +557,6 @@ var app = (function () {
 
 				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 				var wkt = format.writeGeometry(geo);
-
-				console.log("drawend", wkt);
 
 				await LS_WKTs.add(wkt).then(async function (result) {
 					createBaseContent();
