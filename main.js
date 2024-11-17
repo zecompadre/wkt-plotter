@@ -314,8 +314,6 @@ var app = (function () {
 		addWKT: async function () {
 			map.removeInteraction(select);
 			map.addInteraction(draw);
-			//snap = new ol.interaction.Snap({ features: features });
-			//map.addInteraction(snap);
 		},
 		copyWKT: async function () {
 
@@ -556,11 +554,15 @@ var app = (function () {
 						draw.on('drawstart', function (evt) {
 							console.log("drawstart");
 						});
-			
-						draw.on('drawend', function (evt) {
-							console.log("drawend");
-						});
-			
+			*/
+			draw.on('drawend', function (evt) {
+				console.log("drawend", evt);
+
+				features.push(evt.feature);
+
+
+			});
+			/*
 						draw.on('drawabort', function (evt) {
 							console.log("drawabort");
 						});
