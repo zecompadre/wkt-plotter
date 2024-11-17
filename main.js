@@ -541,7 +541,7 @@ var app = (function () {
 
 				console.log("drawend", wkt);
 
-				await LS_WKTs.add(wkt);
+				LS_WKTs.add(wkt);
 
 				createBaseContent();
 
