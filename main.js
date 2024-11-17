@@ -40,7 +40,7 @@ var app = (function () {
 					deselected: []
 				});
 				select.getFeatures();
-				feature.setStyle(styles(editColor));
+				//feature.setStyle(styles(editColor));
 			}
 		});
 		return;
