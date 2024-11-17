@@ -34,11 +34,13 @@ var app = (function () {
 		var id = event.currentTarget.hash.replace("#", "");
 		features.forEach(function (feature) {
 			if (feature.getId() === id) {
-				select.getFeatures().dispatchEvent({
+				select.dispatchEvent({
 					type: 'select',
 					selected: [feature],
 					deselected: []
 				});
+				select.getFeatures();
+				feature.setStyle(styles(editColor));
 			}
 		});
 		return;
