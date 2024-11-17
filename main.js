@@ -308,6 +308,9 @@ var app = (function () {
 			return;
 
 		},
+		addWKT: async function () {
+
+		},
 		copyWKT: async function () {
 
 			//console.log(this);
