@@ -432,6 +432,7 @@ var app = (function () {
 
 				await self.addFeatures().then(async function () {
 					if (current_wkts.length > 0) {
+						main.classList.remove("nowkt");
 						await centerMap();
 					}
 					else {
@@ -571,7 +572,7 @@ var app = (function () {
 
 			createBaseContent();
 
-			self.loadWKTs(true);
+			self.loadWKTs(true).then(function () { map.render(); });
 
 		}
 	};
