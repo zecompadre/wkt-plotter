@@ -80,7 +80,7 @@ var app = (function () {
 	}
 
 	async function generateChecksum(inputString) {
-		if (wkt === "")
+		if (inputString === "")
 			return inputString;
 
 		const encoder = new TextEncoder();
@@ -330,8 +330,6 @@ var app = (function () {
 			}
 
 			await app.loadWKTs(false);
-
-			return;
 
 		},
 		addWKT: function () {
