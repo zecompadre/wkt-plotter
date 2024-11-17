@@ -278,6 +278,12 @@ textarea {
 	height: var(--maph);
 }
 
+.maincontainer.nowkt .map-container {
+	flex: 0 0 100%;
+	position: relative;
+	height: 100%;
+}
+
 .maincontainer .map-container #map {
 	width: 100%;
 	height: 100%;
@@ -307,6 +313,11 @@ textarea {
 	position: relative;
 	height: var(--resulth);
 }
+
+.maincontainer.nowkt .result-container {
+	display: none;
+}
+
 
 .maincontainer .result-container .wkt-container {
 	width: 100%;
