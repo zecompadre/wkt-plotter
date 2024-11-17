@@ -103,22 +103,23 @@ var app = (function () {
 			localStorage.setItem(lfkey, JSON.stringify(current_wkts));
 		},
 		add: function (wkt) {
-			var checksum = generateChecksum(wkt);
+			generateChecksum(wkt).then(function (checksum) {
 
-			console.log("add", checksum, wkt);
+				console.log("add", checksum, wkt);
 
+				var exists = false;
+				if (current_wkts.length > 0) {
+					current_wkts.forEach(item => {
+						if (checksum !== "" && item.id === checksum)
+							exists = true;
+					});
+				}
+				if (wkt != "" && !exists) {
+					current_wkts.push({ id: checksum, wkt: wkt });
+				}
+				this.save();
+			});
 
-			var exists = false;
-			if (current_wkts.length > 0) {
-				current_wkts.forEach(item => {
-					if (checksum !== "" && item.id === checksum)
-						exists = true;
-				});
-			}
-			if (wkt != "" && !exists) {
-				current_wkts.push({ id: checksum, wkt: wkt });
-			}
-			this.save();
 		},
 		get: function () {
 			return current_wkts;
@@ -541,18 +542,18 @@ var app = (function () {
 
 				console.log("drawend", wkt);
 
-				LS_WKTs.add(wkt);
+				LS_WKTs.add(wkt).then(function (result) {
+					createBaseContent();
 
-				createBaseContent();
+					if (tabs.classList.contains("ui-tabs")) {
+						$(tabs).tabs('destroy');
+					}
 
-				if (tabs.classList.contains("ui-tabs")) {
-					$(tabs).tabs('destroy');
-				}
+					app.loadWKTs(false);
 
-				app.loadWKTs(false);
-
-				map.removeInteraction(draw);
-				map.addInteraction(select);
+					map.removeInteraction(draw);
+					map.addInteraction(select);
+				});
 
 			});
 
