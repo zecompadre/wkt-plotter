@@ -534,7 +534,7 @@ var app = (function () {
 				type: /** @type {ol.geom.GeometryType} */ shape
 			});
 
-			draw.on('drawend', async function (evt) {
+			draw.on('drawend', function (evt) {
 
 				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 				var wkt = format.writeGeometry(geo);
@@ -549,7 +549,7 @@ var app = (function () {
 					$(tabs).tabs('destroy');
 				}
 
-				await app.loadWKTs(false);
+				app.loadWKTs(false);
 
 				map.removeInteraction(draw);
 				map.addInteraction(select);
