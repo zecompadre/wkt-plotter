@@ -552,19 +552,19 @@ var app = (function () {
 				features: features,
 				type: /** @type {ol.geom.GeometryType} */ shape
 			});
-
-			draw.on('drawstart', function (evt) {
-				console.log("drawstart");
-			});
-
-			draw.on('drawend', function (evt) {
-				console.log("drawend");
-			});
-
-			draw.on('drawabort', function (evt) {
-				console.log("drawabort");
-			});
-
+			/*
+						draw.on('drawstart', function (evt) {
+							console.log("drawstart");
+						});
+			
+						draw.on('drawend', function (evt) {
+							console.log("drawend");
+						});
+			
+						draw.on('drawabort', function (evt) {
+							console.log("drawabort");
+						});
+			*/
 
 
 			map = new ol.Map({
