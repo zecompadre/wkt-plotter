@@ -36,14 +36,12 @@ var app = (function () {
 			if (feature.getId() === id) {
 				var aa = feature.getGeometry().getExtent();
 				var oo = ol.extent.getCenter(aa);
-				console.log("The center is :  " + oo); // voila!!!!
+				console.log(oo); // voila!!!!
 
-				const event = {
+				map.dispatchEvent({
 					type: 'click',
 					coordinate: oo,
-				}
-
-				map.dispatchEvent(event)
+				});
 			}
 		});
 		return;
