@@ -102,8 +102,8 @@ var app = (function () {
 		save: function () {
 			localStorage.setItem(lfkey, JSON.stringify(current_wkts));
 		},
-		add: function (wkt) {
-			generateChecksum(wkt).then(function (checksum) {
+		add: async function (wkt) {
+			await generateChecksum(wkt).then(function (checksum) {
 
 				console.log("add", checksum, wkt);
 
@@ -535,14 +535,14 @@ var app = (function () {
 				type: /** @type {ol.geom.GeometryType} */ shape
 			});
 
-			draw.on('drawend', function (evt) {
+			draw.on('drawend', async function (evt) {
 
 				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 				var wkt = format.writeGeometry(geo);
 
 				console.log("drawend", wkt);
 
-				LS_WKTs.add(wkt).then(function (result) {
+				await LS_WKTs.add(wkt).then(function (result) {
 					createBaseContent();
 
 					if (tabs.classList.contains("ui-tabs")) {
