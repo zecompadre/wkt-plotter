@@ -286,7 +286,7 @@ var app = (function () {
 
 			map.dispatchEvent({    //        
 				type: 'click',
-				pixel: [100, 100],
+				coordinate: ol.proj.transform([-8.1234, 39.6945], 'EPSG:4326', 'EPSG:3857')
 			});
 
 			createBaseContent();
