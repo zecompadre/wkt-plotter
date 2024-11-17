@@ -104,6 +104,10 @@ var app = (function () {
 		},
 		add: function (wkt) {
 			var checksum = generateChecksum(wkt);
+
+			console.log("add", checksum, wkt);
+
+
 			var exists = false;
 			if (current_wkts.length > 0) {
 				current_wkts.forEach(item => {
