@@ -148,7 +148,7 @@ var app = (function () {
 			element.className = 'ol-top-right ol-unselectable ol-control';
 			element.appendChild(buttonClear);
 			element.appendChild(buttonCopy);
-			//element.appendChild(buttonPlot);
+			element.appendChild(buttonPlot);
 
 			super({
 				element: element,
@@ -157,17 +157,26 @@ var app = (function () {
 
 			buttonClear.addEventListener('click', app.removeWKT.bind(this), false);
 			buttonCopy.addEventListener('click', app.copyWKT.bind(this), false);
-			//buttonPlot.addEventListener('click', app.addWKT.bind(this), false);
+			buttonPlot.addEventListener('click', app.addWKT.bind(this), false);
 
-			this.element.style.display = "none";
+			var buttons = this.element.querySelectorAll("button");
+			buttons[0].style.display = "none";
+			buttons[1].style.display = "none";
+			buttons[2].style.display = "";
 		}
 
 		hide() {
-			this.element.style.display = "none";
+			var buttons = this.element.querySelectorAll("button");
+			buttons[0].style.display = "none";
+			buttons[1].style.display = "none";
+			buttons[2].style.display = "";
 		}
 
 		show() {
-			this.element.style.display = "";
+			var buttons = this.element.querySelectorAll("button");
+			buttons[0].style.display = "";
+			buttons[1].style.display = "";
+			buttons[2].style.display = "none";
 		}
 
 		get() {
