@@ -572,6 +572,9 @@ var app = (function () {
 
 				await app.loadWKTs(false);
 
+				map.removeInteraction(draw);
+				map.addInteraction(select);
+
 			});
 
 
