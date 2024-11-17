@@ -34,14 +34,12 @@ var app = (function () {
 		var id = event.currentTarget.hash.replace("#", "");
 		features.forEach(function (feature) {
 			if (feature.getId() === id) {
-				var aa = feature.getGeometry().getExtent();
-				var oo = ol.extent.getCenter(aa);
-				console.log(oo); // voila!!!!
-
-				map.dispatchEvent({
-					type: 'click',
-					coordinate: oo,
+				select.dispatchEvent({
+					type: 'select',
+					selected: [feature],
+					deselected: []
 				});
+				select.getFeatures();
 			}
 		});
 		return;
