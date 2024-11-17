@@ -280,9 +280,7 @@ var app = (function () {
 
 			var selected = this.get();
 
-			await app.resetFeatures();
-
-			return;
+			select.getFeatures().clear();
 
 			LS_WKTs.remove(selected.id);
 
