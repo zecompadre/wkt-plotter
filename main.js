@@ -467,7 +467,7 @@ var app = (function () {
 
 						$(defaultele).hide();
 
-						$(tabs).tabs({ select: tabSelected });
+						$(tabs).tabs({ activate: tabSelected });
 					});
 				});
 			});
