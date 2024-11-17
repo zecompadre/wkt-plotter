@@ -103,6 +103,7 @@ var app = (function () {
 			localStorage.setItem(lfkey, JSON.stringify(current_wkts));
 		},
 		add: async function (wkt) {
+			var self = this;
 			await generateChecksum(wkt).then(function (checksum) {
 
 				console.log("add", checksum, wkt);
@@ -117,7 +118,7 @@ var app = (function () {
 				if (wkt != "" && !exists) {
 					current_wkts.push({ id: checksum, wkt: wkt });
 				}
-				this.save();
+				self.save();
 			});
 
 		},
