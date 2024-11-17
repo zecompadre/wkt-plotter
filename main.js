@@ -464,18 +464,12 @@ var app = (function () {
 				source: new ol.source.OSM()
 			});
 
-			/*
-						features.on("add", async function (evt) {
-			
-			
-			
-			
-			
-							features.forEach(self.toEPSG4326);
-							textarea.value = format.writeFeatures(features.getArray(), { rightHanded: true });
-							features.forEach(self.toEPSG3857);
-						});
-			*/
+			/*		
+								features.on("add", async function (evt) {
+									features.forEach(self.toEPSG4326);
+									features.forEach(self.toEPSG3857);
+								});
+		*/
 
 			select = new ol.interaction.Select({
 				style: styles(editColor),
@@ -566,6 +560,8 @@ var app = (function () {
 				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 				var wkt = format.writeGeometry(geo);
 
+				console.log("drawend", wkt);
+
 				LS_WKTs.add(wkt);
 
 				createBaseContent();
@@ -577,11 +573,6 @@ var app = (function () {
 				await app.loadWKTs(false);
 
 			});
-			/*
-						draw.on('drawabort', function (evt) {
-							console.log("drawabort");
-						});
-			*/
 
 
 			map = new ol.Map({
