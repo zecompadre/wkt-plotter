@@ -335,7 +335,6 @@ var app = (function () {
 		},
 		clipboardWKT: async function () {
 
-			var self = this;
 			var returnVal = "";
 
 			try {
@@ -360,7 +359,6 @@ var app = (function () {
 		pasteWKT: async function (ele) {
 
 			await LS_WKTs.add(ele.value).then(async function (result) {
-				;
 				await createBaseContent().then(await this.loadWKTs());
 			});
 		},
@@ -434,9 +432,6 @@ var app = (function () {
 				await self.addFeatures().then(async function () {
 					if (current_wkts.length > 0) {
 						await centerMap();
-					}
-					else {
-						self.crateTabs(1, "empty", wkt);
 					}
 
 					$(defaultele).hide();
