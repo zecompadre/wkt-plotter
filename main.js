@@ -312,10 +312,10 @@ var app = (function () {
 
 		},
 		addWKT: async function () {
-			map.removeInteraction(select);
+			//map.removeInteraction(select);
 			map.addInteraction(draw);
-			snap = new ol.interaction.Snap({ features: features });
-			map.addInteraction(snap);
+			//snap = new ol.interaction.Snap({ features: features });
+			//map.addInteraction(snap);
 		},
 		copyWKT: async function () {
 
