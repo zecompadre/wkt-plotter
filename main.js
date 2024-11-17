@@ -47,6 +47,9 @@ var app = (function () {
 	async function centerMap() {
 
 		if (features.length > 0) {
+
+			console.log("centerMap - features");
+
 			var extent = ol.extent.createEmpty();
 			features.forEach(function (feature) {
 				ol.extent.extend(extent, feature.getGeometry().getExtent());
@@ -55,8 +58,11 @@ var app = (function () {
 			map.getView().fit(extent, map.getSize());
 		}
 		else {
+
+			console.log("centerMap - no features");
+
 			map.getView().setCenter(center);
-			map.getView().setZoom(5);
+			map.getView().setZoom(6);
 		}
 	}
 
