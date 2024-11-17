@@ -350,7 +350,7 @@ var app = (function () {
 
 			select.getFeatures().clear();
 
-			this.restoreDefaultColors();
+			app.restoreDefaultColors();
 		},
 		clipboardWKT: async function () {
 
