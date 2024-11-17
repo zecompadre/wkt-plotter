@@ -15,6 +15,8 @@ var app = (function () {
 
 	var current_wkts = [];
 
+	var shape = "Polygon";
+
 	var lfkey = "zecompadre-wkt";
 
 	var normalColor = '#141414'; //'#005baa';
