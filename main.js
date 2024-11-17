@@ -433,10 +433,11 @@ var app = (function () {
 				await self.addFeatures().then(async function () {
 					if (current_wkts.length > 0) {
 						main.classList.remove("nowkt");
-						await centerMap();
+						await centerMap().then(function () { map.updateSize(); });
 					}
 					else {
 						main.classList.add("nowkt");
+						map.updateSize();
 					}
 
 					$(defaultele).hide();
@@ -572,7 +573,7 @@ var app = (function () {
 
 			createBaseContent();
 
-			self.loadWKTs(true).then(function () { map.updateSize(); });
+			self.loadWKTs(true);
 
 		}
 	};
