@@ -358,13 +358,11 @@ var app = (function () {
 			return returnVal;
 		},
 		pasteWKT: async function (ele) {
-			console.log(this, ele);
 
-			LS_WKTs.add(ele.value);
-
-			await createBaseContent();
-
-			await this.loadWKTs();
+			await LS_WKTs.add(ele.value).then(async function (result) {
+				;
+				await createBaseContent().then(await this.loadWKTs());
+			});
 		},
 		crateTabs: function (idx, id, wkt) {
 
@@ -392,61 +390,60 @@ var app = (function () {
 
 			var self = this;
 
-			await self.resetFeatures();
+			await self.resetFeatures().then(async function () {
+				LS_WKTs.load();
 
-			LS_WKTs.load();
+				var wkts = current_wkts;
 
-			var wkts = current_wkts;
+				var wktdefault = tofocus;
+				wktdefault.focus();
 
-			var wktdefault = tofocus;
-			wktdefault.focus();
+				var wkt = "";
+				if (readcb)
+					wkt = await self.clipboardWKT();
 
-			var wkt = "";
-			if (readcb)
-				wkt = await self.clipboardWKT();
+				var checksum = wkt !== "" ? await generateChecksum(wkt) : "";
 
-			var checksum = wkt !== "" ? await generateChecksum(wkt) : "";
+				if (wkts == null || wkts == undefined)
+					wkts = [];
 
-			if (wkts == null || wkts == undefined)
-				wkts = [];
+				var exists = false;
+				var idx = 0;
 
-			var exists = false;
-			var idx = 0;
+				if (wkts.length > 0) {
+					wkts.forEach(item => {
+						idx = idx + 1;
+						self.crateTabs(idx, item.id, item.wkt);
+						if (checksum !== "" && item.id === checksum)
+							exists = true;
+						self.plotWKT(item.id, item.wkt);
+					});
+				}
 
-			if (wkts.length > 0) {
-				wkts.forEach(item => {
+				if (wkt != "" && !exists) {
 					idx = idx + 1;
-					self.crateTabs(idx, item.id, item.wkt);
-					if (checksum !== "" && item.id === checksum)
-						exists = true;
-					self.plotWKT(item.id, item.wkt);
+					self.crateTabs(idx, checksum, wkt);
+					self.plotWKT(checksum, wkt);
+					wkts.push({ id: checksum, wkt: wkt });
+				}
+
+				current_wkts = wkts;
+
+				LS_WKTs.save()
+
+				await self.addFeatures().then(async function () {
+					if (current_wkts.length > 0) {
+						await centerMap();
+					}
+					else {
+						self.crateTabs(1, "empty", wkt);
+					}
+
+					$(defaultele).hide();
+
+					$(tabs).tabs();
 				});
-			}
-
-			if (wkt != "" && !exists) {
-				idx = idx + 1;
-				self.crateTabs(idx, checksum, wkt);
-				self.plotWKT(checksum, wkt);
-				wkts.push({ id: checksum, wkt: wkt });
-			}
-
-			current_wkts = wkts;
-
-			LS_WKTs.save()
-
-			await self.addFeatures();
-
-			if (current_wkts.length > 0) {
-				await centerMap();
-			}
-			else {
-				self.crateTabs(1, "empty", wkt);
-			}
-
-			$(defaultele).hide();
-
-			$(tabs).tabs();
-
+			});
 		},
 		init: function () {
 			var self = this;
