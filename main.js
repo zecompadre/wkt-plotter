@@ -312,6 +312,7 @@ var app = (function () {
 
 		},
 		addWKT: async function () {
+			map.removeInteraction(select);
 			draw = new ol.interaction.Draw({
 				features: features,
 				type: /** @type {ol.geom.GeometryType} */ shape
