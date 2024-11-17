@@ -572,7 +572,7 @@ var app = (function () {
 
 			createBaseContent();
 
-			self.loadWKTs(true).then(function () { map.render(); });
+			self.loadWKTs(true).then(function () { map.updateSize(); });
 
 		}
 	};
