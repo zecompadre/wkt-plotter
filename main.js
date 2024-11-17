@@ -31,14 +31,18 @@ var app = (function () {
 	var textarea = document.querySelector("#wktdefault textarea");
 
 	function tabSelected(event, ui) {
-		console.log(event, ui);
-
-		return;
-		select.dispatchEvent({
-			type: 'select',
-			selected: [featurePoly],
-			deselected: []
+		var id = event.currentTarget.hash.replace("#", "");
+		features.forEach(function (feature) {
+			if (feature.getId() === id) {
+				select.dispatchEvent({
+					type: 'select',
+					selected: [feature],
+					deselected: []
+				});
+			}
 		});
+		return;
+
 	}
 
 	function createBaseContent() {
