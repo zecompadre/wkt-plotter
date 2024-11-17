@@ -313,10 +313,7 @@ var app = (function () {
 		},
 		addWKT: async function () {
 			map.removeInteraction(select);
-			draw = new ol.interaction.Draw({
-				features: features,
-				type: /** @type {ol.geom.GeometryType} */ shape
-			});
+
 			map.addInteraction(draw);
 			/*
 			snap = new Snap({ sfeatures: features });
@@ -553,6 +550,18 @@ var app = (function () {
 					return true;
 				}
 			});
+
+			draw = new ol.interaction.Draw({
+				type: /** @type {ol.geom.GeometryType} */ shape
+			}).on('drawstart', function (evt) {
+				console.log("drawstart");
+			}).on('drawend', function (evt) {
+				console.log("drawend");
+			}).on('drawabort', function (evt) {
+				console.log("drawabort");
+			});
+
+
 
 			map = new ol.Map({
 				controls: ol.control.defaults().extend([new EditorControl()]),
