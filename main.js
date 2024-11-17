@@ -31,6 +31,9 @@ var app = (function () {
 	var textarea = document.querySelector("#wktdefault textarea");
 
 	function tabSelected(event, ui) {
+
+		return;
+
 		var id = event.currentTarget.hash.replace("#", "");
 		features.forEach(function (feature) {
 			if (feature.getId() === id) {
