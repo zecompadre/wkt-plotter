@@ -251,6 +251,12 @@ var app = (function () {
 		resetFeatures: async function () {
 			features = new ol.Collection();
 			map.removeLayer(vector);
+			select.getFeatures().clear();
+			map.getControls().forEach(function (control) {
+				if (control instanceof EditorControl) {
+					control.hide();
+				}
+			});
 		},
 		plotWKT: function (id, wkt) {
 
@@ -279,8 +285,6 @@ var app = (function () {
 		removeWKT: async function () {
 
 			var selected = this.get();
-
-			select.getFeatures().clear();
 
 			LS_WKTs.remove(selected.id);
 
