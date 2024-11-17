@@ -447,6 +447,7 @@ var app = (function () {
 		init: function () {
 			var self = this;
 
+			main = document.querySelector(".maincontainer");
 			tabs = document.querySelector(".result-container");
 			defaultele = document.querySelector("#wktdefault");
 			tofocus = document.querySelector("#wktdefault textarea");
