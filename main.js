@@ -552,6 +552,7 @@ var app = (function () {
 			});
 
 			draw = new ol.interaction.Draw({
+				features: features,
 				type: /** @type {ol.geom.GeometryType} */ shape
 			});
 
