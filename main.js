@@ -464,13 +464,18 @@ var app = (function () {
 				source: new ol.source.OSM()
 			});
 
-			features.on("add", function (e) {
-				self.restoreDefaultColors();
-				features.forEach(self.toEPSG4326);
-				textarea.value = format.writeFeatures(features.getArray(), { rightHanded: true });
-				features.forEach(self.toEPSG3857);
-			});
-
+			/*
+						features.on("add", async function (evt) {
+			
+			
+			
+			
+			
+							features.forEach(self.toEPSG4326);
+							textarea.value = format.writeFeatures(features.getArray(), { rightHanded: true });
+							features.forEach(self.toEPSG3857);
+						});
+			*/
 
 			select = new ol.interaction.Select({
 				style: styles(editColor),
@@ -555,11 +560,21 @@ var app = (function () {
 							console.log("drawstart");
 						});
 			*/
-			draw.on('drawend', function (evt) {
+			draw.on('drawend', async function (evt) {
 				console.log("drawend", evt);
 
-				features.push(evt.feature);
+				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+				var wkt = format.writeGeometry(geo);
 
+				LS_WKTs.add(wkt);
+
+				createBaseContent();
+
+				if (tabs.classList.contains("ui-tabs")) {
+					$(tabs).tabs('destroy');
+				}
+
+				await app.loadWKTs(false);
 
 			});
 			/*
