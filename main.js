@@ -34,10 +34,8 @@ var app = (function () {
 		var id = event.currentTarget.hash.replace("#", "");
 		features.forEach(function (feature) {
 			if (feature.getId() === id) {
-				select.dispatchEvent({
-					type: 'select',
-					selected: [feature],
-					deselected: []
+				feature.dispatchEvent({
+					type: 'select'
 				});
 			}
 		});
@@ -503,8 +501,6 @@ var app = (function () {
 
 					evt.deselected.forEach(function (feature) {
 
-						console.log("deselected", feature.getId(), feature);
-
 						textarea = CurrentTextarea.get(feature.getId());
 
 						self.restoreDefaultColors();
@@ -524,9 +520,6 @@ var app = (function () {
 				}
 
 				if (evt.selected.length > 0) {
-
-					console.log("selected evt", evt);
-
 					map.getControls().forEach(function (control) {
 						if (control instanceof EditorControl) {
 							control.show();
@@ -534,7 +527,6 @@ var app = (function () {
 					});
 
 					evt.selected.forEach(function (feature) {
-						console.log("selected", feature.getId(), feature);
 						CurrentTextarea.set(feature.getId());
 					});
 				}
