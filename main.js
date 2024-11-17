@@ -549,17 +549,19 @@ var app = (function () {
 
 				console.log("drawend", wkt);
 
-				await LS_WKTs.add(wkt).then(function (result) {
+				await LS_WKTs.add(wkt).then(async function (result) {
 					createBaseContent();
 
 					if (tabs.classList.contains("ui-tabs")) {
 						$(tabs).tabs('destroy');
 					}
 
-					app.loadWKTs(false);
+					await app.loadWKTs(false).then(function () {
+						map.removeInteraction(draw);
+						map.addInteraction(select);
+					});
 
-					map.removeInteraction(draw);
-					map.addInteraction(select);
+
 				});
 
 			});
