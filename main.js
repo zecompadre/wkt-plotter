@@ -337,9 +337,9 @@ var app = (function () {
 		},
 		copyWKT: async function () {
 
-			//console.log(this);
+			var selected = this.get();
 
-			textarea = CurrentTextarea.get();
+			textarea = selected.textarea;
 
 			textarea.select();
 			document.execCommand("copy");
