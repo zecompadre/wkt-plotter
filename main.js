@@ -315,7 +315,7 @@ var app = (function () {
 			return;
 
 		},
-		addWKT: async function () {
+		addWKT: function () {
 			map.removeInteraction(select);
 			map.addInteraction(draw);
 		},
