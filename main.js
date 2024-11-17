@@ -553,11 +553,17 @@ var app = (function () {
 
 			draw = new ol.interaction.Draw({
 				type: /** @type {ol.geom.GeometryType} */ shape
-			}).on('drawstart', function (evt) {
+			});
+
+			draw.on('drawstart', function (evt) {
 				console.log("drawstart");
-			}).on('drawend', function (evt) {
+			});
+
+			draw.on('drawend', function (evt) {
 				console.log("drawend");
-			}).on('drawabort', function (evt) {
+			});
+
+			draw.on('drawabort', function (evt) {
 				console.log("drawabort");
 			});
 
