@@ -309,7 +309,13 @@ var app = (function () {
 
 		},
 		addWKT: async function () {
-
+			draw = new ol.interaction.Draw({
+				features: features,
+				type: /** @type {ol.geom.GeometryType} */ shape
+			});
+			map.addInteraction(draw);
+			snap = new Snap({ sfeatures: features });
+			map.addInteraction(snap);
 		},
 		copyWKT: async function () {
 
