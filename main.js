@@ -280,14 +280,11 @@ var app = (function () {
 
 			var selected = this.get();
 
-			console.log("removeWKT", this, selected, selected.id);
+			await app.resetFeatures();
+
+			return;
 
 			LS_WKTs.remove(selected.id);
-
-			map.dispatchEvent({    //        
-				type: 'click',
-				coordinate: ol.proj.transform([-8.1234, 39.6945], 'EPSG:4326', 'EPSG:3857')
-			});
 
 			createBaseContent();
 
@@ -295,35 +292,9 @@ var app = (function () {
 				$(tabs).tabs('destroy');
 			}
 
-			features = new ol.Collection();
-
 			await app.loadWKTs(false);
 
 			return;
-
-			console.log("LS_WKTs", count, LS_WKTs.get());
-
-			if (count === 1) {
-				selected.textarea.value = "";
-			}
-			else {
-				selected.tab.remove();
-				selected.container.remove();
-			}
-
-			var updated = new ol.Collection();
-			features.forEach(function (feature) {
-				if (feature.getId() !== selected.id)
-					updated.push(feature);
-			});
-			features = updated;
-
-			map.removeLayer(vector);
-			vector = new ol.layer.Vector({
-				source: new ol.source.Vector({ features: features }),
-				style: styles(normalColor)
-			});
-			map.addLayer(vector);
 
 		},
 		copyWKT: async function () {
