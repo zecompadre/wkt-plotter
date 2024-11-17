@@ -344,11 +344,11 @@ var app = (function () {
 				const text = await navigator.clipboard.readText();
 				if (text.indexOf('POLYGON') !== -1) {
 					returnVal = text;
+					navigator.clipboard.writeText("");
 				}
 			} catch (error) {
 				console.error('clipboardWKT:', error.message);
 			}
-
 			return returnVal;
 		},
 		pasteWKT: async function (ele) {
