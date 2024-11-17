@@ -30,6 +30,17 @@ var app = (function () {
 	var tofocus = document.querySelector("#wktdefault textarea");
 	var textarea = document.querySelector("#wktdefault textarea");
 
+	function tabSelected(event, ui) {
+		console.log(event, ui);
+
+		return;
+		select.dispatchEvent({
+			type: 'select',
+			selected: [featurePoly],
+			deselected: []
+		});
+	}
+
 	function createBaseContent() {
 		tabs = document.querySelector(".result-container");
 		tabs.innerHTML = "<ul></ul><div id='wktdefault' class='wkt-container'><textarea class='form-control' rows='5'></textarea></div>";
@@ -456,7 +467,7 @@ var app = (function () {
 
 						$(defaultele).hide();
 
-						$(tabs).tabs();
+						$(tabs).tabs({ select: tabSelected });
 					});
 				});
 			});
