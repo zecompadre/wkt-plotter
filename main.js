@@ -154,7 +154,7 @@ var app = (function () {
 			buttonCopy.classList.add('btn', 'btn-warning');
 
 			const buttonPlot = document.createElement('button');
-			buttonPlot.innerHTML = '<i class="fa-solid fa-check fa-sm"></i>';
+			buttonPlot.innerHTML = '<i class="fa-solid fa-square-plus fa-sm"></i>';
 			buttonPlot.classList.add('btn', 'btn-primary');
 
 			const element = document.createElement('div');
@@ -300,6 +300,7 @@ var app = (function () {
 		addWKT: function () {
 			map.removeInteraction(select);
 			map.addInteraction(draw);
+			textarea.value = "";
 		},
 		copyWKT: async function () {
 
