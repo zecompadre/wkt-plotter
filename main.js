@@ -328,11 +328,11 @@ var app = (function () {
 		},
 		removeWKT: async function () {
 
-			console.log(select);
+			console.log(select.getFeatures())
 
-			var selected = this.get();
+			var current = select.getFeatures()[0];
 
-			LS_WKTs.remove(selected.id);
+			LS_WKTs.remove(current.getId());
 
 			await app.loadWKTs(false);
 
@@ -344,9 +344,6 @@ var app = (function () {
 		},
 		copyWKT: async function () {
 
-			var selected = this.get();
-
-			textarea = selected.textarea;
 
 			textarea.select();
 			document.execCommand("copy");
@@ -489,6 +486,7 @@ var app = (function () {
 				}
 
 				if (evt.selected.length > 0) {
+
 					map.getControls().forEach(function (control) {
 						if (control instanceof EditorControl) {
 							control.show();
