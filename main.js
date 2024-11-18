@@ -96,6 +96,7 @@ var app = (function () {
 	};
 
 	function featuresToMultiPolygon() {
+		/*
 		const polygonCoordinates = features.getArray().map(feature => {
 			const geometry = feature.getGeometry();
 			if (geometry.getType() === 'Polygon') {
@@ -104,6 +105,22 @@ var app = (function () {
 				throw new Error('Feature is not a polygon');
 			}
 		});
+*/
+
+		const polygonCoordinates = features.getArray().map(feature => {
+			const geometry = feature.getGeometry();
+			const geometryType = geometry.getType();
+
+			switch (geometryType) {
+				case 'Polygon':
+					return [geometry.getCoordinates()]; // Wrap in an array to standardize structure
+				case 'MultiPolygon':
+					return geometry.getCoordinates(); // MultiPolygon already provides an array of polygons
+				default:
+					throw new Error('Feature is neither a Polygon nor a MultiPolygon');
+			}
+		});
+
 
 		// Create a MultiPolygon geometry
 		const multiPolygonGeometry = new ol.geom.MultiPolygon(polygonCoordinates);
