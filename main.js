@@ -25,39 +25,9 @@ var app = (function () {
 	var center = ol.proj.transform([-8.1234, 39.6945], 'EPSG:4326', 'EPSG:3857');
 
 	var main = document.querySelector(".maincontainer");
-	var tabs = document.querySelector(".result-container");
 	var defaultele = document.querySelector("#wktdefault");
 	var tofocus = document.querySelector("#wktdefault textarea");
 	var textarea = document.querySelector("#wktdefault textarea");
-
-	function tabSelected(event, ui) {
-
-		return;
-
-		var id = event.currentTarget.hash.replace("#", "");
-		features.forEach(function (feature) {
-			if (feature.getId() === id) {
-				select.dispatchEvent({
-					type: 'select',
-					selected: [feature],
-					deselected: []
-				});
-				select.getFeatures();
-				//feature.setStyle(styles(editColor));
-			}
-		});
-		return;
-
-	}
-
-	function createBaseContent() {
-		tabs = document.querySelector(".result-container");
-		tabs.innerHTML = "<ul></ul><div id='wktdefault' class='wkt-container'><textarea class='form-control' rows='5'></textarea></div>";
-		defaultele = document.querySelector("#wktdefault");
-		tofocus = document.querySelector("#wktdefault textarea");
-		textarea = document.querySelector("#wktdefault textarea");
-	}
-
 
 	function deselectFeature() {
 		select.getFeatures().clear();
@@ -330,12 +300,6 @@ var app = (function () {
 
 			LS_WKTs.remove(selected.id);
 
-			//createBaseContent();
-
-			if (tabs.classList.contains("ui-tabs")) {
-				$(tabs).tabs('destroy');
-			}
-
 			await app.loadWKTs(false);
 
 		},
@@ -386,28 +350,6 @@ var app = (function () {
 				await this.loadWKTs();
 			});
 		},
-		crateTabs: function (idx, id, wkt) {
-
-			var ul = tabs.querySelector("ul");
-
-			var tabLI = document.createElement("li");
-			var tabA = document.createElement("a");
-			tabA.href = "#" + id;
-			tabA.innerText = "WKT " + idx++;
-			tabLI.appendChild(tabA);
-			ul.appendChild(tabLI);
-
-			const clonedElement = defaultele.cloneNode(true);
-			defaultele.parentNode.insertBefore(clonedElement, defaultele.nextSibling);
-
-			clonedElement.id = id;
-			var ele = clonedElement.querySelector("textarea");
-			ele.value = wkt;
-			ele.addEventListener("click", this.restoreDefaultColors);
-			//ele.addEventListener("paste", this.pasteWKT(ele));
-
-		},
-
 		loadWKTs: async function (readcb) {
 
 			var self = this;
@@ -434,7 +376,6 @@ var app = (function () {
 					if (wkts.length > 0) {
 						wkts.forEach(item => {
 							idx = idx + 1;
-							//							self.crateTabs(idx, item.id, item.wkt);
 							if (checksum !== "" && item.id === checksum)
 								exists = true;
 							self.plotWKT(item.id, item.wkt);
@@ -443,7 +384,6 @@ var app = (function () {
 
 					if (wkt != "" && !exists) {
 						idx = idx + 1;
-						//self.crateTabs(idx, checksum, wkt);
 						self.plotWKT(checksum, wkt);
 						wkts.push({ id: checksum, wkt: wkt });
 					}
@@ -462,9 +402,6 @@ var app = (function () {
 
 						await centerMap().then(function () { map.updateSize(); });
 
-						$(defaultele).hide();
-
-						$(tabs).tabs({ activate: tabSelected });
 					});
 				});
 			});
@@ -473,7 +410,6 @@ var app = (function () {
 			var self = this;
 
 			main = document.querySelector(".maincontainer");
-			tabs = document.querySelector(".result-container");
 			defaultele = document.querySelector("#wktdefault");
 			tofocus = document.querySelector("#wktdefault textarea");
 			textarea = document.querySelector("#wktdefault textarea");
@@ -496,12 +432,10 @@ var app = (function () {
 
 					evt.deselected.forEach(function (feature) {
 
-						//textarea = CurrentTextarea.get(feature.getId());
-
-						//self.restoreDefaultColors();
-						//var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-						//textarea.value = format.writeGeometry(geo);
-						//var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+						self.restoreDefaultColors();
+						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+						textarea.value = format.writeGeometry(geo);
+						var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
 
 						LS_WKTs.update(feature.getId(), textarea.value);
 
@@ -558,12 +492,6 @@ var app = (function () {
 				var wkt = format.writeGeometry(geo);
 
 				await LS_WKTs.add(wkt).then(async function (result) {
-					//createBaseContent();
-
-					//if (tabs.classList.contains("ui-tabs")) {
-					//	$(tabs).tabs('destroy');
-					//}
-
 					await app.loadWKTs(false).then(function () {
 						map.removeInteraction(draw);
 						map.addInteraction(select);
