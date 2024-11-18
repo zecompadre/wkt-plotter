@@ -428,6 +428,10 @@ var app = (function () {
 						LS_WKTs.update(feature.getId(), textarea.value);
 
 						textarea.value = "";
+						var multi = new ol.geom.MultiPolygon();
+						features.forEach(function (feature) {
+							multi.appendPolygon(feature);
+						});
 
 					});
 
