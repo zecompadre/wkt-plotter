@@ -430,7 +430,7 @@ var app = (function () {
 						textarea.value = "";
 
 
-						const polygonCoordinates = features.map(feature => {
+						const polygonCoordinates = features.forEach(feature => {
 							const geometry = feature.getGeometry();
 							if (geometry.getType() === 'Polygon') {
 								return geometry.getCoordinates(); // Extract coordinates of the polygon
