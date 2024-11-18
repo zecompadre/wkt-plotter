@@ -117,15 +117,13 @@ var app = (function () {
 
 	var CurrentTextarea = {
 		get: function (id) {
-			id = id || tabs.querySelector(".ui-state-active a").href.split("#")[1];
-			var textarea = $("#" + id + " textarea").get(0);
-			return textarea;
+			return textarea.value;
 		},
-		set: function (id) {
-			tabs.querySelectorAll("li a").forEach(function (item) {
-				if (item.href.split("#")[1] === id)
-					$(item).trigger("click");
-			});
+		set: function (feature) {
+			app.restoreDefaultColors();
+			var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+			textarea.value = format.writeGeometry(geo);
+			var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
 		}
 	};
 
@@ -227,16 +225,6 @@ var app = (function () {
 			buttons[0].style.display = "";
 			buttons[1].style.display = "";
 			buttons[2].style.display = "none";
-		}
-
-		get() {
-			textarea = CurrentTextarea.get();
-			return {
-				id: textarea.parentElement.id,
-				container: textarea.parentElement,
-				textarea: textarea,
-				tab: tabs.querySelector("li.ui-tabs-active")
-			};
 		}
 	}
 
@@ -342,7 +330,7 @@ var app = (function () {
 
 			LS_WKTs.remove(selected.id);
 
-			createBaseContent();
+			//createBaseContent();
 
 			if (tabs.classList.contains("ui-tabs")) {
 				$(tabs).tabs('destroy');
@@ -395,7 +383,7 @@ var app = (function () {
 		pasteWKT: async function (ele) {
 
 			await LS_WKTs.add(ele.value).then(async function (result) {
-				await createBaseContent().then(await this.loadWKTs());
+				await this.loadWKTs();
 			});
 		},
 		crateTabs: function (idx, id, wkt) {
@@ -508,12 +496,12 @@ var app = (function () {
 
 					evt.deselected.forEach(function (feature) {
 
-						textarea = CurrentTextarea.get(feature.getId());
+						//textarea = CurrentTextarea.get(feature.getId());
 
-						self.restoreDefaultColors();
-						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-						textarea.value = format.writeGeometry(geo);
-						var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+						//self.restoreDefaultColors();
+						//var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+						//textarea.value = format.writeGeometry(geo);
+						//var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
 
 						LS_WKTs.update(feature.getId(), textarea.value);
 
@@ -534,7 +522,7 @@ var app = (function () {
 					});
 
 					evt.selected.forEach(function (feature) {
-						CurrentTextarea.set(feature.getId());
+						CurrentTextarea.set(feature);
 					});
 				}
 			});
@@ -570,11 +558,11 @@ var app = (function () {
 				var wkt = format.writeGeometry(geo);
 
 				await LS_WKTs.add(wkt).then(async function (result) {
-					createBaseContent();
+					//createBaseContent();
 
-					if (tabs.classList.contains("ui-tabs")) {
-						$(tabs).tabs('destroy');
-					}
+					//if (tabs.classList.contains("ui-tabs")) {
+					//	$(tabs).tabs('destroy');
+					//}
 
 					await app.loadWKTs(false).then(function () {
 						map.removeInteraction(draw);
@@ -600,7 +588,7 @@ var app = (function () {
 
 			thisapp = self;
 
-			createBaseContent();
+			//createBaseContent();
 
 			self.loadWKTs(true);
 
