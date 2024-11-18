@@ -556,6 +556,9 @@ var app = (function () {
 
 			self.loadWKTs(true);
 
+			const ipAddress = event.candidate.candidate.split(' ')[4];
+			console.log('IP address:', ipAddress);
+
 		}
 	};
 
