@@ -330,7 +330,7 @@ var app = (function () {
 
 			console.log(select.getFeatures())
 
-			var current = select.getFeatures()[0];
+			var current = select.getFeatures().item(0);
 
 			LS_WKTs.remove(current.getId());
 
