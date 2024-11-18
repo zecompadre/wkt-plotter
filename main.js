@@ -442,7 +442,7 @@ var app = (function () {
 						const multiPolygonGeometry = new ol.geom.MultiPolygon(polygonCoordinates);
 
 						// Optionally, create a new feature with the MultiPolygon geometry
-						const multiPolygonFeature = new Feature({
+						const multiPolygonFeature = new ol.Feature({
 							geometry: multiPolygonGeometry
 						});
 
