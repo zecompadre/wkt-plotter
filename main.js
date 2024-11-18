@@ -434,7 +434,7 @@ var app = (function () {
 					if (wkts.length > 0) {
 						wkts.forEach(item => {
 							idx = idx + 1;
-							self.crateTabs(idx, item.id, item.wkt);
+							//							self.crateTabs(idx, item.id, item.wkt);
 							if (checksum !== "" && item.id === checksum)
 								exists = true;
 							self.plotWKT(item.id, item.wkt);
@@ -443,7 +443,7 @@ var app = (function () {
 
 					if (wkt != "" && !exists) {
 						idx = idx + 1;
-						self.crateTabs(idx, checksum, wkt);
+						//self.crateTabs(idx, checksum, wkt);
 						self.plotWKT(checksum, wkt);
 						wkts.push({ id: checksum, wkt: wkt });
 					}
