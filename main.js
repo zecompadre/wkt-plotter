@@ -95,6 +95,27 @@ var app = (function () {
 		}
 	};
 
+	function featuresToMultiPolygon() {
+		const polygonCoordinates = features.getArray().map(feature => {
+			const geometry = feature.getGeometry();
+			if (geometry.getType() === 'Polygon') {
+				return geometry.getCoordinates(); // Extract coordinates of the polygon
+			} else {
+				throw new Error('Feature is not a polygon');
+			}
+		});
+
+		// Create a MultiPolygon geometry
+		const multiPolygonGeometry = new ol.geom.MultiPolygon(polygonCoordinates);
+
+		// Optionally, create a new feature with the MultiPolygon geometry
+		const multiPolygonFeature = new ol.Feature({
+			geometry: multiPolygonGeometry
+		});
+
+		return multiPolygonFeature;
+	}
+
 	var LS_WKTs = {
 		load: function () {
 			var wkts = localStorage.getItem(lfkey) || "[]";
@@ -394,7 +415,12 @@ var app = (function () {
 							main.classList.add("nowkt");
 						}
 
-						await centerMap().then(function () { map.updateSize(); });
+						await centerMap().then(function () {
+							map.updateSize();
+							var multi = featuresToMultiPolygon();
+							var geo = multi.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+							textarea.value = format.writeGeometry(geo);
+						});
 
 					});
 				});
@@ -428,29 +454,9 @@ var app = (function () {
 
 						LS_WKTs.update(feature.getId(), textarea.value);
 
-						textarea.value = "";
-
-						const polygonCoordinates = features.getArray().map(feature => {
-							const geometry = feature.getGeometry();
-							if (geometry.getType() === 'Polygon') {
-								return geometry.getCoordinates(); // Extract coordinates of the polygon
-							} else {
-								throw new Error('Feature is not a polygon');
-							}
-						});
-
-						// Create a MultiPolygon geometry
-						const multiPolygonGeometry = new ol.geom.MultiPolygon(polygonCoordinates);
-
-						// Optionally, create a new feature with the MultiPolygon geometry
-						const multiPolygonFeature = new ol.Feature({
-							geometry: multiPolygonGeometry
-						});
-
-						var geo = multiPolygonFeature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+						var multi = featuresToMultiPolygon();
+						var geo = multi.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 						textarea.value = format.writeGeometry(geo);
-
-
 					});
 
 					map.getControls().forEach(function (control) {
@@ -527,8 +533,6 @@ var app = (function () {
 			});
 
 			thisapp = self;
-
-			//createBaseContent();
 
 			self.loadWKTs(true);
 
