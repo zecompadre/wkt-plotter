@@ -25,8 +25,6 @@ var app = (function () {
 	var center = ol.proj.transform([-8.1234, 39.6945], 'EPSG:4326', 'EPSG:3857');
 
 	var main = document.querySelector(".maincontainer");
-	var defaultele = document.querySelector("#wktdefault");
-	var tofocus = document.querySelector("#wktdefault textarea");
 	var textarea = document.querySelector("#wktdefault textarea");
 
 	function deselectFeature() {
@@ -114,9 +112,6 @@ var app = (function () {
 		add: async function (wkt) {
 			var self = this;
 			await generateChecksum(wkt).then(function (checksum) {
-
-				console.log("add", checksum, wkt);
-
 				var exists = false;
 				if (current_wkts.length > 0) {
 					current_wkts.forEach(item => {
@@ -253,9 +248,8 @@ var app = (function () {
 
 		},
 		restoreDefaultColors: function () {
-			//textarea = getCurrentTextarea();
-			//textarea.style.borderColor = "";
-			//textarea.style.backgroundColor = "";
+			textarea.style.borderColor = "";
+			textarea.style.backgroundColor = "";
 		},
 		addFeatures: async function () {
 			map.removeLayer(vector);
@@ -327,7 +321,7 @@ var app = (function () {
 
 			try {
 
-				tofocus.focus();
+				textarea.focus();
 
 				const permission = await navigator.permissions.query({ name: 'clipboard-read' });
 				if (permission.state === 'denied') {
@@ -359,8 +353,7 @@ var app = (function () {
 
 				var wkts = current_wkts;
 
-				var wktdefault = tofocus;
-				wktdefault.focus();
+				textarea.focus();
 
 				var wkt = "";
 				if (readcb)
@@ -410,12 +403,7 @@ var app = (function () {
 			var self = this;
 
 			main = document.querySelector(".maincontainer");
-			defaultele = document.querySelector("#wktdefault");
-			tofocus = document.querySelector("#wktdefault textarea");
 			textarea = document.querySelector("#wktdefault textarea");
-			btncopy = document.getElementById("btn-copy");
-			btnclear = document.getElementById("btn-clear");
-			btnplot = document.getElementById("btn-plot");
 
 			this.createVector();
 			raster = new ol.layer.Tile({
@@ -438,6 +426,8 @@ var app = (function () {
 						var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
 
 						LS_WKTs.update(feature.getId(), textarea.value);
+
+						textarea.value = "";
 
 					});
 
