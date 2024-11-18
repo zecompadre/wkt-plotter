@@ -428,10 +428,28 @@ var app = (function () {
 						LS_WKTs.update(feature.getId(), textarea.value);
 
 						textarea.value = "";
-						var multi = new ol.geom.MultiPolygon();
-						features.forEach(function (feature) {
-							multi.appendPolygon(feature.getGeometry().getPolygons());
+
+
+						const polygonCoordinates = features.map(feature => {
+							const geometry = feature.getGeometry();
+							if (geometry.getType() === 'Polygon') {
+								return geometry.getCoordinates(); // Extract coordinates of the polygon
+							} else {
+								throw new Error('Feature is not a polygon');
+							}
 						});
+
+						// Create a MultiPolygon geometry
+						const multiPolygonGeometry = new MultiPolygon(polygonCoordinates);
+
+						// Optionally, create a new feature with the MultiPolygon geometry
+						const multiPolygonFeature = new Feature({
+							geometry: multiPolygonGeometry
+						});
+
+						var geo = multiPolygonFeature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+						textarea.value = format.writeGeometry(geo);
+
 
 					});
 
