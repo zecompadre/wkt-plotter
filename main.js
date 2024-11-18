@@ -192,7 +192,7 @@ var app = (function () {
 			buttonCopy.classList.add('btn', 'btn-warning');
 
 			const buttonPlot = document.createElement('button');
-			buttonPlot.innerHTML = '<i class="fa-solid fa-square-plus fa-sm"></i>';
+			buttonPlot.innerHTML = '<i class="fa-solid fa-plus fa-sm"></i>';
 			buttonPlot.classList.add('btn', 'btn-primary');
 
 			const element = document.createElement('div');
@@ -435,6 +435,9 @@ var app = (function () {
 						await centerMap().then(function () {
 							map.updateSize();
 							var multi = featuresToMultiPolygon();
+
+							console.log("multi", multi);
+
 							var geo = multi.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 							textarea.value = format.writeGeometry(geo);
 						});
