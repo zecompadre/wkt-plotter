@@ -84,7 +84,7 @@ var app = (function () {
 	}
 
 	var CurrentTextarea = {
-		get: function (id) {
+		get: function () {
 			return textarea.value;
 		},
 		set: function (feature) {
@@ -327,6 +327,8 @@ var app = (function () {
 			}
 		},
 		removeWKT: async function () {
+
+			console.log(select);
 
 			var selected = this.get();
 
