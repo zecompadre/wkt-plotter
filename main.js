@@ -430,7 +430,7 @@ var app = (function () {
 						textarea.value = "";
 						var multi = new ol.geom.MultiPolygon();
 						features.forEach(function (feature) {
-							multi.appendPolygon(feature);
+							multi.appendPolygon(feature.getGeometry().getPolygons());
 						});
 
 					});
