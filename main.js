@@ -119,7 +119,7 @@ var app = (function () {
 				default:
 					throw new Error('Feature is neither a Polygon nor a MultiPolygon');
 			}
-		});
+		}).flat();
 
 
 		// Create a MultiPolygon geometry
