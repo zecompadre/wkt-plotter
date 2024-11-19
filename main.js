@@ -54,10 +54,10 @@
 		}
 		else {
 
-			console.log("centerMap - no features");
-
+			await 			getLocation().then () {
 			map.getView().setCenter(center);
-			map.getView().setZoom(10);
+			map.getView().setZoom(12);
+			}
 		}
 	}
 
@@ -274,7 +274,7 @@
     return 'Unable to retrieve IP address';
   }
 }
-function getLocation() {
+async function getLocation() {
   // Check browser support
   if (!navigator.geolocation) {
     console.log('Geolocation is not supported by your browser');
@@ -508,7 +508,19 @@ function getLocation() {
 		init: function () {
 			var self = this;
 
-			getLocation();
+// Usage:
+getIP().then(ip => {
+  if (typeof ip === 'string' && ip.startsWith('http')) {
+    // Fallback option: use geolocation API as a last resort
+    navigator.geolocation.getCurrentPosition(position => {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+      console.log(`Estimated IP based on location: ${latitude}, ${longitude}`);
+    });
+  } else {
+    console.log(`Retrieved IP address: ${ip}`);
+  }
+});
 
 			main = document.querySelector(".maincontainer");
 			textarea = document.querySelector("#wktdefault textarea");
@@ -617,22 +629,6 @@ function getLocation() {
 			thisapp = self;
 
 			self.loadWKTs(true);
-
-// Usage:
-getIP().then(ip => {
-  if (typeof ip === 'string' && ip.startsWith('http')) {
-    // Fallback option: use geolocation API as a last resort
-    navigator.geolocation.getCurrentPosition(position => {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      console.log(`Estimated IP based on location: ${latitude}, ${longitude}`);
-    });
-  } else {
-    console.log(`Retrieved IP address: ${ip}`);
-  }
-});
-
-			
 
 		}
 	};
