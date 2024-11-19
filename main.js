@@ -53,11 +53,10 @@
 			map.getView().fit(extent, map.getSize());
 		}
 		else {
-
-			await 			getLocation().then () {
+await getLocation().then(async function (result) {
 			map.getView().setCenter(center);
-			map.getView().setZoom(12);
-			}
+			map.getView().setZoom(12);	
+			});
 		}
 	}
 
