@@ -22,7 +22,10 @@ var app = (function () {
 	var editColor = '#ec7063';
 	var snapColor = '#34495e';
 
-	var center = ol.proj.transform([-8.1234, 39.6945], 'EPSG:4326', 'EPSG:3857');
+	const latitude = -8.1234;
+      	const longitude =39.6945;
+	
+	var center = ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
 
 	var main = document.querySelector(".maincontainer");
 	var textarea = document.querySelector("#wktdefault textarea");
@@ -270,6 +273,45 @@ var app = (function () {
     console.error('Error fetching IP:', error);
     return 'Unable to retrieve IP address';
   }
+}
+function getLocation() {
+  // Check browser support
+  if (!navigator.geolocation) {
+    console.log('Geolocation is not supported by your browser');
+    return;
+  }
+
+  // Handle errors
+  function handleError(error) {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        console.log('User denied the request for Geolocation');
+        break;
+      case error.POSITION_UNAVAILABLE:
+        console.log('Location information is unavailable');
+        break;
+      case error.TIMEOUT:
+        console.log('The request to get user location timed out');
+        break;
+      case error.UNKNOWN_ERROR:
+        console.log('An unknown error occurred while retrieving coordinates');
+        break;
+    }
+  }
+
+  // Get current position
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      latitude = position.coords.latitude.toFixed(4);
+      longitude = position.coords.longitude.toFixed(4);
+
+      console.log(`Latitude: ${latitude}`);
+      console.log(`Longitude: ${longitude}`);
+
+	    center = ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
+    },
+    handleError
+  );
 }
 
 
