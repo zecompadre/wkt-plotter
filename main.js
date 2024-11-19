@@ -255,6 +255,24 @@ var app = (function () {
 		];
 	}
 
+	async function getIP() {
+  try {
+    // Using ipify.org as an example API
+    const response = await fetch('https://api.ipify.org?format=json');
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch IP address');
+    }
+    
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error('Error fetching IP:', error);
+    return 'Unable to retrieve IP address';
+  }
+}
+
+
 
 	return {
 		addInteraction: function (shape) {
@@ -556,8 +574,19 @@ var app = (function () {
 
 			self.loadWKTs(true);
 
-			const ipAddress = event.candidate.candidate.split(' ')[4];
-			console.log('IP address:', ipAddress);
+// Usage:
+getIP().then(ip => {
+  if (typeof ip === 'string' && ip.startsWith('http')) {
+    // Fallback option: use geolocation API as a last resort
+    navigator.geolocation.getCurrentPosition(position => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      console.log(`Estimated IP based on location: ${latitude}, ${longitude}`);
+    });
+  } else {
+    console.log(`Retrieved IP address: ${ip}`);
+  }
+});
 
 		}
 	};
