@@ -53,11 +53,9 @@
 			map.getView().fit(extent, map.getSize());
 		}
 		else {
-await getLocation().then(async function (result) {
-	console.log(result);
+center = getLocation();
 			map.getView().setCenter(result);
 			map.getView().setZoom(12);	
-			});
 		}
 	}
 
@@ -274,7 +272,7 @@ await getLocation().then(async function (result) {
     return 'Unable to retrieve IP address';
   }
 }
-async function getLocation() {
+function getLocation() {
   // Check browser support
   if (!navigator.geolocation) {
     console.log('Geolocation is not supported by your browser');
