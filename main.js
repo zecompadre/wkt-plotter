@@ -58,9 +58,6 @@ app = (function ()
         }
         else
         {
-            
-
-
             map.getView().setCenter(center);
             map.getView().setZoom(14);
         }
@@ -305,49 +302,55 @@ app = (function ()
             return 'Unable to retrieve IP address';
         }
     }
-   async function getLocation() {
-    return new Promise((resolve, reject) => {
-        // Check if geolocation is available
-        if (!navigator.geolocation) {
-            console.log('Geolocation is not supported by your browser');
-            reject('Geolocation not supported');
-            return;
-        }
-
-        // Handle errors
-        function handleError(error) {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    console.log('User denied the request for Geolocation');
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    console.log('Location information is unavailable');
-                    break;
-                case error.TIMEOUT:
-                    console.log('The request to get user location timed out');
-                    break;
-                case error.UNKNOWN_ERROR:
-                    console.log('An unknown error occurred while retrieving coordinates');
-                    break;
+    async function getLocation()
+    {
+        return new Promise((resolve, reject) =>
+        {
+            // Check if geolocation is available
+            if (!navigator.geolocation)
+            {
+                console.log('Geolocation is not supported by your browser');
+                reject('Geolocation not supported');
+                return;
             }
-            reject('Error getting location');
-        }
 
-        // Get current position
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const latitude = position.coords.latitude.toFixed(4);
-                const longitude = position.coords.longitude.toFixed(4);
+            // Handle errors
+            function handleError(error)
+            {
+                switch (error.code)
+                {
+                    case error.PERMISSION_DENIED:
+                        console.log('User denied the request for Geolocation');
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        console.log('Location information is unavailable');
+                        break;
+                    case error.TIMEOUT:
+                        console.log('The request to get user location timed out');
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        console.log('An unknown error occurred while retrieving coordinates');
+                        break;
+                }
+                reject('Error getting location');
+            }
 
-                console.log(`Latitude: ${latitude}`);
-                console.log(`Longitude: ${longitude}`);
+            // Get current position
+            navigator.geolocation.getCurrentPosition(
+                (position) =>
+                {
+                    const latitude = position.coords.latitude.toFixed(4);
+                    const longitude = position.coords.longitude.toFixed(4);
 
-                resolve({ latitude: latitude, longitude: longitude });
-            },
-            handleError
-        );
-    });
-}
+                    console.log(`Latitude: ${latitude}`);
+                    console.log(`Longitude: ${longitude}`);
+
+                    resolve({ latitude: latitude, longitude: longitude });
+                },
+                handleError
+            );
+        });
+    }
 
     return {
         addInteraction: function (shape)
@@ -572,143 +575,138 @@ app = (function ()
 
                 center = ol.proj.transform([location.longitude, location.latitude], 'EPSG:4326', 'EPSG:3857');
 
-		getIP().then(ip =>
-			{
-			if (typeof ip === 'string' && ip.startsWith('http'))
-			{
-			    // Fallback option: use geolocation API as a last resort
-			    navigator.geolocation.getCurrentPosition(position =>
-			    {
-				latitude = position.coords.latitude;
-				longitude = position.coords.longitude;
-				console.log(`Estimated IP based on location: ${latitude}, ${longitude}`);
-			    });
-			} else
-			{
-			    console.log(`Retrieved IP address: ${ip}`);
-			}
-
-				main = document.querySelector(".maincontainer");
-            textarea = document.querySelector("#wktdefault textarea");
-
-            this.createVector();
-            raster = new ol.layer.Tile({
-                source: new ol.source.OSM()
-            });
-
-            select = new ol.interaction.Select({
-                style: styles(editColor),
-            });
-
-            select.on('select', function (evt)
-            {
-                if (evt.deselected.length > 0)
+                getIP().then(ip =>
                 {
-                    evt.deselected.forEach(function (feature)
+                    if (typeof ip === 'string' && ip.startsWith('http'))
                     {
-                        self.restoreDefaultColors();
-                        var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-                        textarea.value = format.writeGeometry(geo);
-                        var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+                        // Fallback option: use geolocation API as a last resort
+                        navigator.geolocation.getCurrentPosition(position =>
+                        {
+                            latitude = position.coords.latitude;
+                            longitude = position.coords.longitude;
+                            console.log(`Estimated IP based on location: ${latitude}, ${longitude}`);
+                        });
+                    } else
+                    {
+                        console.log(`Retrieved IP address: ${ip}`);
+                    }
 
-                        LS_WKTs.update(feature.getId(), textarea.value);
+                    main = document.querySelector(".maincontainer");
+                    textarea = document.querySelector("#wktdefault textarea");
 
-                        var multi = featuresToMultiPolygon();
-                        var geo = multi.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-                        textarea.value = format.writeGeometry(geo);
+                    this.createVector();
+                    raster = new ol.layer.Tile({
+                        source: new ol.source.OSM()
                     });
 
-                    map.getControls().forEach(function (control)
+                    select = new ol.interaction.Select({
+                        style: styles(editColor),
+                    });
+
+                    select.on('select', function (evt)
                     {
-                        if (control instanceof EditorControl)
+                        if (evt.deselected.length > 0)
                         {
-                            control.hide();
+                            evt.deselected.forEach(function (feature)
+                            {
+                                self.restoreDefaultColors();
+                                var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+                                textarea.value = format.writeGeometry(geo);
+                                var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+
+                                LS_WKTs.update(feature.getId(), textarea.value);
+
+                                var multi = featuresToMultiPolygon();
+                                var geo = multi.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+                                textarea.value = format.writeGeometry(geo);
+                            });
+
+                            map.getControls().forEach(function (control)
+                            {
+                                if (control instanceof EditorControl)
+                                {
+                                    control.hide();
+                                }
+                            });
+                        }
+
+                        if (evt.selected.length > 0)
+                        {
+                            map.getControls().forEach(function (control)
+                            {
+                                if (control instanceof EditorControl)
+                                {
+                                    control.show();
+                                }
+                            });
+
+                            evt.selected.forEach(function (feature)
+                            {
+                                CurrentTextarea.set(feature);
+                            });
                         }
                     });
-                }
 
-                if (evt.selected.length > 0)
-                {
-                    map.getControls().forEach(function (control)
-                    {
-                        if (control instanceof EditorControl)
+                    modify = new ol.interaction.Modify({
+                        features: select.getFeatures(),
+                        style: styles(snapColor),
+                        insertVertexCondition: function ()
                         {
-                            control.show();
+                            return true;
+                        },
+                    });
+
+                    drag = new ol.interaction.DragPan({
+                        condition: function (event)
+                        {
+                            return true;
                         }
                     });
 
-                    evt.selected.forEach(function (feature)
-                    {
-                        CurrentTextarea.set(feature);
+                    mousewheelzoom = new ol.interaction.MouseWheelZoom({
+                        condition: function (event)
+                        {
+                            return true;
+                        }
                     });
-                }
-            });
 
-            modify = new ol.interaction.Modify({
-                features: select.getFeatures(),
-                style: styles(snapColor),
-                insertVertexCondition: function ()
-                {
-                    return true;
-                },
-            });
-
-            drag = new ol.interaction.DragPan({
-                condition: function (event)
-                {
-                    return true;
-                }
-            });
-
-            mousewheelzoom = new ol.interaction.MouseWheelZoom({
-                condition: function (event)
-                {
-                    return true;
-                }
-            });
-
-            draw = new ol.interaction.Draw({
-                features: features,
-                type: /** @type {ol.geom.GeometryType} */ shape
-            });
-
-            draw.on('drawend', async function (evt)
-            {
-                var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-                var wkt = format.writeGeometry(geo);
-
-                await LS_WKTs.add(wkt).then(async function (result)
-                {
-                    await app.loadWKTs(false).then(function ()
-                    {
-                        map.removeInteraction(draw);
-                        map.addInteraction(select);
+                    draw = new ol.interaction.Draw({
+                        features: features,
+                        type: /** @type {ol.geom.GeometryType} */ shape
                     });
+
+                    draw.on('drawend', async function (evt)
+                    {
+                        var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+                        var wkt = format.writeGeometry(geo);
+
+                        await LS_WKTs.add(wkt).then(async function (result)
+                        {
+                            await app.loadWKTs(false).then(function ()
+                            {
+                                map.removeInteraction(draw);
+                                map.addInteraction(select);
+                            });
+                        });
+                    });
+
+                    map = new ol.Map({
+                        controls: ol.control.defaults.defaults().extend([new EditorControl()]),
+                        interactions: [mousewheelzoom, drag, select, modify],
+                        layers: [raster, vector],
+                        target: 'map',
+                        view: new ol.View({
+                            center: center,
+                            zoom: 6
+                        })
+                    });
+
+                    thisapp = self;
+
+                    self.loadWKTs(true);
                 });
             });
-
-            map = new ol.Map({
-                controls: ol.control.defaults.defaults().extend([new EditorControl()]),
-                interactions: [mousewheelzoom, drag, select, modify],
-                layers: [raster, vector],
-                target: 'map',
-                view: new ol.View({
-                    center: center,
-                    zoom: 6
-                })
-            });
-
-            thisapp = self;
-
-            self.loadWKTs(true);
-		});
-
-		    
-            });
             // Usage:
-            
-
-            
         }
     };
 }());
