@@ -54,7 +54,8 @@
 		}
 		else {
 await getLocation().then(async function (result) {
-			map.getView().setCenter(center);
+	console.log(result);
+			map.getView().setCenter(result);
 			map.getView().setZoom(12);	
 			});
 		}
@@ -277,7 +278,7 @@ async function getLocation() {
   // Check browser support
   if (!navigator.geolocation) {
     console.log('Geolocation is not supported by your browser');
-    return;
+    return  center;
   }
 
   // Handle errors
@@ -296,6 +297,7 @@ async function getLocation() {
         console.log('An unknown error occurred while retrieving coordinates');
         break;
     }
+	  return  center;
   }
 
   // Get current position
@@ -303,11 +305,7 @@ async function getLocation() {
     (position) => {
       latitude = position.coords.latitude.toFixed(4);
       longitude = position.coords.longitude.toFixed(4);
-
-      console.log(`Latitude: ${latitude}`);
-      console.log(`Longitude: ${longitude}`);
-
-	    center = ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
+      return ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
     },
     handleError
   );
