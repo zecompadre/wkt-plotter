@@ -31,6 +31,22 @@ var app = (function () {
 	var textarea = document.querySelector("#wktdefault textarea");
 
 	function imageCanvas(feature) {
+
+		var center = feature.getGeometry().getExtent().getCenter();
+
+		extent = feature.getGeometry().getExtent();
+		minx = feature.getGeometry().getExtent()[0];
+		miny = feature.getGeometry().getExtent()[1];
+		maxx = feature.getGeometry().getExtent()[2];
+		maxy = feature.getGeometry().getExtent()[3];
+		centerx = (minx + maxx) / 2;
+		centery = (miny + maxy) / 2;
+		map.setView(new ol.View({
+			center: [centerx, centery],
+			zoom: 8
+		}));
+		map.getView().fit(extent, map.getSize());
+
 		const _0x44fc83 = document.getElementById("map");
 		const _0x8b5714 = _0x44fc83.offsetWidth;
 		const _0xb507ab = _0x44fc83.offsetHeight;
