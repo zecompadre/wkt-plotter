@@ -610,8 +610,7 @@ var app = (function () {
 			});
 
 			document.addEventListener('keydown', function (evt) {
-				console.log(evt.key);
-				if (evt.key === 'Del') {
+				if (evt.key === 'Delete') {
 					app.removeWKT();
 				}
 			}, false);
