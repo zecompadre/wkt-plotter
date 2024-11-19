@@ -22,7 +22,10 @@ var app = (function () {
 	var editColor = '#ec7063';
 	var snapColor = '#34495e';
 
-	var center = ol.proj.transform([-8.1234, 39.6945], 'EPSG:4326', 'EPSG:3857');
+	var latitude = 39.6945;
+	var longitude = -8.1234;
+
+	var center = ol.proj.transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857');
 
 	var main = document.querySelector(".maincontainer");
 	var textarea = document.querySelector("#wktdefault textarea");
@@ -97,27 +100,21 @@ var app = (function () {
 	}
 
 	async function centerMap() {
-
-		if (!main.classList.contains("nowkt")) {
-
-			console.log("centerMap - features");
-
-			var extent = ol.extent.createEmpty();
-			features.forEach(function (feature) {
-				ol.extent.extend(extent, feature.getGeometry().getExtent());
-			});
-
-			map.getView().fit(extent, map.getSize());
-		}
-		else {
-
-			console.log("centerMap - no features");
-
-			console.log("center", center);
-
-			map.getView().setCenter(center);
-			map.getView().setZoom(6);
-		}
+		return new Promise((resolve, reject) => {
+			if (!main.classList.contains("nowkt")) {
+				var extent = ol.extent.createEmpty();
+				features.forEach(function (feature) {
+					ol.extent.extend(extent, feature.getGeometry().getExtent());
+				});
+				map.getView().fit(extent, map.getSize());
+			}
+			else {
+				console.log("center", center);
+				map.getView().setCenter(center);
+				map.getView().setZoom(6);
+			}
+			resolve();
+		});
 	}
 
 	function hexToRgbA(hex) {
