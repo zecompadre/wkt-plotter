@@ -1,4 +1,4 @@
-var app = (function () {
+ app = (function () {
 
 	var raster;
 	var vector;
@@ -508,6 +508,8 @@ function getLocation() {
 		init: function () {
 			var self = this;
 
+			getLocation();
+
 			main = document.querySelector(".maincontainer");
 			textarea = document.querySelector("#wktdefault textarea");
 
@@ -630,7 +632,7 @@ getIP().then(ip => {
   }
 });
 
-			getLocation();
+			
 
 		}
 	};
