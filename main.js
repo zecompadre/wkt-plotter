@@ -25,7 +25,7 @@ var app = (function () {
 	var latitude = 39.6945;
 	var longitude = -8.1234;
 
-	var center = ol.proj.transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857');
+	var defaultCenter = ol.proj.transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857');
 
 	var main = document.querySelector(".maincontainer");
 	var textarea = document.querySelector("#wktdefault textarea");
@@ -59,8 +59,7 @@ var app = (function () {
 		return new Promise((resolve, reject) => {
 			// Check if geolocation is available
 			if (!navigator.geolocation) {
-				console.log('Geolocation is not supported by your browser');
-				reject('Geolocation not supported');
+				reject('Geolocation is not supported by your browser');
 				return;
 			}
 
@@ -68,17 +67,13 @@ var app = (function () {
 			function handleError(error) {
 				switch (error.code) {
 					case error.PERMISSION_DENIED:
-						console.log('User denied the request for Geolocation');
-						break;
+						reject('User denied the request for Geolocation');
 					case error.POSITION_UNAVAILABLE:
-						console.log('Location information is unavailable');
-						break;
+						reject('Location information is unavailable');
 					case error.TIMEOUT:
-						console.log('The request to get user location timed out');
-						break;
+						reject('The request to get user location timed out');
 					case error.UNKNOWN_ERROR:
-						console.log('An unknown error occurred while retrieving coordinates');
-						break;
+						reject('An unknown error occurred while retrieving coordinates');
 				}
 				reject('Error getting location');
 			}
@@ -109,8 +104,8 @@ var app = (function () {
 				map.getView().fit(extent, map.getSize());
 			}
 			else {
-				console.log("center", center);
-				map.getView().setCenter(center);
+				console.log("defaultCenter", defaultCenter);
+				map.getView().setCenter(defaultCenter);
 				map.getView().setZoom(6);
 			}
 			resolve();
@@ -155,16 +150,6 @@ var app = (function () {
 	};
 
 	function featuresToMultiPolygon() {
-		/*
-		const polygonCoordinates = features.getArray().map(feature => {
-			const geometry = feature.getGeometry();
-			if (geometry.getType() === 'Polygon') {
-				return geometry.getCoordinates(); // Extract coordinates of the polygon
-			} else {
-				throw new Error('Feature is not a polygon');
-			}
-		});
-*/
 
 		const polygonCoordinates = features.getArray().map(feature => {
 			const geometry = feature.getGeometry();
@@ -602,7 +587,7 @@ var app = (function () {
 				layers: [raster, vector],
 				target: 'map',
 				view: new ol.View({
-					center: center,
+					center: defaultCenter,
 					zoom: 6
 				})
 			});
@@ -625,7 +610,7 @@ var app = (function () {
 			getLocation().then(location => {
 				console.log("location", location);
 
-				center = ol.proj.transform([location.longitude, location.latitude], 'EPSG:4326', 'EPSG:3857');
+				defaultCenter = ol.proj.transform([location.longitude, location.latitude], 'EPSG:4326', 'EPSG:3857');
 
 				self.prepareObjets();
 
