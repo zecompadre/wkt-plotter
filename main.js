@@ -630,6 +630,8 @@ getIP().then(ip => {
   }
 });
 
+			getLocation();
+
 		}
 	};
 
