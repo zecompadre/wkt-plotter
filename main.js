@@ -575,21 +575,6 @@ app = (function ()
 
                 center = ol.proj.transform([location.longitude, location.latitude], 'EPSG:4326', 'EPSG:3857');
 
-                getIP().then(ip =>
-                {
-                    if (typeof ip === 'string' && ip.startsWith('http'))
-                    {
-                        // Fallback option: use geolocation API as a last resort
-                        navigator.geolocation.getCurrentPosition(position =>
-                        {
-                            latitude = position.coords.latitude;
-                            longitude = position.coords.longitude;
-                            console.log(`Estimated IP based on location: ${latitude}, ${longitude}`);
-                        });
-                    } else
-                    {
-                        console.log(`Retrieved IP address: ${ip}`);
-                    }
 
                     main = document.querySelector(".maincontainer");
                     textarea = document.querySelector("#wktdefault textarea");
@@ -703,7 +688,26 @@ app = (function ()
 
                     thisapp = self;
 
-                    self.loadWKTs(true);
+                self.loadWKTs(true);
+
+                getIP().then(ip =>
+                {
+                    if (typeof ip === 'string' && ip.startsWith('http'))
+                    {
+                        // Fallback option: use geolocation API as a last resort
+                        navigator.geolocation.getCurrentPosition(position =>
+                        {
+                            latitude = position.coords.latitude;
+                            longitude = position.coords.longitude;
+                            console.log(`Estimated IP based on location: ${latitude}, ${longitude}`);
+                        });
+                    } else
+                    {
+                        console.log(`Retrieved IP address: ${ip}`);
+                    }
+
+
+                    
                 });
             });
             // Usage:
