@@ -30,6 +30,24 @@ var app = (function () {
 	var main = document.querySelector(".maincontainer");
 	var textarea = document.querySelector("#wktdefault textarea");
 
+	function imageCanvas(feature) {
+		const featureExtent = feature.getGeometry().getExtent();
+
+		// Zoom to the feature's extent:
+		map.getView().fit(featureExtent, { duration: 2000 });
+
+		// After the zoom animation:
+		setTimeout(() => {
+			html2canvas(document.getElementById('map')).then(canvas => {
+				const imageData = canvas.toDataURL('image/png');
+				const link = document.createElement('a');
+				link.download = 'feature_image.png';
+				link.href = imageData;
+				link.click();
+			});
+		}, 2000);
+	}
+
 
 	function exportFeatureToImage(feature, width = 400, height = 400) {
 		// Create a hidden canvas
@@ -635,7 +653,7 @@ var app = (function () {
 
 			draw.on('drawend', async function (evt) {
 
-				exportFeatureToImage(evt.feature);
+				imageCanvas(evt.feature);
 
 				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 				var wkt = format.writeGeometry(geo);
