@@ -31,88 +31,16 @@ var app = (function () {
 	var textarea = document.querySelector("#wktdefault textarea");
 
 	function imageCanvas(feature) {
-		const featureExtent = feature.getGeometry().getExtent();
-
-		// Zoom to the feature's extent:
-		map.getView().fit(featureExtent, { duration: 2000 });
-
-		// After the zoom animation:
-		setTimeout(() => {
-			html2canvas(document.getElementById('map')).then(canvas => {
-				const imageData = canvas.toDataURL('image/png');
-				const link = document.createElement('a');
-				link.download = 'feature_image.png';
-				link.href = imageData;
-				link.click();
+		domtoimage.toPng(node)
+			.then(function (dataUrl) {
+				var img = new Image();
+				img.src = dataUrl;
+				document.body.appendChild(img);
+			})
+			.catch(function (error) {
+				console.error('oops, something went wrong!', error);
 			});
-		}, 2000);
 	}
-
-
-	function exportFeatureToImage(feature, width = 400, height = 400) {
-		// Create a hidden canvas
-		const canvas = document.createElement('canvas');
-		canvas.width = width;
-		canvas.height = height;
-		const context = canvas.getContext('2d');
-
-		// Create a temporary map to render the feature
-		const extent = feature.getGeometry().getExtent();
-		const padding = 10; // Add padding for better visibility
-		const resolution = Math.max(
-			ol.extent.getWidth(extent) / (width - 2 * padding),
-			ol.extent.getHeight(extent) / (height - 2 * padding)
-		);
-
-		const map = new ol.Map({
-			target: null, // No visible target, rendering off-screen
-			layers: [
-				new ol.layer.Tile({
-					source: new ol.source.OSM()
-				}),
-				new ol.layer.Vector({
-					source: new ol.source.Vector({
-						features: [feature],
-					}),
-					style: new ol.style.Style({
-						fill: new ol.style.Fill({
-							color: 'rgba(0, 150, 136, 0.6)',
-						}),
-						stroke: new ol.style.Stroke({
-							color: '#009688',
-							width: 2,
-						}),
-					}),
-				}),
-			],
-			view: new ol.View({
-				center: [
-					(extent[0] + extent[2]) / 2,
-					(extent[1] + extent[3]) / 2,
-				],
-				resolution: resolution,
-			}),
-		});
-
-		map.once('rendercomplete', function () {
-			const mapCanvas = map.getViewport().querySelector('canvas');
-			if (mapCanvas) {
-				context.drawImage(mapCanvas, 0, 0);
-				// Convert the canvas to a PNG image
-				canvas.toBlob(function (blob) {
-					const link = document.createElement('a');
-					link.href = URL.createObjectURL(blob);
-					link.download = 'feature.png';
-					link.click();
-				});
-			}
-		});
-
-		// Trigger map render
-		map.renderSync();
-	}
-
-
 
 	function deselectFeature() {
 		select.getFeatures().clear();
