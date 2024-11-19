@@ -387,14 +387,14 @@ var app = (function () {
 		},
 		removeWKT: async function () {
 
-			console.log(select.getFeatures())
+			if (select.getFeatures().item.length > 0) {
 
-			var current = select.getFeatures().item(0);
+				var current = select.getFeatures().item(0);
 
-			LS_WKTs.remove(current.getId());
+				LS_WKTs.remove(current.getId());
 
-			await app.loadWKTs(false);
-
+				await app.loadWKTs(false);
+			}
 		},
 		addWKT: function () {
 			map.removeInteraction(select);
@@ -608,6 +608,12 @@ var app = (function () {
 					zoom: 6
 				})
 			});
+
+			document.addEventListener('keydown', function (evt) {
+				if (evt.key === 'Del') {
+					app.removeWKT();
+				}
+			}, false);
 
 		},
 
