@@ -106,17 +106,6 @@ app = (function ()
 
     function featuresToMultiPolygon()
     {
-        /*
-        const polygonCoordinates = features.getArray().map(feature => {
-            const geometry = feature.getGeometry();
-            if (geometry.getType() === 'Polygon') {
-                return geometry.getCoordinates(); // Extract coordinates of the polygon
-            } else {
-                throw new Error('Feature is not a polygon');
-            }
-        });
-*/
-
         const polygonCoordinates = features.getArray().map(feature =>
         {
             const geometry = feature.getGeometry();
@@ -690,7 +679,10 @@ app = (function ()
 
                 self.loadWKTs(true);
 
-                getIP().then(ip =>
+
+            });
+
+                            getIP().then(ip =>
                 {
                     if (typeof ip === 'string' && ip.startsWith('http'))
                     {
@@ -709,8 +701,6 @@ app = (function ()
 
                     
                 });
-            });
-            // Usage:
         }
     };
 }());
