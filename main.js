@@ -54,6 +54,8 @@
 		}
 		else {
 			center = getLocation();
+console.log(center)
+			
 			map.getView().setCenter(center);
 			map.getView().setZoom(12);	
 		}
