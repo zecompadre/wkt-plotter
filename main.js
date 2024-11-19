@@ -30,6 +30,69 @@ var app = (function () {
 	var main = document.querySelector(".maincontainer");
 	var textarea = document.querySelector("#wktdefault textarea");
 
+
+	function exportFeatureToImage(feature, width = 400, height = 400) {
+		// Create a hidden canvas
+		const canvas = document.createElement('canvas');
+		canvas.width = width;
+		canvas.height = height;
+		const context = canvas.getContext('2d');
+
+		// Create a temporary map to render the feature
+		const extent = feature.getGeometry().getExtent();
+		const padding = 10; // Add padding for better visibility
+		const resolution = Math.max(
+			getWidth(extent) / (width - 2 * padding),
+			getHeight(extent) / (height - 2 * padding)
+		);
+
+		const map = new Map({
+			target: null, // No visible target, rendering off-screen
+			layers: [
+				new ol.layer.Vector({
+					source: new ol.source.Vector({
+						features: [feature],
+					}),
+					style: new ol.style.Style({
+						fill: new ol.style.Fill({
+							color: 'rgba(0, 150, 136, 0.6)',
+						}),
+						stroke: new ol.style.Stroke({
+							color: '#009688',
+							width: 2,
+						}),
+					}),
+				}),
+			],
+			view: new ol.View({
+				center: [
+					(extent[0] + extent[2]) / 2,
+					(extent[1] + extent[3]) / 2,
+				],
+				resolution: resolution,
+			}),
+		});
+
+		map.once('rendercomplete', function () {
+			const mapCanvas = map.getViewport().querySelector('canvas');
+			if (mapCanvas) {
+				context.drawImage(mapCanvas, 0, 0);
+				// Convert the canvas to a PNG image
+				canvas.toBlob(function (blob) {
+					const link = document.createElement('a');
+					link.href = URL.createObjectURL(blob);
+					link.download = 'feature.png';
+					link.click();
+				});
+			}
+		});
+
+		// Trigger map render
+		map.renderSync();
+	}
+
+
+
 	function deselectFeature() {
 		select.getFeatures().clear();
 		map.getControls().forEach(function (control) {
@@ -568,6 +631,8 @@ var app = (function () {
 			});
 
 			draw.on('drawend', async function (evt) {
+
+				exportFeatureToImage(evt.feature);
 
 				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 				var wkt = format.writeGeometry(geo);
