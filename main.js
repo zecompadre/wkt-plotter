@@ -619,15 +619,10 @@ var app = (function () {
 
 				center = ol.proj.transform([location.longitude, location.latitude], 'EPSG:4326', 'EPSG:3857');
 
-				prepareObjets();
-
-
-				thisapp = self;
+				self.prepareObjets();
 
 				self.loadWKTs(true);
 			});
-
-
 
 
 			getIP().then(ip => {
