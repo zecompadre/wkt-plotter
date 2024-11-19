@@ -44,7 +44,7 @@ app = (function ()
 
     async function centerMap()
     {
-        if (!main.classList.contains("nowkt"))
+        if (!main.classList.contains("nowkt") || features.lenght > 0)
         {
             console.log("centerMap - features");
 
