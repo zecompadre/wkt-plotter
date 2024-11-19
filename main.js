@@ -22,10 +22,10 @@
 	var editColor = '#ec7063';
 	var snapColor = '#34495e';
 
-	var longitude = -8.1234;
       	var latitude =39.6945;
+	 	var longitude = -8.1234;
 	
-	var center = ol.proj.transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857');	
+	var center = ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
 
 	var main = document.querySelector(".maincontainer");
 	var textarea = document.querySelector("#wktdefault textarea");
@@ -309,7 +309,7 @@ function getLocation() {
       console.log(`Latitude: ${latitude}`);
       console.log(`Longitude: ${longitude}`);
 	    
-      center = ol.proj.transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857');	
+      center = ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
 
 	    return center;
     },
