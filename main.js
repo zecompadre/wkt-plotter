@@ -30,6 +30,29 @@ var app = (function () {
 	var main = document.querySelector(".maincontainer");
 	var textarea = document.querySelector("#wktdefault textarea");
 
+	function centerOnFeature(feature) {
+		let geometry = feature.getGeometry();
+
+		let extent = geometry.getExtent(); // Returns [minX, minY, maxX, maxY]
+		let center = ol.extent.getCenter(extent); // Calculate the center
+
+		var defaultCenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+
+		console.log('Center coordinates:', defaultCenter);
+
+		minx = extent[0];
+		miny = extent[1];
+		maxx = extent[2];
+		maxy = extent[3];
+		centerx = (minx + maxx) / 2;
+		centery = (miny + maxy) / 2;
+		map.setView(new ol.View({
+			center: [centerx, centery],
+			zoom: 8
+		}));
+		map.getView().fit(extent, map.getSize());
+	}
+
 	function imageCanvas(feature) {
 
 
@@ -134,7 +157,13 @@ var app = (function () {
 
 	async function centerMap() {
 		return new Promise((resolve, reject) => {
+
+
+
 			if (!main.classList.contains("nowkt")) {
+
+				resolve();
+
 				var extent = ol.extent.createEmpty();
 				features.forEach(function (feature) {
 					ol.extent.extend(extent, feature.getGeometry().getExtent());
@@ -616,6 +645,7 @@ var app = (function () {
 					await app.loadWKTs(false).then(function () {
 						map.removeInteraction(draw);
 						map.addInteraction(select);
+						centerOnFeature(evt.feature);
 					});
 				});
 			});
