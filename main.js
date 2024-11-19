@@ -297,7 +297,6 @@ function getLocation() {
         console.log('An unknown error occurred while retrieving coordinates');
         break;
     }
-	  return  center;
   }
 
   // Get current position
@@ -310,11 +309,11 @@ function getLocation() {
       console.log(`Longitude: ${longitude}`);
 	    
       center = ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
-
-	    return center;
     },
     handleError
   );
+
+	return center;
 }
 
 
