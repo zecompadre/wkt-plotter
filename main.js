@@ -42,8 +42,8 @@ var app = (function () {
 		const extent = feature.getGeometry().getExtent();
 		const padding = 10; // Add padding for better visibility
 		const resolution = Math.max(
-			getWidth(extent) / (width - 2 * padding),
-			getHeight(extent) / (height - 2 * padding)
+			ol.extent.getWidth(extent) / (width - 2 * padding),
+			ol.extent.getHeight(extent) / (height - 2 * padding)
 		);
 
 		const map = new Map({
