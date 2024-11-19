@@ -32,13 +32,17 @@ var app = (function () {
 
 	function imageCanvas(feature) {
 
-		var center = feature.getGeometry().getExtent().getCenter();
 
-		extent = feature.getGeometry().getExtent();
-		minx = feature.getGeometry().getExtent()[0];
-		miny = feature.getGeometry().getExtent()[1];
-		maxx = feature.getGeometry().getExtent()[2];
-		maxy = feature.getGeometry().getExtent()[3];
+		let geometry = feature.getGeometry();
+
+		let extent = geometry.getExtent(); // Returns [minX, minY, maxX, maxY]
+		let center = ol.extent.getCenter(extent); // Calculate the center
+		console.log('Center coordinates:', center);
+
+		minx = extent[0];
+		miny = extent[1];
+		maxx = extent[2];
+		maxy = extent[3];
 		centerx = (minx + maxx) / 2;
 		centery = (miny + maxy) / 2;
 		map.setView(new ol.View({
