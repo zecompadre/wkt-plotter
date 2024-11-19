@@ -313,7 +313,7 @@ app = (function ()
             if (!navigator.geolocation)
             {
                 console.log('Geolocation is not supported by your browser');
-                return center;
+                return toreturn;
             }
 
             // Handle errors
@@ -334,10 +334,11 @@ app = (function ()
                         console.log('An unknown error occurred while retrieving coordinates');
                         break;
                 }
+		    return toreturn;
             }
 
             // Get current position
-            navigator.geolocation.getCurrentPosition(
+            toreturn = navigator.geolocation.getCurrentPosition(
                 (position) =>
                 {
                     latitude = position.coords.latitude.toFixed(4);
@@ -345,11 +346,13 @@ app = (function ()
 
                     console.log(`Latitude: ${latitude}`);
                     console.log(`Longitude: ${longitude}`);
+
+			return { latitude: latitude, longitude: longitude }
                 },
                 handleError
             );
 
-            resolve({ latitude: latitude, longitude: longitude });
+            resolve(toreturn);
         });
     }
 
