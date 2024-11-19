@@ -53,8 +53,8 @@
 			map.getView().fit(extent, map.getSize());
 		}
 		else {
-center = getLocation();
-			map.getView().setCenter(result);
+			center = getLocation();
+			map.getView().setCenter(center);
 			map.getView().setZoom(12);	
 		}
 	}
