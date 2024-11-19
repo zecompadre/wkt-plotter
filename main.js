@@ -273,7 +273,8 @@
     return 'Unable to retrieve IP address';
   }
 }
-function getLocation() {
+async function getLocation() {
+	return new Promise((resolve) => {
   // Check browser support
   if (!navigator.geolocation) {
     console.log('Geolocation is not supported by your browser');
@@ -312,7 +313,8 @@ function getLocation() {
     handleError
   );
 
-	return center;
+	resolve(center);
+		  });
 }
 
 
@@ -509,7 +511,9 @@ function getLocation() {
 		init: function () {
 			var self = this;
 			
-			center = getLocation();
+			getLocation().then(center => {
+				center = center;
+			});
 // Usage:
 getIP().then(ip => {
   if (typeof ip === 'string' && ip.startsWith('http')) {
