@@ -58,10 +58,53 @@ app = (function ()
         }
         else
         {
-            console.log(center);
+            async function getLocation() {
+    return new Promise((resolve, reject) => {
+        // Check if geolocation is available
+        if (!navigator.geolocation) {
+            console.log('Geolocation is not supported by your browser');
+            reject('Geolocation not supported');
+            return;
+        }
+
+        // Handle errors
+        function handleError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    console.log('User denied the request for Geolocation');
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    console.log('Location information is unavailable');
+                    break;
+                case error.TIMEOUT:
+                    console.log('The request to get user location timed out');
+                    break;
+                case error.UNKNOWN_ERROR:
+                    console.log('An unknown error occurred while retrieving coordinates');
+                    break;
+            }
+            reject('Error getting location');
+        }
+
+        // Get current position
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const latitude = position.coords.latitude.toFixed(4);
+                const longitude = position.coords.longitude.toFixed(4);
+
+                console.log(`Latitude: ${latitude}`);
+                console.log(`Longitude: ${longitude}`);
+
+                resolve({ latitude: latitude, longitude: longitude });
+            },
+            handleError
+        );
+    });
+}
+
 
             map.getView().setCenter(center);
-            map.getView().setZoom(12);
+            map.getView().setZoom(14);
         }
     }
 
