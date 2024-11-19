@@ -483,12 +483,11 @@ var app = (function () {
 					LS_WKTs.save()
 
 					await self.addFeatures().then(async function () {
-						if (current_wkts.length > 0) {
+
+						if (features.getArray().length > 0)
 							main.classList.remove("nowkt");
-						}
-						else {
+						else
 							main.classList.add("nowkt");
-						}
 
 						await centerMap().then(function () {
 							map.updateSize();
