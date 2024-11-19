@@ -57,7 +57,7 @@ var app = (function () {
 			console.log("centerMap - no features");
 
 			map.getView().setCenter(center);
-			map.getView().setZoom(6);
+			map.getView().setZoom(10);
 		}
 	}
 
