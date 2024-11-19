@@ -315,113 +315,6 @@ var app = (function () {
 		];
 	}
 
-	function prepareObjets() {
-		main = document.querySelector(".maincontainer");
-		textarea = document.querySelector("#wktdefault textarea");
-
-		this.createVector();
-		raster = new ol.layer.Tile({
-			source: new ol.source.OSM()
-		});
-
-		select = new ol.interaction.Select({
-			style: styles(editColor),
-		});
-
-		select.on('select', function (evt) {
-
-			if (evt.deselected.length > 0) {
-
-				evt.deselected.forEach(function (feature) {
-
-					self.restoreDefaultColors();
-					var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-					textarea.value = format.writeGeometry(geo);
-					var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-
-					LS_WKTs.update(feature.getId(), textarea.value);
-
-					var multi = featuresToMultiPolygon();
-					var geo = multi.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-					textarea.value = format.writeGeometry(geo);
-				});
-
-				map.getControls().forEach(function (control) {
-					if (control instanceof EditorControl) {
-						control.hide();
-					}
-				});
-			}
-
-			if (evt.selected.length > 0) {
-
-				map.getControls().forEach(function (control) {
-					if (control instanceof EditorControl) {
-						control.show();
-					}
-				});
-
-				evt.selected.forEach(function (feature) {
-					CurrentTextarea.set(feature);
-				});
-			}
-		});
-
-		modify = new ol.interaction.Modify({
-			features: select.getFeatures(),
-			style: styles(snapColor),
-			insertVertexCondition: function () {
-				return true;
-			},
-		});
-
-		drag = new ol.interaction.DragPan({
-			condition: function (event) {
-				return true;
-			}
-		});
-
-		mousewheelzoom = new ol.interaction.MouseWheelZoom({
-			condition: function (event) {
-				return true;
-			}
-		});
-
-		draw = new ol.interaction.Draw({
-			features: features,
-			type: /** @type {ol.geom.GeometryType} */ shape
-		});
-
-		draw.on('drawend', async function (evt) {
-
-			var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
-			var wkt = format.writeGeometry(geo);
-
-			await LS_WKTs.add(wkt).then(async function (result) {
-				await app.loadWKTs(false).then(function () {
-					map.removeInteraction(draw);
-					map.addInteraction(select);
-				});
-
-
-			});
-
-		});
-
-
-		map = new ol.Map({
-			controls: ol.control.defaults.defaults().extend([new EditorControl()]),
-			interactions: [mousewheelzoom, drag, select, modify],
-			layers: [raster, vector],
-			target: 'map',
-			view: new ol.View({
-				center: center,
-				zoom: 6
-			})
-		});
-
-	}
-
 	return {
 		addInteraction: function (shape) {
 			draw = new ol.interaction.Draw({
@@ -611,6 +504,113 @@ var app = (function () {
 				});
 			});
 		},
+		prepareObjets: function () {
+			main = document.querySelector(".maincontainer");
+			textarea = document.querySelector("#wktdefault textarea");
+
+			this.createVector();
+			raster = new ol.layer.Tile({
+				source: new ol.source.OSM()
+			});
+
+			select = new ol.interaction.Select({
+				style: styles(editColor),
+			});
+
+			select.on('select', function (evt) {
+
+				if (evt.deselected.length > 0) {
+
+					evt.deselected.forEach(function (feature) {
+
+						self.restoreDefaultColors();
+						var geo = feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+						textarea.value = format.writeGeometry(geo);
+						var geo = feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+
+						LS_WKTs.update(feature.getId(), textarea.value);
+
+						var multi = featuresToMultiPolygon();
+						var geo = multi.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+						textarea.value = format.writeGeometry(geo);
+					});
+
+					map.getControls().forEach(function (control) {
+						if (control instanceof EditorControl) {
+							control.hide();
+						}
+					});
+				}
+
+				if (evt.selected.length > 0) {
+
+					map.getControls().forEach(function (control) {
+						if (control instanceof EditorControl) {
+							control.show();
+						}
+					});
+
+					evt.selected.forEach(function (feature) {
+						CurrentTextarea.set(feature);
+					});
+				}
+			});
+
+			modify = new ol.interaction.Modify({
+				features: select.getFeatures(),
+				style: styles(snapColor),
+				insertVertexCondition: function () {
+					return true;
+				},
+			});
+
+			drag = new ol.interaction.DragPan({
+				condition: function (event) {
+					return true;
+				}
+			});
+
+			mousewheelzoom = new ol.interaction.MouseWheelZoom({
+				condition: function (event) {
+					return true;
+				}
+			});
+
+			draw = new ol.interaction.Draw({
+				features: features,
+				type: /** @type {ol.geom.GeometryType} */ shape
+			});
+
+			draw.on('drawend', async function (evt) {
+
+				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
+				var wkt = format.writeGeometry(geo);
+
+				await LS_WKTs.add(wkt).then(async function (result) {
+					await app.loadWKTs(false).then(function () {
+						map.removeInteraction(draw);
+						map.addInteraction(select);
+					});
+
+
+				});
+
+			});
+
+
+			map = new ol.Map({
+				controls: ol.control.defaults.defaults().extend([new EditorControl()]),
+				interactions: [mousewheelzoom, drag, select, modify],
+				layers: [raster, vector],
+				target: 'map',
+				view: new ol.View({
+					center: center,
+					zoom: 6
+				})
+			});
+
+		},
+
 		init: function () {
 			var self = this;
 
