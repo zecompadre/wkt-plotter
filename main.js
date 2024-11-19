@@ -106,7 +106,7 @@ var app = (function () {
 			else {
 				console.log("defaultCenter", defaultCenter);
 				map.getView().setCenter(defaultCenter);
-				map.getView().setZoom(6);
+				map.getView().setZoom(16);
 			}
 			resolve();
 		});
