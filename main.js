@@ -138,13 +138,7 @@ var app = (function () {
 
 	async function centerMap() {
 		return new Promise((resolve, reject) => {
-
-
-
 			if (!main.classList.contains("nowkt")) {
-
-				resolve();
-
 				var extent = ol.extent.createEmpty();
 				features.forEach(function (feature) {
 					ol.extent.extend(extent, feature.getGeometry().getExtent());
@@ -617,8 +611,6 @@ var app = (function () {
 
 			draw.on('drawend', async function (evt) {
 
-				imageCanvas(evt.feature);
-
 				var geo = evt.feature.getGeometry().transform('EPSG:3857', 'EPSG:4326');
 				var wkt = format.writeGeometry(geo);
 
@@ -626,7 +618,8 @@ var app = (function () {
 					await app.loadWKTs(false).then(function () {
 						map.removeInteraction(draw);
 						map.addInteraction(select);
-						centerOnFeature(evt.feature);
+						//centerOnFeature(evt.feature);
+						//imageCanvas(evt.feature);
 					});
 				});
 			});
