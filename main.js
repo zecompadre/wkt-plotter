@@ -49,6 +49,9 @@ var app = (function () {
 		const map = new ol.Map({
 			target: null, // No visible target, rendering off-screen
 			layers: [
+				new ol.layer.Tile({
+					source: new ol.source.OSM()
+				}),
 				new ol.layer.Vector({
 					source: new ol.source.Vector({
 						features: [feature],
