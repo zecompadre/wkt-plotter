@@ -36,9 +36,9 @@ var app = (function () {
 		let extent = geometry.getExtent(); // Returns [minX, minY, maxX, maxY]
 		let center = ol.extent.getCenter(extent); // Calculate the center
 
-		var defaultCenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+		//var defaultCenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
 
-		console.log('Center coordinates:', defaultCenter);
+		console.log('Center coordinates:', center);
 
 		minx = extent[0];
 		miny = extent[1];
