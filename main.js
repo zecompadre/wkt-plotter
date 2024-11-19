@@ -113,6 +113,8 @@ var app = (function () {
 
 			console.log("centerMap - no features");
 
+			console.log("center", center);
+
 			map.getView().setCenter(center);
 			map.getView().setZoom(6);
 		}
@@ -609,11 +611,15 @@ var app = (function () {
 			});
 
 			document.addEventListener('keydown', function (evt) {
-				if (evt.key === 'Delete') {
-					app.removeWKT();
+				switch (evt.key) {
+					case 'Escape':
+						map.removeInteraction(draw);
+						break;
+					case 'Delete':
+						app.removeWKT();
+						break;
 				}
 			}, false);
-
 		},
 
 		init: function () {
