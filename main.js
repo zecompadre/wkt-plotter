@@ -46,7 +46,7 @@ var app = (function () {
 			ol.extent.getHeight(extent) / (height - 2 * padding)
 		);
 
-		const map = new Map({
+		const map = new ol.Map({
 			target: null, // No visible target, rendering off-screen
 			layers: [
 				new ol.layer.Vector({
