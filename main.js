@@ -53,8 +53,7 @@
 			map.getView().fit(extent, map.getSize());
 		}
 		else {
-			center = getLocation();
-console.log(center)
+			console.log(center);
 			
 			map.getView().setCenter(center);
 			map.getView().setZoom(12);	
@@ -509,7 +508,8 @@ function getLocation() {
 		},
 		init: function () {
 			var self = this;
-
+			
+			center = getLocation();
 // Usage:
 getIP().then(ip => {
   if (typeof ip === 'string' && ip.startsWith('http')) {
