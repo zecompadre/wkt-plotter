@@ -31,7 +31,13 @@ var app = (function () {
 	var textarea = document.querySelector("#wktdefault textarea");
 
 	function imageCanvas(feature) {
-		domtoimage.toPng(node)
+		const _0x44fc83 = document.getElementById("map");
+		const _0x8b5714 = _0x44fc83.offsetWidth;
+		const _0xb507ab = _0x44fc83.offsetHeight;
+		domtoimage.toPng(_0x44fc83, {
+			"width": _0x8b5714,
+			"height": _0xb507ab
+		})
 			.then(function (dataUrl) {
 				var img = new Image();
 				img.src = dataUrl;
