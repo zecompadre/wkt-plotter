@@ -55,25 +55,6 @@ var app = (function () {
 
 	function imageCanvas(feature) {
 
-
-		let geometry = feature.getGeometry();
-
-		let extent = geometry.getExtent(); // Returns [minX, minY, maxX, maxY]
-		let center = ol.extent.getCenter(extent); // Calculate the center
-		console.log('Center coordinates:', center);
-
-		minx = extent[0];
-		miny = extent[1];
-		maxx = extent[2];
-		maxy = extent[3];
-		centerx = (minx + maxx) / 2;
-		centery = (miny + maxy) / 2;
-		map.setView(new ol.View({
-			center: [centerx, centery],
-			zoom: 8
-		}));
-		map.getView().fit(extent, map.getSize());
-
 		const _0x44fc83 = document.getElementById("map");
 		const _0x8b5714 = _0x44fc83.offsetWidth;
 		const _0xb507ab = _0x44fc83.offsetHeight;
