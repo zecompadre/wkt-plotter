@@ -304,57 +304,49 @@ app = (function ()
             return 'Unable to retrieve IP address';
         }
     }
-    async function getLocation()
-    {
-        return new Promise((resolve) =>
-        {
-            var toreturn = { latitude: latitude, longitude: longitude };
-            // Check browser support
-            if (!navigator.geolocation)
-            {
-                console.log('Geolocation is not supported by your browser');
-                return toreturn;
+   async function getLocation() {
+    return new Promise((resolve, reject) => {
+        // Check if geolocation is available
+        if (!navigator.geolocation) {
+            console.log('Geolocation is not supported by your browser');
+            reject('Geolocation not supported');
+            return;
+        }
+
+        // Handle errors
+        function handleError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    console.log('User denied the request for Geolocation');
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    console.log('Location information is unavailable');
+                    break;
+                case error.TIMEOUT:
+                    console.log('The request to get user location timed out');
+                    break;
+                case error.UNKNOWN_ERROR:
+                    console.log('An unknown error occurred while retrieving coordinates');
+                    break;
             }
+            reject('Error getting location');
+        }
 
-            // Handle errors
-            function handleError(error)
-            {
-                switch (error.code)
-                {
-                    case error.PERMISSION_DENIED:
-                        console.log('User denied the request for Geolocation');
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        console.log('Location information is unavailable');
-                        break;
-                    case error.TIMEOUT:
-                        console.log('The request to get user location timed out');
-                        break;
-                    case error.UNKNOWN_ERROR:
-                        console.log('An unknown error occurred while retrieving coordinates');
-                        break;
-                }
-		    return toreturn;
-            }
+        // Get current position
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const latitude = position.coords.latitude.toFixed(4);
+                const longitude = position.coords.longitude.toFixed(4);
 
-            // Get current position
-            toreturn = navigator.geolocation.getCurrentPosition(
-                (position) =>
-                {
-                    latitude = position.coords.latitude.toFixed(4);
-                    longitude = position.coords.longitude.toFixed(4);
+                console.log(`Latitude: ${latitude}`);
+                console.log(`Longitude: ${longitude}`);
 
-                    console.log(`Latitude: ${latitude}`);
-                    console.log(`Longitude: ${longitude}`);
-
-			return { latitude: latitude, longitude: longitude }
-                },
-                handleError
-            );
-
-            resolve(toreturn);
-        });
-    }
+                resolve({ latitude: latitude, longitude: longitude });
+            },
+            handleError
+        );
+    });
+}
 
     return {
         addInteraction: function (shape)
