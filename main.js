@@ -303,8 +303,11 @@ function getLocation() {
   // Get current position
   navigator.geolocation.getCurrentPosition(
     (position) => {
-      latitude = position.coords.latitude;
-      longitude = position.coords.longitude;
+      latitude = position.coords.latitude.toFixed(4);
+      longitude = position.coords.longitude.toFixed(4);
+
+      console.log(`Latitude: ${latitude}`);
+      console.log(`Longitude: ${longitude}`);
       center = ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
 
 	    return center;
