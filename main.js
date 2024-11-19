@@ -505,6 +505,9 @@ var app = (function () {
 			});
 		},
 		prepareObjets: function () {
+
+			var self = this;
+
 			main = document.querySelector(".maincontainer");
 			textarea = document.querySelector("#wktdefault textarea");
 
