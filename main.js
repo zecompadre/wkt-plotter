@@ -22,8 +22,8 @@
 	var editColor = '#ec7063';
 	var snapColor = '#34495e';
 
-	const latitude = -8.1234;
-      	const longitude =39.6945;
+	var latitude = -8.1234;
+      	var longitude =39.6945;
 	
 	var center = ol.proj.transform([latitude, longitude], 'EPSG:4326', 'EPSG:3857');	
 
