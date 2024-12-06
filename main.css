@@ -1,49 +1,28 @@
 :root {
 	--header-height: 60px;
-	--map-height: 75%;
-	--result-height: 25%;
+	--map-width: 75%;
+	--controls-width: 25%;
 	--button-size: 36px;
 	/* --navbar-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px; */
 	/* --navbar-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset; */
 	--navbar-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5), 0px 7px 13px -3px rgba(0, 0, 0, 0.3), 0px -3px 0px 0px rgba(0, 0, 0, 0.2) inset;
-	--color-white: #fff;
+	--color-base-white: #fff;
+	--color-theme-primary: #007bff;
 	--textarea-border-color: #ced4da;
 	--text-area-color: #495057;
 	--border-color-focused-textarea: #80bdff;
 	--box-shadow-text-area: rgba(0, 123, 255, .25);
-	--primary-header-color: #333;
-	--map-background-color: #ddd;
-	--color-primary: #007bff;
+	--primary-text-color: #333;
+	--site-background-color: #ddd;
 	--button-hover-background: rgb(0 0 0 / 5%);
 	--button-divider-color: #0000001c;
+	--header-color-text: #9ca3af;
+	--controls-background: #fff;
 
-	--indigo: #6610f2;
-	--purple: #6f42c1;
-	--pink: #e83e8c;
-	--red: #dc3545;
-	--orange: #fd7e14;
-	--yellow: #ffc107;
-	--green: #28a745;
-	--teal: #20c997;
-	--cyan: #17a2b8;
-
-	--gray: #6c757d;
-	--gray-dark: #343a40;
-	--color-primary: #007bff;
-	--secondary: #6c757d;
-	--success: #28a745;
-	--info: #17a2b8;
-	--warning: #ffc107;
-	--danger: #dc3545;
-	--light: #f8f9fa;
-	--dark: #343a40;
-	--breakpoint-xs: 0;
-	--breakpoint-sm: 576px;
-	--breakpoint-md: 768px;
-	--breakpoint-lg: 992px;
-	--breakpoint-xl: 1200px;
 	--font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	--font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+	--font-size: .85em;
 }
 
 * {
@@ -60,7 +39,6 @@ body {
 
 button,
 input,
-optgroup,
 select,
 textarea {
 	margin: 0;
@@ -69,126 +47,157 @@ textarea {
 	line-height: inherit;
 }
 
-textarea {
+#wrapper {
+	position: relative;
+	z-index: 0;
+	width: 100%;
+	height: 100vh;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+#map {
+	width: var(--map-width);
+	max-width: 100%;
+	max-height: 100%;
+	background-color: var(--site-background-color);
+}
+
+#controls {
+	width: var(--controls-width);
+	max-height: 100%;
+	background-color: var(--site-background-color);
+	border-left: 5px solid var(--button-divider-color);
+	box-shadow: -4px 0 4px rgba(0, 0, 0, 0.3);
+}
+
+#controls #header {
+	text-align: center;
+	/* border-bottom: 2px solid var(--button-divider-color); */
+}
+
+#controls #header img {
+	margin: 10px;
+}
+
+#controls textarea {
+	width: 100%;
 	display: block;
 	width: 100%;
-	padding: .375rem .75rem;
-	font-size: 1rem;
-	line-height: 1.5;
+	height: 150px;
+	padding: .35rem;
+	font-size: .7em;
+	line-height: 1.25em;
 	color: var(--text-area-color);
-	background-color: var(--color-white);
+	background-color: var(--color-base-white);
 	background-clip: padding-box;
 	border: 1px solid var(--textarea-border-color);
-	border-radius: .25rem;
 	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 	overflow: auto;
 	resize: vertical;
+	margin-bottom: 3.5px;
 }
 
-textarea:focus {
+#controls textarea:focus {
 	color: var(--text-area-color);
-	background-color: var(--color-white);
-	border-color: var(--border-color-focused-textarea);
+	background-color: var(--color-base-white);
+	/* border-color: var(--border-color-focused-textarea); */
 	outline: 0;
 	box-shadow: 0 0 0 .2rem var(--box-shadow-text-area);
 }
 
-.headercontainer {
-	padding: 0;
-	height: var(--header-height);
-	background-color: var(--primary-header-color);
-	color: var(--color-white);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 18px;
-}
-
-.headercontainer .title {
-	display: inline-block;
-	line-height: var(--header-height);
-	height: var(--header-height);
-	vertical-align: middle;
-	margin: 0;
-	padding: 0 10px 0 0;
-	color: var(--color-white);
-}
-
-.headercontainer .inspired {
-	display: inline-block;
-	line-height: var(--header-height);
-	height: var(--header-height);
-	font-size: 14px;
-	vertical-align: middle;
-	color: rgba(255, 255, 255, .5);
-	margin-left: 10px;
-}
-
-/* Container layout */
-.maincontainer {
-	display: flex;
+.flex-col {
 	flex-direction: column;
-	height: calc(100% - var(--header-height));
-	max-width: 100%;
 }
 
-/* Map container */
-.maincontainer .map-container {
-	flex: 0 0 var(--map-height);
-	position: relative;
-	height: var(--map-height);
+.flex {
+	display: flex;
 }
 
-.maincontainer.nowkt .map-container {
-	flex: 0 0 100%;
-	position: relative;
-	height: 100%;
+.grow-0 {
+	flex-grow: 0;
 }
 
-.maincontainer .map-container #map {
-	width: 100%;
-	height: 100%;
-	background-color: var(--map-background-color);
+.flex-none {
+	flex: none;
 }
 
-.maincontainer .map-container #overlay {
-	position: absolute;
-	top: 10px;
-	left: 10px;
-	z-index: 1;
+.tabs {
+	font-family: Arial, sans-serif;
 }
 
-.maincontainer .map-container .btns {
+.tab-buttons {
+	display: flex;
+	justify-content: space-between;
+	margin: 0 10px;
+	background-color: var(--color-base-white);
+	box-shadow: var(--navbar-shadow);
+}
+
+.tab-buttons button {
+	flex: 1;
+	/* Cada botão ocupa um espaço igual */
+	text-align: center;
+	/* Centraliza o texto dentro do botão */
+	padding: 10px 0;
+	/* Espaçamento vertical */
+	border: none;
+	background-color: #f0f0f0;
+	cursor: pointer;
+	border-radius: 5px 5px 0 0;
+	pointer-events: auto;
 	background-color: transparent;
-	z-index: 1;
-	position: absolute;
-	top: 280px;
-	right: 26px;
-	display: none;
+	border: 0;
+	box-sizing: border-box;
+	cursor: pointer;
+	display: block;
+	height: var(--button-size);
+	outline: none;
+	padding: 0;
+	width: var(--button-size);
+	margin: 0;
+	border-radius: 0;
+	border-right: 1px solid var(--button-divider-color);
 }
 
-/* Text area container */
-.maincontainer .result-container {
-	flex: 0 0 var(--result-height);
+.tab-buttons button:not(:last-child) {
+	border-right: 1px solid var(--button-divider-color);
+}
+
+.tab-buttons button:hover {
+	background-color: var(--button-hover-background);
+}
+
+.tab-buttons button.active,
+.tab-buttons button.active:hover {
+	background-color: var(--color-theme-primary);
+	color: var(--color-base-white);
+	margin-bottom: calc(var(--button-size) - 33px) !important;
+}
+
+.tab-content {
+	padding-top: 20px;
+}
+
+.tab-pane {
+	display: none;
 	position: relative;
-	height: var(--result-height);
-}
-
-.maincontainer.nowkt .result-container {
-	display: none;
-}
-
-.maincontainer .result-container .wkt-container {
+	color: var(--primary-text-color);
+	max-height: 30%;
+	overflow-y: auto;
+	-webkit-box-flex: 1;
+	-ms-flex: 1;
+	flex: 1;
 	width: 100%;
-	height: 100%;
+	max-width: 100%;
+	padding: 0 10px;
+	padding-top: 0;
+	margin-right: 0;
 }
 
-.maincontainer .result-container .wkt-container textarea {
-	width: 100%;
-	height: 100%;
-	resize: none;
-	padding: 5px;
-	font-size: 10px;
+.tab-pane.active {
+	display: block;
 }
 
 .ol-bar .ol-button {
@@ -231,12 +240,12 @@ textarea:focus {
 
 .ol-control.ol-bar .ol-bar.editbar {
 	margin-right: 5px;
-	background-color: var(--color-white);
+	background-color: var(--color-base-white);
 	box-shadow: var(--navbar-shadow);
 }
 
 .ol-control.ol-bar .ol-bar.editbar .ol-control.ol-bar.ol-control.ol-option-bar {
-	background-color: var(--color-white);
+	background-color: var(--color-base-white);
 	box-shadow: var(--navbar-shadow);
 }
 
@@ -247,14 +256,14 @@ textarea:focus {
 
 .ol-control.ol-bar .ol-bar.locationbar {
 	margin-left: 5px;
-	background-color: var(--color-white);
+	background-color: var(--color-base-white);
 	box-shadow: var(--navbar-shadow);
 }
 
 .ol-control.ol-bar.layerbar {
 	right: -.5em;
 	left: unset;
-	background-color: var(--color-white);
+	background-color: var(--color-base-white);
 	box-shadow: var(--navbar-shadow);
 }
 
@@ -278,7 +287,7 @@ textarea:focus {
 }
 
 .ol-zoom.ol-unselectable.ol-control {
-	background-color: var(--color-white);
+	background-color: var(--color-base-white);
 	border-radius: 4px;
 	box-shadow: var(--navbar-shadow);
 }
@@ -310,7 +319,7 @@ textarea:focus {
 }
 
 .ol-attribution.ol-unselectable.ol-control {
-	background-color: var(--color-white);
+	background-color: var(--color-base-white);
 	border-radius: 0;
 	box-shadow: var(--navbar-shadow);
 }
@@ -355,97 +364,46 @@ textarea:focus {
 	margin-left: 1px;
 }
 
-#xtooltip {
-	position: absolute;
-	background: rgba(0, 0, 0, 0.7);
-	/* Semi-transparent background */
+.hidden {
+	display: none;
+}
+
+.ol-tooltip {
+	position: relative;
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 4px;
 	color: white;
-	/* Text color */
-	padding: 8px 12px;
-	/* Padding inside the tooltip */
-	border-radius: 5px;
-	/* Rounded corners */
-	font-size: 14px;
-	/* Font size */
-	font-family: Arial, sans-serif;
-	/* Font style */
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-	/* Box shadow for better visibility */
-	pointer-events: none;
-	/* Disable pointer events to avoid interaction interference */
+	padding: 4px 8px;
+	opacity: 0.7;
 	white-space: nowrap;
-	/* Prevent text wrapping */
-	z-index: 1000;
-	/* Ensure it appears on top of the map */
+	font-size: 12px;
+	cursor: default;
+	user-select: none;
 }
 
-/* Tooltip arrow (optional) */
-#xtooltip::after {
-	content: "";
-	position: absolute;
-	border-width: 6px;
-	border-style: solid;
-	border-color: rgba(0, 0, 0, 0.7) transparent transparent transparent;
-	/* Arrow color */
-	top: 100%;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-/* Cool modern tooltip style */
-#tooltip {
-	position: absolute;
-	background: linear-gradient(135deg, rgba(45, 45, 45, 0.8), rgba(0, 0, 0, 0.6));
-	/* Gradient background */
-	color: #f0f0f0;
-	/* Light grey text for contrast */
-	padding: 12px 16px;
-	/* Slightly larger padding for more space */
-	border-radius: 8px;
-	/* Rounded corners for a smooth look */
-	font-size: 16px;
-	/* Slightly larger text */
-	font-family: 'Helvetica Neue', sans-serif;
-	/* Modern font */
+.ol-tooltip-measure {
+	opacity: 1;
 	font-weight: bold;
-	/* Bold text for emphasis */
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-	/* Soft shadow for a 3D effect */
-	pointer-events: none;
-	/* Avoid interfering with map interactions */
-	z-index: 1000;
-	/* Make sure it shows above other elements */
-	white-space: nowrap;
-	/* Prevent text wrapping */
-	transition: all 0.2s ease-in-out;
-	/* Smooth transition effect */
 }
 
-/* Tooltip arrow - sleek triangle with rounded edges */
-#vtooltip::after {
+.ol-tooltip-static {
+	background-color: #ffcc33;
+	color: black;
+	/* border: 1px solid white; */
+}
+
+.ol-tooltip-measure:before,
+.ol-tooltip-static:before {
+	border-top: 6px solid rgba(0, 0, 0, 0.5);
+	border-right: 6px solid transparent;
+	border-left: 6px solid transparent;
 	content: "";
 	position: absolute;
-	border-width: 10px;
-	border-style: solid;
-	border-color: transparent transparent rgba(45, 45, 45, 0.8) transparent;
-	/* Gradient color of the tooltip */
-	top: 100%;
+	bottom: -6px;
+	margin-left: -7px;
 	left: 50%;
-	transform: translateX(-50%);
 }
 
-/* Tooltip fade-in effect */
-#tooltip.fade-in {
-	opacity: 0;
-	animation: fadeIn 0.3s forwards;
-}
-
-@keyframes fadeIn {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
+.ol-tooltip-static:before {
+	border-top-color: #ffcc33;
 }

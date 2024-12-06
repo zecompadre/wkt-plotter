@@ -1,5 +1,131 @@
 var app = (function () {
 
+	class LightUI {
+		constructor() {
+			this.initSelects();
+		}
+
+		// Enhance native selects
+		initSelects() {
+			document.querySelectorAll('.ui-select').forEach(select => {
+				// Optional: Add additional behaviors or logging if needed
+				select.addEventListener('change', (e) => {
+					console.log(`Selected value: ${e.target.value}`);
+				});
+			});
+		}
+	}
+
+	class SettingsManager {
+		constructor(containerId, storageKey, callbacks = []) {
+			this.container = document.getElementById(containerId);
+			this.storageKey = storageKey;
+			this.callbacks = callbacks; // Lista de callbacks no formato especificado
+
+			if (!this.container) {
+				throw new Error("Container not found");
+			}
+
+			this.loadSettings();
+			this.attachEventListeners();
+		}
+
+		// Carregar configurações do localStorage
+		loadSettings() {
+			const savedSettings = JSON.parse(localStorage.getItem(this.storageKey)) || {};
+
+			this.container.querySelectorAll('input, select').forEach((element) => {
+				const { id, type } = element;
+
+				if (id && id in savedSettings) {
+					if (type === 'checkbox') {
+						element.checked = savedSettings[id];
+					} else {
+						element.value = savedSettings[id];
+					}
+				}
+			});
+		}
+
+		// Salvar configurações no localStorage
+		saveSettings() {
+			const settings = {};
+
+			this.container.querySelectorAll('input, select').forEach((element) => {
+				const { id, type } = element;
+
+				if (id) {
+					settings[id] = type === 'checkbox' ? element.checked : element.value;
+				}
+			});
+
+			localStorage.setItem(this.storageKey, JSON.stringify(settings));
+		}
+
+		getSettings() {
+			return JSON.parse(localStorage.getItem(this.storageKey)) || {};
+		}
+
+		getSettingById(id) {
+			const settings = this.getSettings();
+			return settings[id] !== undefined ? settings[id] : null;
+		}
+
+		// Adicionar ouvintes de eventos para os elementos baseados nos callbacks
+		attachEventListeners() {
+
+			// Garantir que todos os inputs e selects tenham eventos padrão para salvar configurações
+			this.container.querySelectorAll('input, select').forEach((element) => {
+				element.addEventListener('change', () => this.saveSettings());
+			});
+
+			this.callbacks.forEach(({ id, type, callback }) => {
+				const element = this.container.querySelector(`#${id}`);
+				if (element) {
+					element.addEventListener(type, (e) => callback(e, this));
+				}
+			});
+		}
+
+		// Adicionar um novo evento com callback dinamicamente
+		addEvent(elementId, eventType, eventCallback) {
+			this.callbacks.push({ id: elementId, type: eventType, callback: eventCallback });
+
+			// Garantir que o novo evento seja aplicado ao elemento correspondente
+			const element = this.container.querySelector(`#${elementId}`);
+			if (element) {
+				element.addEventListener(eventType, (e) => eventCallback(e, this));
+			}
+		}
+	}
+
+	class TabSystem {
+		constructor(container) {
+			this.container = container;
+			this.buttons = container.querySelectorAll('.tab-buttons button');
+			this.panes = container.querySelectorAll('.tab-pane');
+
+			this.addEventListeners();
+		}
+
+		addEventListeners() {
+			this.buttons.forEach(button => {
+				button.addEventListener('click', () => this.showTab(button));
+			});
+		}
+
+		showTab(button) {
+			// Remove active class from all buttons and panes
+			this.buttons.forEach(btn => btn.classList.remove('active'));
+			this.panes.forEach(pane => pane.classList.remove('active'));
+
+			// Add active class to the clicked button and the corresponding pane
+			button.classList.add('active');
+			const targetPane = this.container.querySelector(`#${button.dataset.tab}`);
+			if (targetPane) targetPane.classList.add('active');
+		}
+	}
+
 	class Translation {
 		constructor() {
 			this.language = navigator.language || 'en'; // Default to English if no language is detected
@@ -98,6 +224,116 @@ var app = (function () {
 		// Get the current language
 		getCurrentLanguage() {
 			return this.language;
+		}
+	}
+
+	/**
+	 * Utility class for handling WKT (Well-Known Text) operations,
+	 * including saving, loading, removing, updating, and interacting with the clipboard.
+	 */
+	class WKTUtilities {
+		/**
+		 * Internal variable to hold the WKTs array.
+		 */
+		static wkts = [];
+
+		static clear(fromMap, fromStorage) {
+			if (fromStorage) {
+				localStorage.removeItem(lfkey);
+				console.log("Removed WKTs from localStorage.");
+			}
+			if (fromMap) {
+				map.set("wkts", []);
+				console.log("Removed WKTs from map.");
+			}
+		}
+
+		/**
+		 * Loads WKT data from localStorage and updates the internal wkts variable.
+		 */
+		static load() {
+			if (settingsManager.getSettingById('wkt-presistent')) {
+				const storedData = localStorage.getItem(lfkey) || "[]";
+				this.wkts = JSON.parse(storedData);
+			} else {
+				this.wkts = [];
+			}
+			map.set("wkts", this.wkts); // Sync with the map
+			console.log("Loaded WKTs:", this.wkts);
+		}
+
+		/**
+		 * Saves the current WKT data to localStorage and syncs with the map.
+		 */
+		static save() {
+			if (settingsManager.getSettingById('wkt-presistent')) {
+				localStorage.setItem(lfkey, JSON.stringify(this.wkts));
+			}
+			map.set("wkts", this.wkts); // Update the map's WKT collection
+			console.log("Saved WKTs:", this.wkts);
+		}
+
+		/**
+		 * Removes a WKT entry by its ID.
+		 * @param {string} id - The ID of the WKT to remove.
+		 */
+		static remove(id) {
+			this.wkts = this.wkts.filter((item) => item.id !== id);
+			this.save();
+			console.log(`Removed WKT with ID: ${id}`);
+		}
+
+		/**
+		 * Adds a new WKT entry for a given feature after generating a checksum.
+		 * @param {ol.Feature} feature - The OpenLayers feature to add.
+		 * @async
+		 */
+		static async add(feature) {
+			try {
+				const wkt = utilities.getFeatureWKT(feature);
+
+				if (!wkt) {
+					throw new Error("Feature WKT is undefined or invalid.");
+				}
+
+				const checksum = await utilities.generateChecksum(wkt);
+
+				// Check if the WKT already exists based on the checksum
+				if (!this.wkts.some((item) => item.id === checksum)) {
+					this.wkts.push({ id: checksum, wkt });
+					feature.setId(checksum); // Assign checksum as feature ID
+					this.save(); // Persist changes
+					console.log("Added new WKT:", { id: checksum, wkt });
+				} else {
+					console.log("WKT already exists with ID:", checksum);
+				}
+			} catch (error) {
+				console.error("Error adding WKT:", error.message);
+			}
+		}
+
+		/**
+		 * Retrieves all WKT entries.
+		 * @returns {Array} - An array of WKT objects.
+		 */
+		static get() {
+			return this.wkts;
+		}
+
+		/**
+		 * Updates an existing WKT entry by ID.
+		 * @param {string} id - The ID of the WKT to update.
+		 * @param {string} wkt - The updated WKT string.
+		 */
+		static update(id, wkt) {
+			const updated = this.wkts.find((item) => item.id === id);
+			if (updated) {
+				updated.wkt = wkt;
+				this.save();
+				console.log(`Updated WKT with ID: ${id}`, updated);
+			} else {
+				console.warn(`WKT with ID: ${id} not found.`);
+			}
 		}
 	}
 
@@ -223,6 +459,23 @@ var app = (function () {
 		}
 	}
 
+	/**
+	 * Format area output.
+	 * @param {Polygon} polygon The polygon.
+	 * @return {string} Formatted area.
+	 */
+	const formatArea = function (feature) {
+		const area = ol.sphere.getArea(feature.getGeometry());
+		if (area === 0) return '';
+		let output;
+		if (area > 10000) {
+			output = Math.round((area / 1000000) * 100) / 100 + ' ' + 'km²';
+		} else {
+			output = Math.round(area * 100) / 100 + ' ' + 'm²';
+		}
+		return output;
+	};
+
 	const projections = {
 		geodetic: 'EPSG:4326',
 		mercator: 'EPSG:3857',
@@ -243,11 +496,13 @@ var app = (function () {
 
 	const loading = new Loading({ dotCount: 4, dotSize: 25 });
 
+	let settingsManager = null;
+
 	const translator = new Translation();
 
-	let map, attributionControl, vectorLayer, format, defaultCenter, userLocation, featureCollection, main, textarea, modifyInteraction, undoInteraction;
+	let map, attributionControl, vectorLayer, format, defaultCenter, userLocation, featureCollection, textarea, modifyInteraction, undoInteraction;
 
-	let lfkey = "zecompadre-wkt";
+	let lfkey = "wkt-objects";
 
 	let mapControls = {};
 
@@ -649,8 +904,47 @@ var app = (function () {
 					console.error('oops, something went wrong!', error);
 					loading.hide(); // Hide the loading overlay if an error occurs
 				});
-		}
+		},
 
+		/**
+		 * Reads text from the clipboard, focusing on text containing "POLYGON".
+		 * @async
+		 * @returns {string} - The WKT string from the clipboard, or an empty string if not found.
+		 */
+		readClipboard: async function () {
+			let returnVal = "";
+			try {
+				textarea.focus();
+				const permission = await navigator.permissions.query({ name: "clipboard-read" });
+
+				if (permission.state === "denied") {
+					throw new Error("Not allowed to read clipboard.");
+				}
+
+				const text = await navigator.clipboard.readText();
+				if (text.includes("POLYGON")) {
+					returnVal = text;
+					await navigator.clipboard.writeText(""); // Clear clipboard
+				}
+			} catch (error) {
+				console.error("Error reading clipboard:", error.message);
+			}
+			return returnVal;
+		},
+
+		/**
+		 * Adds a WKT entry from an element's value, then reloads the WKTs into the map.
+		 * @param {HTMLTextAreaElement} ele - The HTML element containing the WKT value.
+		 * @async
+		 */
+		paste: async () => {
+			try {
+				await mapUtilities.loadWKTs(true, true);
+				//await mapUtilities.reviewLayout(false);
+			} catch (error) {
+				console.error("Error pasting WKT:", error);
+			}
+		},
 	};
 
 	const featureUtilities = {
@@ -841,7 +1135,7 @@ var app = (function () {
 		 * 
 		 * @returns {void}
 		 */
-		addToFeatures: function (id, wkt) {
+		addToFeatures: (id, wkt) => {
 			let newFeature;
 			const wktString = wkt || textarea.value;
 
@@ -879,6 +1173,8 @@ var app = (function () {
 			// Reset the textarea style on successful feature addition
 			textarea.style.borderColor = "";
 			textarea.style.backgroundColor = "";
+
+			return newFeature;
 		}
 	};
 
@@ -928,12 +1224,10 @@ var app = (function () {
 
 				if (featureCount > 0) {
 					// Features exist: update layout and controls accordingly
-					main.classList.remove("nowkt");
 					featureUtilities.createFromAllFeatures();
 					mapControls.centerObjectsBtn.setVisible(true);
 				} else {
 					// No features: adjust layout and hide controls
-					main.classList.add("nowkt");
 					mapControls.selectBar.setVisible(false);
 					mapControls.centerObjectsBtn.setVisible(false);
 				}
@@ -956,7 +1250,7 @@ var app = (function () {
 		 */
 		center: async function () {
 			try {
-				if (!main.classList.contains("nowkt") && featureCollection.getLength() > 0) {
+				if (featureCollection.getLength() > 0) {
 					// Create an empty extent and calculate the combined extent of all features
 					const extent = ol.extent.createEmpty();
 					featureCollection.forEach(feature => {
@@ -1007,18 +1301,18 @@ var app = (function () {
 		 * @param {boolean} [readcb=false] - If true, reads WKT from clipboard before processing.
 		 * @returns {Promise<void>} - An asynchronous function that updates the map and layout.
 		 */
-		loadWKTs: async function (readcb = false) {
+		loadWKTs: async function (readcb = false, frompaste = false) {
 			const self = this; // Capture the correct context
-
+			let newfeature = null;
 			try {
 				// Load existing WKT entries from localStorage
-				wktUtilities.load();
-				let wkts = wktUtilities.get();
+				WKTUtilities.load();
+				let wkts = WKTUtilities.get();
 
 				// Focus on textarea to prepare for possible WKT paste
 				textarea.focus();
 
-				let wkt = readcb ? await wktUtilities.readClipboard() : "";
+				let wkt = readcb ? await utilities.readClipboard() : "";
 
 				// Generate checksum for the WKT string
 				const checksum = await utilities.generateChecksum(wkt);
@@ -1040,156 +1334,27 @@ var app = (function () {
 				// Add the new WKT if it doesn't exist
 				if (wkt && !exists) {
 					wkts.push({ id: checksum, wkt });
-					featureUtilities.addToFeatures(checksum, wkt);
+					newfeature = featureUtilities.addToFeatures(checksum, wkt);
 				}
 
 				// Save the updated WKT list
 				map.set("wkts", wkts);
-				wktUtilities.save();
+				WKTUtilities.save();
 
 				// Add features to the map and review layout
 				await featureUtilities.addFeatures();
-				await self.reviewLayout(true);
+				await self.reviewLayout(!frompaste);
+
+				console.log(newfeature);
+
+				if (frompaste && newfeature) {
+					featureUtilities.centerOnFeature(newfeature);
+				}
 
 			} catch (error) {
 				console.error('Error loading WKTs:', error);
 			}
 		}
-
-	};
-
-	/**
-	 * Utility functions for handling WKT (Well-Known Text) operations,
-	 * including saving, loading, removing, updating, and interacting with the clipboard.
-	 */
-	const wktUtilities = {
-		/**
-		 * Loads WKT data from localStorage into the map.
-		 */
-		load: function () {
-			const wkts = localStorage.getItem(lfkey) || "[]";
-			map.set("wkts", JSON.parse(wkts));
-		},
-
-		/**
-		 * Removes a WKT entry from the map by its ID.
-		 * @param {string} id - The ID of the WKT to remove.
-		 */
-		remove: function (id) {
-			let wkts = map.get("wkts");
-			wkts = wkts.filter((item) => item.id !== id);
-			map.set("wkts", wkts);
-			this.save();
-		},
-
-		/**
-		 * Saves the current WKT data from the map into localStorage.
-		 */
-		save: function () {
-			localStorage.setItem(lfkey, JSON.stringify(this.get()));
-		},
-
-		/**
-		 * Adds a new WKT entry for a given feature after generating a checksum to ensure uniqueness.
-		 * Assigns the checksum as the feature's ID.
-		 * @param {ol.Feature} feature - The OpenLayers feature to add.
-		 * @async
-		 */
-		add: async function (feature) {
-			try {
-				// Convert the feature into its WKT representation
-				const wkt = utilities.getFeatureWKT(feature);
-
-				if (!wkt) {
-					throw new Error("Feature WKT is undefined or invalid.");
-				}
-
-				// Generate a checksum for the WKT
-				const checksum = await utilities.generateChecksum(wkt);
-
-				// Retrieve current WKTs from the map or initialize an empty array
-				const wkts = map.get("wkts") || [];
-
-				// Check if the WKT already exists based on the checksum
-				const exists = wkts.some((item) => item.id === checksum);
-
-				// Set the checksum as the feature's ID
-				feature.setId(checksum);
-
-				// Add the new WKT to the collection if it does not already exist
-				if (!exists) {
-					wkts.push({ id: checksum, wkt });
-					map.set("wkts", wkts); // Update the map's WKT collection
-					this.save(); // Persist changes to localStorage
-				}
-			} catch (error) {
-				console.error("Error adding WKT:", error.message);
-			}
-		},
-
-		/**
-		 * Retrieves all WKT entries from the map.
-		 * @returns {Array} - An array of WKT objects.
-		 */
-		get: function () {
-			return map.get("wkts") || [];
-		},
-
-		/**
-		 * Updates an existing WKT entry by ID.
-		 * @param {string} id - The ID of the WKT to update.
-		 * @param {string} wkt - The updated WKT string.
-		 */
-		update: function (id, wkt) {
-			const wkts = map.get("wkts") || [];
-			wkts.forEach((item) => {
-				if (item.id === id) {
-					item.wkt = wkt;
-				}
-			});
-			map.set("wkts", wkts);
-			this.save();
-		},
-
-		/**
-		 * Reads text from the clipboard, focusing on text containing "POLYGON".
-		 * @async
-		 * @returns {string} - The WKT string from the clipboard, or an empty string if not found.
-		 */
-		readClipboard: async function () {
-			let returnVal = "";
-			try {
-				textarea.focus();
-				const permission = await navigator.permissions.query({ name: "clipboard-read" });
-
-				if (permission.state === "denied") {
-					throw new Error("Not allowed to read clipboard.");
-				}
-
-				const text = await navigator.clipboard.readText();
-				if (text.includes("POLYGON")) {
-					returnVal = text;
-					await navigator.clipboard.writeText(""); // Clear clipboard
-				}
-			} catch (error) {
-				console.error("Error reading clipboard:", error.message);
-			}
-			return returnVal;
-		},
-
-		/**
-		 * Adds a WKT entry from an element's value, then reloads the WKTs into the map.
-		 * @param {HTMLTextAreaElement} ele - The HTML element containing the WKT value.
-		 * @async
-		 */
-		paste: async () => {
-			try {
-				await mapUtilities.loadWKTs(true);
-				await mapUtilities.reviewLayout(true);
-			} catch (error) {
-				console.error("Error pasting WKT:", error);
-			}
-		},
 	};
 
 	/**
@@ -1234,30 +1399,29 @@ var app = (function () {
 
 		const tooltip = new ol.Overlay({
 			element: document.getElementById('tooltip'),
-			offset: [15, 15],
-			positioning: 'bottom-left',
+			offset: [0, -15],
+			positioning: 'bottom-center',
+			stopEvent: false,
+			insertFirst: false,
 		});
 		map.addOverlay(tooltip);
 
 		map.on('pointermove', function (event) {
-			const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
-				return feature;
-			});
 
-			if (feature) {
-				// Calculate area of the polygon in square meters
-				const areaInSquareMeters = ol.sphere.getArea(feature.getGeometry());
+			if (settingsManager.getSettingById('show-area')) {
+				const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
+					return feature;
+				});
 
-				// Convert to square feet
-				//const areaInSquareFeet = areaInSquareMeters * 10.7639;
-
-				// Display the area in the tooltip
-				tooltip.setPosition(event.coordinate);
-				tooltip.getElement().innerHTML = `Area: ${areaInSquareMeters.toFixed(2)} m²`;
-				tooltip.getElement().style.display = 'block';
-				tooltip.getElement().classList.add('fade-in'); // Apply fade-in effect
-			} else {
-				tooltip.getElement().style.display = 'none';
+				tooltip.getElement().className = 'ol-tooltip hidden';
+				if (feature) {
+					let area = formatArea(feature);
+					if (area !== '') {
+						tooltip.setPosition(event.coordinate);
+						tooltip.getElement().innerHTML = area;
+						tooltip.getElement().className = 'ol-tooltip ol-tooltip-static';
+					}
+				}
 			}
 		});
 
@@ -1360,7 +1524,7 @@ var app = (function () {
 		// Keyboard shortcuts for interaction
 		document.addEventListener('keydown', handleKeyboardShortcuts);
 
-		document.addEventListener('paste', wktUtilities.paste);
+		document.addEventListener('paste', utilities.paste);
 
 		/**
 		 * Creates a control bar.
@@ -1402,7 +1566,7 @@ var app = (function () {
 			if (evt.deselected.length > 0) {
 				evt.deselected.forEach(feature => {
 					textarea.value = utilities.getFeatureWKT(feature);
-					wktUtilities.update(feature.getId(), textarea.value);
+					WKTUtilities.update(feature.getId(), textarea.value);
 					featureUtilities.createFromAllFeatures();
 				});
 				mapControls.selectBar.setVisible(false);
@@ -1433,7 +1597,7 @@ var app = (function () {
 
 						console.log(feature, feature.getId());
 
-						wktUtilities.remove(feature.getId());
+						WKTUtilities.remove(feature.getId());
 						for (var i = 0, f; f = features.item(i); i++) {
 							vectorLayer.getSource().removeFeature(f);
 						}
@@ -1473,7 +1637,7 @@ var app = (function () {
 		 * @returns {ol.interaction.ModifyFeature} The created modify interaction.
 		 */
 		function createModifyInteraction(selectCtrl) {
-			return new ol.interaction.ModifyTouch({
+			return new ol.interaction.ModifyFeature({
 				features: selectCtrl.getInteraction().getFeatures(),
 				//style: utilities.modifyStyleFunction,
 				style: utilities.modifyStyleFunction(colors.edit),
@@ -1505,7 +1669,7 @@ var app = (function () {
 		 * @param {ol.events.Event} evt - The event triggered by the draw interaction.
 		 */
 		async function handleDrawEnd(evt) {
-			await wktUtilities.add(evt.feature);
+			await WKTUtilities.add(evt.feature);
 			mapUtilities.reviewLayout(false);
 			featureUtilities.centerOnFeature(evt.feature);
 			mapControls.selectCtrl.setActive(true);
@@ -1657,7 +1821,23 @@ var app = (function () {
 
 			setupMap();
 
-			mapUtilities.loadWKTs(true);
+			document.addEventListener('DOMContentLoaded', () => {
+				new LightUI();
+			});
+
+			const tabContainer = document.querySelector('#controls');
+			if (tabContainer) new TabSystem(tabContainer);
+
+			settingsManager = new SettingsManager('settingsContainer', 'wkt-settings');
+			settingsManager.addEvent('wkt-presistent', 'change', (e, manager) => {
+				console.log('O campo "kt-presistent" foi alterado para:', e.target.checked);
+				if (e.target.checked)
+					WKTUtilities.save();
+				else
+					WKTUtilities.clear(false, true);
+			});
+
+			mapUtilities.loadWKTs(true, false);
 
 			/**
 			 * Obtém o endereço IP do usuário e sua localização geográfica (latitude e longitude).

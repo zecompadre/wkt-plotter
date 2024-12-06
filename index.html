@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>WKT Plotter</title>
+	<title>WKT Playground</title>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -31,31 +31,63 @@
 	<link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 
-	<script src="/main.js?v=202412022358"></script>
-	<link rel="stylesheet" href="/main.css?v=202412022358">
+	<script src="/main.js?v=202412062200"></script>
+	<link href="/main.css?v=202412062200" rel="stylesheet">
+	<link href="/theme1.css?v=202412062200" rel="stylesheet">
 
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-HQWSTRZMSN"></script>
-	<script>
+	<!-- <script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag() { dataLayer.push(arguments); }
 		gtag('js', new Date());
 		gtag('config', 'G-HQWSTRZMSN');
-	</script>
+	</script> -->
 </head>
 
 <body onload="app.init()">
-	<nav class="headercontainer">
-		<img src="logo.png" title="WKT Plotter" width="167" height="50">
-		<a class="inspired" href="https://github.com/clydedacruz/openstreetmap-wkt-playground" target="_inspired">Inspired By</a>
-	</nav>
-	<div class="maincontainer">
-		<div class="map-container">
-			<div id="map" class="map" style="z-index: 0"></div>
-			<div id="tooltip" style="display: none;"></div>
-		</div>
-		<div class="result-container nowtk">
-			<div id='wktdefault' class='wkt-container'><textarea class='form-control' rows='5'></textarea></div>
+	<div id="wrapper">
+		<div id="map" class="map" style="z-index: 0"></div>
+		<div id="tooltip" class="ol-tooltip hidden"></div>
+		<div id="controls">
+			<div id="header" class="flex-none grow-0">
+				<img src="logo.svg?v=202412062200" title="WKT Playground" width="160" height="50">
+				<div class="tabs">
+					<div class="tab-buttons">
+						<button data-tab="importContainer" class="active">Import</button>
+						<button data-tab="settingsContainer">Settings</button>
+					</div>
+				</div>
+			</div>
+			<div class="tab-content">
+				<div id="importContainer" class="tab-pane active">
+					<form>
+						<div id='wktdefault' class='wkt-container'><textarea rows='5'></textarea></div>
+					</form>
+				</div>
+				<div id="settingsContainer" class="settings tab-pane">
+					<form id="light-form">
+						<div class="ui-checkbox">
+							<input type="checkbox" id="show-area">
+							<label for="show-area">Mostrar Area</label>
+						</div>
+						<div class="ui-checkbox">
+							<input type="checkbox" id="wkt-presistent">
+							<label for="wkt-presistent">Reter Objectos</label>
+						</div>
+						<!-- <div class="ui-select-container">
+							<select class="ui-select" id="styled-select">
+								<option value="" disabled selected>Choose an option</option>
+								<option value="option1">Option 1</option>
+								<option value="option2">Option 2</option>
+								<option value="option3">Option 3</option>
+							</select>
+						</div>
+
+						<input type="text" id="text-input" class="ui-input" placeholder="Type here"> -->
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
