@@ -1540,3 +1540,5 @@ var app = (function () {
 	};
 
 }());
+
+window.app = app;
