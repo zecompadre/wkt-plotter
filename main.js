@@ -35,7 +35,10 @@ var app = (function () {
 			const savedSettings = JSON.parse(localStorage.getItem(this.storageKey)) || {};
 
 			this.container.querySelectorAll('input, select').forEach((element) => {
-				const { id, type } = element;
+				const {
+					id,
+					type
+				} = element;
 
 				if (id && id in savedSettings) {
 					if (type === 'checkbox') {
@@ -52,7 +55,10 @@ var app = (function () {
 			const settings = {};
 
 			this.container.querySelectorAll('input, select').forEach((element) => {
-				const { id, type } = element;
+				const {
+					id,
+					type
+				} = element;
 
 				if (id) {
 					settings[id] = type === 'checkbox' ? element.checked : element.value;
@@ -79,7 +85,11 @@ var app = (function () {
 				element.addEventListener('change', () => this.saveSettings());
 			});
 
-			this.callbacks.forEach(({ id, type, callback }) => {
+			this.callbacks.forEach(({
+				id,
+				type,
+				callback
+			}) => {
 				const element = this.container.querySelector(`#${id}`);
 				if (element) {
 					element.addEventListener(type, (e) => callback(e, this));
@@ -89,7 +99,11 @@ var app = (function () {
 
 		// Adicionar um novo evento com callback dinamicamente
 		addEvent(elementId, eventType, eventCallback) {
-			this.callbacks.push({ id: elementId, type: eventType, callback: eventCallback });
+			this.callbacks.push({
+				id: elementId,
+				type: eventType,
+				callback: eventCallback
+			});
 
 			// Garantir que o novo evento seja aplicado ao elemento correspondente
 			const element = this.container.querySelector(`#${elementId}`);
@@ -300,10 +314,16 @@ var app = (function () {
 
 				// Check if the WKT already exists based on the checksum
 				if (!this.wkts.some((item) => item.id === checksum)) {
-					this.wkts.push({ id: checksum, wkt });
+					this.wkts.push({
+						id: checksum,
+						wkt
+					});
 					feature.setId(checksum); // Assign checksum as feature ID
 					this.save(); // Persist changes
-					console.log("Added new WKT:", { id: checksum, wkt });
+					console.log("Added new WKT:", {
+						id: checksum,
+						wkt
+					});
 				} else {
 					console.log("WKT already exists with ID:", checksum);
 				}
@@ -349,7 +369,12 @@ var app = (function () {
 		 * @param {number} [options.dotGap=10] - Gap between dots in pixels.
 		 * @param {number} [options.animationDuration=1.4] - Duration of the bounce animation in seconds.
 		 */
-		constructor({ dotCount = 4, dotSize = 15, dotGap = 10, animationDuration = 1.4 } = {}) {
+		constructor({
+			dotCount = 4,
+			dotSize = 15,
+			dotGap = 10,
+			animationDuration = 1.4
+		} = {}) {
 			/**
 			 * Colors used for the dots.
 			 * @type {string[]}
@@ -454,7 +479,9 @@ var app = (function () {
 				if (this.overlay.parentNode) {
 					document.body.removeChild(this.overlay);
 				}
-			}, { once: true });
+			}, {
+				once: true
+			});
 			this.isVisible = false;
 		}
 	}
@@ -494,13 +521,16 @@ var app = (function () {
 		zoom: 6,
 	};
 
-	const loading = new Loading({ dotCount: 4, dotSize: 25 });
+	const loading = new Loading({
+		dotCount: 4,
+		dotSize: 25
+	});
 
 	let settingsManager = null;
 
 	const translator = new Translation();
 
-	let map, attributionControl, vectorLayer, format, defaultCenter, userLocation, featureCollection, textarea, modifyInteraction, undoInteraction;
+	let map, attributionControl, vectorLayer, format, defaultCenter, userLocation, featureCollection, textarea, wktcontainer, modifyInteraction, undoInteraction;
 
 	let lfkey = "wkt-objects";
 
@@ -576,8 +606,8 @@ var app = (function () {
 
 			// Extract the red, green, and blue components using bitwise operations
 			const r = (bigint >> 16) & 255; // Extract the first 8 bits (red)
-			const g = (bigint >> 8) & 255;  // Extract the next 8 bits (green)
-			const b = bigint & 255;         // Extract the last 8 bits (blue)
+			const g = (bigint >> 8) & 255; // Extract the next 8 bits (green)
+			const b = bigint & 255; // Extract the last 8 bits (blue)
 
 			// Return the color in RGBA format with the specified opacity
 			return `rgba(${r}, ${g}, ${b}, ${opacity})`;
@@ -639,7 +669,9 @@ var app = (function () {
 		 */
 		createVectorLayer: () => {
 			vectorLayer = new ol.layer.Vector({
-				source: new ol.source.Vector({ features: featureCollection }), // Set the features in the vector source
+				source: new ol.source.Vector({
+					features: featureCollection
+				}), // Set the features in the vector source
 				style: utilities.genericStyleFunction(colors.normal), // Apply a style function to the layer
 			});
 			vectorLayer.set('displayInLayerSwitcher', false); // Prevent the layer from appearing in the layer switcher
@@ -708,15 +740,25 @@ var app = (function () {
 		genericStyleFunction: (color) => [
 			new ol.style.Style({
 				image: new ol.style.RegularShape({
-					fill: new ol.style.Fill({ color: colors.normal }),
-					stroke: new ol.style.Stroke({ color: colors.normal, width: 3 }),
+					fill: new ol.style.Fill({
+						color: colors.normal
+					}),
+					stroke: new ol.style.Stroke({
+						color: colors.normal,
+						width: 3
+					}),
 					points: 4, // Square shape
 					radius: 10, // Size of the shape
 					radius2: 0, // Inner radius (smaller)
 					angle: 0, // No rotation
 				}),
-				fill: new ol.style.Fill({ color: utilities.hexToRgbA(color, '0.3') }), // Apply a semi-transparent fill for the feature
-				stroke: new ol.style.Stroke({ color, width: 2 }), // Apply stroke color and width to the feature
+				fill: new ol.style.Fill({
+					color: utilities.hexToRgbA(color, '0.3')
+				}), // Apply a semi-transparent fill for the feature
+				stroke: new ol.style.Stroke({
+					color,
+					width: 2
+				}), // Apply stroke color and width to the feature
 			}),
 		],
 		/**
@@ -751,8 +793,13 @@ var app = (function () {
 					var styles = [
 						new ol.style.Style({
 							image: new ol.style.RegularShape({
-								fill: new ol.style.Fill({ color: colors.normal }),
-								stroke: new ol.style.Stroke({ color: colors.normal, width: 3 }),
+								fill: new ol.style.Fill({
+									color: colors.normal
+								}),
+								stroke: new ol.style.Stroke({
+									color: colors.normal,
+									width: 3
+								}),
 								points: 4, // Square shape
 								radius: 10, // Size of the shape
 								radius2: 0, // Inner radius (smaller)
@@ -861,7 +908,7 @@ var app = (function () {
 				navigator.geolocation.getCurrentPosition(
 					(position) => {
 						resolve({
-							latitude: position.coords.latitude.toFixed(4),  // Round latitude to 4 decimal places
+							latitude: position.coords.latitude.toFixed(4), // Round latitude to 4 decimal places
 							longitude: position.coords.longitude.toFixed(4), // Round longitude to 4 decimal places
 						});
 					},
@@ -915,13 +962,18 @@ var app = (function () {
 			let returnVal = "";
 			try {
 				textarea.focus();
-				const permission = await navigator.permissions.query({ name: "clipboard-read" });
+				const permission = await navigator.permissions.query({
+					name: "clipboard-read"
+				});
 
 				if (permission.state === "denied") {
 					throw new Error("Not allowed to read clipboard.");
 				}
 
 				const text = await navigator.clipboard.readText();
+
+				//console.log("readClipboard", text);
+
 				if (text.includes("POLYGON")) {
 					returnVal = text;
 					await navigator.clipboard.writeText(""); // Clear clipboard
@@ -990,13 +1042,54 @@ var app = (function () {
 		 * @returns {void} This method does not return a value. It modifies the textarea input value.
 		 */
 		createFromAllFeatures: () => {
+
+			var wkt = featureUtilities.convertFeaturesToWKT(vectorLayer);
+			textarea.value = wkt[0];
+			return;
 			const multi = featureUtilities.featuresToMultiPolygon(); // Get MultiPolygon geometry from all features
+
+			//const features = vectorLayer.getSource().getFeatures();
+
 			if (multi) {
 				const geo = multi.getGeometry().transform(projections.mercator, projections.geodetic); // Transform the geometry to Geodetic
 				textarea.value = format.writeGeometry(geo); // Write the WKT representation to textarea
 			} else {
 				console.warn('No valid polygons or multipolygons found to create a MultiPolygon.');
 			}
+		},
+		convertFeaturesToWKT: (vectorLayer) => {
+			const source = vectorLayer.getSource();
+			const features = source.getFeatures();
+
+			// Create a WKT format object
+			const wktFormat = new ol.format.WKT();
+
+			// Initialize an empty array to store WKT representations
+			const wktRepresentations = [];
+
+			// Iterate through each feature
+			features.forEach(function (feature) {
+				try {
+					// Get the geometry of the feature
+					const geometry = feature.getGeometry();
+
+					// Check if the geometry exists
+					if (geometry) {
+						// Convert the geometry to WKT
+						const geom = geometry.clone();
+						geom.transform(projections.mercator, projections.geodetic); // Transform the geometry to Geodetic
+						const wktRepresentation = wktFormat.writeGeometry(geom, {
+							decimals: 5
+						});
+						// Add the WKT representation to the array
+						wktRepresentations.push(wktRepresentation);
+					}
+				} catch (error) {
+					console.error(`Error converting feature ${feature.getId()} to WKT:`, error);
+				}
+			});
+
+			return wktRepresentations;
 		},
 		/**
 		 * Centers and zooms the map view to fit the provided feature's geometry.
@@ -1022,7 +1115,10 @@ var app = (function () {
 			map.getView().setCenter(center);
 
 			// Fit the map view to the extent, with padding around the feature
-			map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50] });
+			map.getView().fit(extent, {
+				size: map.getSize(),
+				padding: [50, 50, 50, 50]
+			});
 		},
 		/**
 		 * Centers and zooms the map view to fit all features within the specified vector layer's extent.
@@ -1064,9 +1160,9 @@ var app = (function () {
 			const features = vectorLayer.getSource().getFeatures();
 
 			// Filter for features of type 'Polygon' or 'MultiPolygon'
-			const polygons = features.filter((f) =>
-				['Polygon', 'MultiPolygon'].includes(f.getGeometry().getType())
-			);
+			const polygons = features.filter((f) => ['Polygon', 'MultiPolygon'].includes(f.getGeometry().getType()));
+
+			//console.log("polygons.length", polygons.length);
 
 			// If no polygons were found, return null
 			if (polygons.length === 0) return null;
@@ -1084,7 +1180,7 @@ var app = (function () {
 			// Otherwise, combine the geometries into a MultiPolygon and return
 			return new ol.Feature(
 				new ol.geom.MultiPolygon(
-					geometries.map((g) => g.getCoordinates())  // Flatten all coordinates into a MultiPolygon
+					geometries.map((g) => g.getCoordinates()) // Flatten all coordinates into a MultiPolygon
 				)
 			);
 		},
@@ -1309,47 +1405,60 @@ var app = (function () {
 				WKTUtilities.load();
 				let wkts = WKTUtilities.get();
 
+				if (!Array.isArray(wkts)) {
+					wkts = [];
+				}
+
 				// Focus on textarea to prepare for possible WKT paste
 				textarea.focus();
 
 				let wkt = readcb ? await utilities.readClipboard() : "";
 
-				// Generate checksum for the WKT string
-				const checksum = await utilities.generateChecksum(wkt);
-
 				// Ensure wkts is an array
-				if (!Array.isArray(wkts)) {
-					wkts = [];
-				}
 
-				// Check for existing WKT entries and add them to features
-				let exists = false;
-				wkts.forEach(item => {
-					if (checksum && item.id === checksum) {
-						exists = true;
+				let arrWKT = wkt.split("\n");
+				(async () => {
+					for (const wkt of arrWKT) {
+						console.dir(arrWKT);
+
+						// Generate checksum for the WKT string
+						const checksum = await utilities.generateChecksum(wkt);
+
+						// Check for existing WKT entries and add them to features
+						let exists = false;
+						wkts.forEach(item => {
+							if (checksum && item.id === checksum) {
+								exists = true;
+							}
+							featureUtilities.addToFeatures(item.id, item.wkt);
+						});
+
+						// Add the new WKT if it doesn't exist
+						if (wkt && !exists) {
+							wkts.push({
+								id: checksum,
+								wkt
+							});
+							newfeature = featureUtilities.addToFeatures(checksum, wkt);
+						}
 					}
-					featureUtilities.addToFeatures(item.id, item.wkt);
-				});
 
-				// Add the new WKT if it doesn't exist
-				if (wkt && !exists) {
-					wkts.push({ id: checksum, wkt });
-					newfeature = featureUtilities.addToFeatures(checksum, wkt);
-				}
+					// Save the updated WKT list
+					map.set("wkts", wkts);
 
-				// Save the updated WKT list
-				map.set("wkts", wkts);
-				WKTUtilities.save();
+					WKTUtilities.save();
 
-				// Add features to the map and review layout
-				await featureUtilities.addFeatures();
-				await self.reviewLayout(!frompaste);
+					// Add features to the map and review layout
+					await featureUtilities.addFeatures();
 
-				console.log(newfeature);
+					await self.reviewLayout(!frompaste);
 
-				if (frompaste && newfeature) {
-					featureUtilities.centerOnFeature(newfeature);
-				}
+					// console.log(newfeature);
+
+					if (frompaste && newfeature) {
+						featureUtilities.centerOnFeature(newfeature);
+					}
+				})();
 
 			} catch (error) {
 				console.error('Error loading WKTs:', error);
@@ -1364,6 +1473,7 @@ var app = (function () {
 		// Cache essential DOM elements
 		main = document.querySelector(".maincontainer");
 		textarea = document.querySelector("#wktdefault textarea");
+		wktcontainer = document.querySelector("#wkyContainer");
 
 		// Initialize WKT format parser and feature collection
 		format = new ol.format.WKT();
@@ -1384,16 +1494,18 @@ var app = (function () {
 		map = new ol.Map({
 			target: 'map', // Target container ID
 			layers: [
-				osmLayer,      // OpenStreetMap layer
-				arcgisLayer,   // ArcGIS layer
-				vectorLayer    // Vector layer for user features
+				osmLayer, // OpenStreetMap layer
+				arcgisLayer, // ArcGIS layer
+				vectorLayer // Vector layer for user features
 			],
-			controls: ol.control.defaults.defaults({ attribution: false }) // Disable default attribution
+			controls: ol.control.defaults.defaults({
+				attribution: false
+			}) // Disable default attribution
 				.extend([attributionControl]), // Add custom attribution control
 			view: new ol.View({
-				center: defaultCenter,       // Set the initial center
-				zoom: mapDefaults.zoom,      // Set the initial zoom level
-				maxZoom: 19                  // Set the maximum zoom level
+				center: defaultCenter, // Set the initial center
+				zoom: mapDefaults.zoom, // Set the initial zoom level
+				maxZoom: 19 // Set the maximum zoom level
 			}),
 		});
 
@@ -1435,8 +1547,12 @@ var app = (function () {
 	 */
 	function initializeMapControls() {
 		// Add basic map interactions
-		map.addInteraction(new ol.interaction.DragPan({ condition: () => true }));
-		map.addInteraction(new ol.interaction.MouseWheelZoom({ condition: () => true }));
+		map.addInteraction(new ol.interaction.DragPan({
+			condition: () => true
+		}));
+		map.addInteraction(new ol.interaction.MouseWheelZoom({
+			condition: () => true
+		}));
 
 		// Main control bar setup
 		const mainBar = createControlBar('mainbar');
@@ -1519,7 +1635,9 @@ var app = (function () {
 		mapControls.layerChangeBtn = layerChangeBtn;
 
 		// Add snap interaction for feature modification
-		map.addInteraction(new ol.interaction.Snap({ source: vectorLayer.getSource() }));
+		map.addInteraction(new ol.interaction.Snap({
+			source: vectorLayer.getSource()
+		}));
 
 		// Keyboard shortcuts for interaction
 		document.addEventListener('keydown', handleKeyboardShortcuts);
@@ -1534,7 +1652,11 @@ var app = (function () {
 		 * @returns {ol.control.Bar} The created control bar.
 		 */
 		function createControlBar(className, toggleOne = false, group = false) {
-			return new ol.control.Bar({ className, toggleOne, group });
+			return new ol.control.Bar({
+				className,
+				toggleOne,
+				group
+			});
 		}
 
 		/**
@@ -1546,7 +1668,10 @@ var app = (function () {
 			const selectCtrl = new ol.control.Toggle({
 				html: '<i class="fa-solid fa-arrow-pointer fa-lg"></i>',
 				title: translator.get("select"),
-				interaction: new ol.interaction.Select({ hitTolerance: 2, style: utilities.genericStyleFunction(colors.edit) }),
+				interaction: new ol.interaction.Select({
+					hitTolerance: 2,
+					style: utilities.genericStyleFunction(colors.edit)
+				}),
 				bar: selectBar,
 				autoActivate: true,
 				active: true
@@ -1595,7 +1720,7 @@ var app = (function () {
 					} else {
 						var feature = features.item(0);
 
-						console.log(feature, feature.getId());
+						//console.log(feature, feature.getId());
 
 						WKTUtilities.remove(feature.getId());
 						for (var i = 0, f; f = features.item(i); i++) {
@@ -1830,7 +1955,7 @@ var app = (function () {
 
 			settingsManager = new SettingsManager('settingsContainer', 'wkt-settings');
 			settingsManager.addEvent('wkt-presistent', 'change', (e, manager) => {
-				console.log('O campo "kt-presistent" foi alterado para:', e.target.checked);
+				console.log('O campo "wkt-presistent" foi alterado para:', e.target.checked);
 				if (e.target.checked)
 					WKTUtilities.save();
 				else
