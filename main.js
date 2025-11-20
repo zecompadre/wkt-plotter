@@ -1,5 +1,5 @@
 import LightUI from './lightui.js';
-import Loading from './loading,.js';
+import Loading from './loading.js';
 import Translation from './translation.js';
 import SettingsManager from './settingsmanager.js';
 import TabSystem from './tabsystem.js';
