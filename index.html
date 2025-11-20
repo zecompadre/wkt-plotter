@@ -34,18 +34,18 @@
 	<link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 
-	<script src="/main.js?v=202412171910"></script>
+	<script type="module" src="/main.js?v=202412171910"></script>
 	<link href="/main.css?v=202412171910" rel="stylesheet">
 	<link href="/theme1.css?v=202412171910" rel="stylesheet">
 
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-HQWSTRZMSN"></script>
-	<!-- <script>
+	<script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag() { dataLayer.push(arguments); }
 		gtag('js', new Date());
 		gtag('config', 'G-HQWSTRZMSN');
-	</script> -->
+	</script>
 </head>
 
 <body onload="app.init()">
@@ -67,7 +67,7 @@
 					<form>
 						<div id='wktdefault' class='wkt-container'><textarea rows='5'></textarea></div>
 					</form>
-					<ul id="wkyContainer"></ul>
+					<ul id="wktcontainer"></ul>
 				</div>
 				<div id="settingsContainer" class="settings tab-pane">
 					<form id="light-form">
