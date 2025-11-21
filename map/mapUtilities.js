@@ -33,6 +33,9 @@ export const mapUtilities = {
 		// 2. Se pediu para ler o clipboard...
 		if (readClipboard) {
 			const clipboardText = await utilities.readClipboard();
+
+			console.log(clipboardText);
+
 			if (clipboardText) {
 				const lines = clipboardText.trim().split(/\n/).filter(line => line.trim());
 
