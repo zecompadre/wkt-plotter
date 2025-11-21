@@ -1,5 +1,4 @@
-// js/app.js
-
+// js/app.js ← VERSÃO FINAL OFICIAL (21 Nov 2025)
 import { setupMap } from './map/mapSetup.js';
 import { initializeControls } from './map/mapInteractions.js';
 import { mapUtilities } from './map/mapUtilities.js';
@@ -7,46 +6,38 @@ import { SettingsManager } from './classes/SettingsManager.js';
 import { Translation } from './classes/Translation.js';
 import { TabSystem } from './classes/TabSystem.js';
 import { LightUI } from './classes/LightUI.js';
-import { WKTUtilities } from './classes/WKTUtilities.js';     // ← NOVO (faltava!)
-import { Loading } from './classes/Loading.js';               // ← NOVO (para loading.show/hide)
+import { WKTUtilities } from './classes/WKTUtilities.js';
+import { Loading } from './classes/Loading.js';
 
 export class App {
 	static async init() {
-		// 1. Criação do mapa + layers + loading overlay
-		const { map, vectorLayer, loading } = setupMap();
 
-		// 2. Traduções e settings
+		const loading = new Loading({ dotSize: 25 });
+
+
+		const { map, vectorLayer } = setupMap();
+
 		const translator = new Translation();
 		const settingsManager = new SettingsManager('settingsContainer', 'wkt-settings');
 
-		// Persistência automática dos WKTs
 		settingsManager.addEvent('wkt-presistent', 'change', (e) => {
-			if (e.target.checked) {
-				WKTUtilities.save();
-			} else {
-				WKTUtilities.clear(false, true);
-			}
+			e.target.checked ? WKTUtilities.save() : WKTUtilities.clear(false, true);
 		});
 
-		// 3. UI básica
 		new LightUI();
-		const tabContainer = document.querySelector('#controls');
-		if (tabContainer) new TabSystem(tabContainer);
+		document.querySelector('#controls') && new TabSystem(document.querySelector('#controls'));
 
-		// 4. Todos os controles e interações do mapa
 		initializeControls(map, vectorLayer, translator, settingsManager);
 
-		// 5. Carrega WKTs persistentes + tenta ler automaticamente do clipboard
 		loading.show();
 		try {
-			await mapUtilities.loadWKTs(true, false);  // ← true = tenta ler clipboard ao abrir
+			await mapUtilities.loadWKTs(true, false);
 		} catch (err) {
-			console.warn("Não foi possível ler o clipboard automaticamente:", err);
+			console.warn("Clipboard automático falhou (normal em alguns casos):", err);
 		} finally {
 			loading.hide();
 		}
 	}
 }
 
-// Inicia a app quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => App.init());
