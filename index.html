@@ -31,6 +31,8 @@
 	<!-- ol-ext -->
 	<link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
+	<link href="/main.css?v=202412171910" rel="stylesheet">
+	<link href="/theme1.css?v=202412171910" rel="stylesheet">
 
 	<script type="module">
 		// Cache-buster automático para TODOS os módulos importados
@@ -42,8 +44,6 @@
 				document.body.innerHTML += '<h1 style="color:red">Erro ao carregar JS – abre o console (F12)</h1>';
 			});
 	</script>
-	<link href="/main.css?v=202412171910" rel="stylesheet">
-	<link href="/theme1.css?v=202412171910" rel="stylesheet">
 
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-HQWSTRZMSN"></script>
@@ -55,7 +55,7 @@
 	</script> -->
 </head>
 
-<body onload="app.init()">
+<body>
 	<div id="wrapper">
 		<div id="map" class="map" style="z-index: 0"></div>
 		<div id="tooltip" class="ol-tooltip hidden"></div>
