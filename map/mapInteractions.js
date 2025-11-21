@@ -1,4 +1,4 @@
-// js/map/mapInteractions.js
+// js/map/mapInteractions.js — VERSÃO FINAL E DEFINITIVA (21 Nov 2025)
 
 import { colors } from '../constants.js';
 import { utilities } from '../utils/utilities.js';
@@ -6,18 +6,20 @@ import { featureUtilities } from '../utils/featureUtilities.js';
 import { WKTUtilities } from '../classes/WKTUtilities.js';
 
 export function initializeControls(map, vectorLayer, translator, settingsManager) {
-	window.map = map;                    // Necessário para outros módulos
-	window.vectorLayer = vectorLayer;    // Necessário para snap, draw, etc.
+	window.map = map;
+	window.vectorLayer = vectorLayer;
 	window.settingsManager = settingsManager;
 
 	const source = vectorLayer.getSource();
-	const selectBar = new ol.control.Bar({ className: 'selectbar' });
+
+	// ========= BARRAS =========
 	const mainBar = new ol.control.Bar({ className: 'mainbar' });
 	const editBar = new ol.control.Bar({ className: 'editbar', toggleOne: true });
+	const selectBar = new ol.control.Bar({ className: 'selectbar' });
 	const locationBar = new ol.control.Bar({ className: 'locationbar' });
 	const layerBar = new ol.control.Bar({ className: 'layerbar' });
 
-	// === SELECT INTERACTION ===
+	// ========= INTERAÇÕES =========
 	const selectInteraction = new ol.interaction.Select({
 		hitTolerance: 5,
 		style: feature => [new ol.style.Style({
@@ -27,7 +29,6 @@ export function initializeControls(map, vectorLayer, translator, settingsManager
 	});
 	map.addInteraction(selectInteraction);
 
-	// === MODIFY INTERACTION ===
 	const modifyInteraction = new ol.interaction.ModifyFeature({
 		features: selectInteraction.getFeatures(),
 		style: feature => [new ol.style.Style({
@@ -36,7 +37,6 @@ export function initializeControls(map, vectorLayer, translator, settingsManager
 	});
 	map.addInteraction(modifyInteraction);
 
-	// === DRAW INTERACTION ===
 	const drawInteraction = new ol.interaction.Draw({
 		type: 'Polygon',
 		source: source,
@@ -53,19 +53,17 @@ export function initializeControls(map, vectorLayer, translator, settingsManager
 		selectInteraction.setActive(true);
 	});
 
-	// === UNDO / REDO ===
 	const undoRedo = new ol.interaction.UndoRedo();
 	map.addInteraction(undoRedo);
 
-	// === SNAP ===
 	map.addInteraction(new ol.interaction.Snap({ source }));
 
-	// === TOOLTIP DE ÁREA ===
+	// ========= TOOLTIP ÁREA =========
 	const tooltip = new ol.Overlay({
-		element: document.getElementById('tooltip') || (() => {
+		element: document.getElementById('tooltip') || (function () {
 			const el = document.createElement('div');
 			el.id = 'tooltip';
-			el.className = 'ol-tooltip';
+			el.className = 'ol-tooltip hidden';
 			document.body.appendChild(el);
 			return el;
 		})(),
@@ -91,12 +89,12 @@ export function initializeControls(map, vectorLayer, translator, settingsManager
 		}
 	});
 
-	// === BOTÕES ===
+	// ========= BOTÕES =========
 	const selectBtn = new ol.control.Toggle({
 		html: '<i class="fa-solid fa-arrow-pointer fa-lg"></i>',
 		title: translator.get('select'),
 		interaction: selectInteraction,
-		bar: selectBar,
+		bar: editBar,
 		active: true,
 		autoActivate: true
 	});
@@ -125,19 +123,20 @@ export function initializeControls(map, vectorLayer, translator, settingsManager
 		title: translator.get('delete'),
 		handleClick: () => {
 			const features = selectInteraction.getFeatures();
-			if (features.getLength() === 0) return;
-			const feature = features.item(0);
-			WKTUtilities.remove(feature.getId());
-			source.removeFeature(feature);
-			features.clear();
-			selectBar.setVisible(false);
+			if (features.getLength() > 0) {
+				const feature = features.item(0);
+				WKTUtilities.remove(feature.getId());
+				source.removeFeature(feature);
+				features.clear();
+				selectBar.setVisible(false);
+			}
 		}
 	});
 
 	const centerObjectsBtn = new ol.control.Button({
 		html: '<i class="fa-solid fa-arrows-to-dot fa-lg"></i>',
 		title: translator.get('centerobjects'),
-		handleClick: () => featureUtilities.centerOnVector(vectorLayer, map)
+		handleClick: () => map.getView().fit(source.getExtent(), { padding: [50, 50, 50, 50], size: map.getSize() })
 	});
 
 	const locationBtn = new ol.control.Button({
@@ -152,17 +151,17 @@ export function initializeControls(map, vectorLayer, translator, settingsManager
 	});
 
 	const layerBtn = new ol.control.Button({
-		html: utilities.layerChangeBtnHtml(osmLayer.getVisible()),
+		html: '🗺️',
 		title: translator.get('changebutton'),
-		handleClick: () => {
-			const osmVisible = osmLayer.getVisible();
-			osmLayer.setVisible(!osmVisible);
-			arcgisLayer.setVisible(osmVisible);
-			layerBtn.setHtml(utilities.layerChangeBtnHtml(!osmVisible));
+		handleClick: function () {
+			const osmVisible = window.osmLayer.getVisible();
+			window.osmLayer.setVisible(!osmVisible);
+			window.arcgisLayer.setVisible(osmVisible);
+			this.element.innerHTML = osmVisible ? '🛰️' : '🗺️';
 		}
 	});
 
-	// === MONTAGEM DAS BARRAS ===
+	// ========= ADICIONA BOTÕES ÀS BARRAS =========
 	editBar.addControl(selectBtn);
 	editBar.addControl(drawBtn);
 	editBar.addControl(undoBtn);
@@ -179,17 +178,32 @@ export function initializeControls(map, vectorLayer, translator, settingsManager
 	mainBar.addControl(editBar);
 	mainBar.addControl(locationBar);
 
+	// ========= ADICIONA BARRAS AO MAPA (OBRIGATÓRIO!) =========
 	map.addControl(mainBar);
 	map.addControl(selectBar);
+	map.addControl(locationBar);
 	map.addControl(layerBar);
 
-	// Eventos de seleção
+	// ========= EVENTO DE SELEÇÃO (WKT na textarea + update ao desselecionar) =========
 	selectInteraction.on('select', evt => {
 		const textarea = document.querySelector('#wktdefault textarea');
+		if (!textarea) return;
+
+		utilities.restoreDefaultColors();
+
 		if (evt.selected.length > 0) {
-			textarea.value = utilities.getFeatureWKT(evt.selected[0]);
+			evt.selected.forEach(feature => {
+				textarea.value = utilities.getFeatureWKT(feature);
+			});
 			selectBar.setVisible(true);
-		} else if (evt.deselected.length > 0) {
+		}
+
+		if (evt.deselected.length > 0) {
+			evt.deselected.forEach(feature => {
+				textarea.value = utilities.getFeatureWKT(feature);
+				WKTUtilities.update(feature.getId(), textarea.value);
+				featureUtilities.createFromAllFeatures(); // opcional: atualiza o textarea com todos
+			});
 			selectBar.setVisible(false);
 		}
 	});
