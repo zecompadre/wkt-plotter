@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>WKT Plotter</title>
+	<title>WKT Playground</title>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -26,26 +26,29 @@
 	<!-- Openlayers -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css" />
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/polyfill-library@4.8.0/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+	<script
+		src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL">
+		</script>
+
 	<!-- ol-ext -->
 	<link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 
-	<script type="module" src="/main.js?v=202412171910"></script>
+	<script type="module" src="/app.js?v=202412171910"></script>
 	<link href="/main.css?v=202412171910" rel="stylesheet">
 	<link href="/theme1.css?v=202412171910" rel="stylesheet">
 
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-HQWSTRZMSN"></script>
-	<script>
+	<!-- <script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag() { dataLayer.push(arguments); }
 		gtag('js', new Date());
 		gtag('config', 'G-HQWSTRZMSN');
-	</script>
+	</script> -->
 </head>
 
-<body>
+<body onload="app.init()">
 	<div id="wrapper">
 		<div id="map" class="map" style="z-index: 0"></div>
 		<div id="tooltip" class="ol-tooltip hidden"></div>
@@ -64,7 +67,7 @@
 					<form>
 						<div id='wktdefault' class='wkt-container'><textarea rows='5'></textarea></div>
 					</form>
-					<ul id="wktcontainer"></ul>
+					<ul id="wkyContainer"></ul>
 				</div>
 				<div id="settingsContainer" class="settings tab-pane">
 					<form id="light-form">
