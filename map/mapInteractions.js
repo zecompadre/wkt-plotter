@@ -10,6 +10,8 @@ export function initializeControls(map, vectorLayer, translator, settingsManager
 	window.vectorLayer = vectorLayer;
 	window.settingsManager = settingsManager;
 
+	console.log(map, vectorLayer, translator, settingsManager);
+
 	const source = vectorLayer.getSource();
 
 	// ========= BARRAS =========
