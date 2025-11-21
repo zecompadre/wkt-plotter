@@ -38,13 +38,13 @@ export class App {
 
 		// 5. Carrega WKTs persistentes + tenta ler automaticamente do clipboard
 		loading.show();
-		// 	try {
-		// 		await mapUtilities.loadWKTs(true, false);  // ← true = tenta ler clipboard ao abrir
-		// 	} catch (err) {
-		// 		console.warn("Não foi possível ler o clipboard automaticamente:", err);
-		// 	} finally {
-		// 		loading.hide();
-		// 	}
+		try {
+			await mapUtilities.loadWKTs(true, false);  // ← true = tenta ler clipboard ao abrir
+		} catch (err) {
+			console.warn("Não foi possível ler o clipboard automaticamente:", err);
+		} finally {
+			loading.hide();
+		}
 	}
 }
 
