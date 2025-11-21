@@ -42,5 +42,10 @@ export function setupMap() {
 		])
 	});
 
+	window.osmLayer = osmLayer;
+	window.arcgisLayer = arcgisLayer;
+	window.map = map;           // opcional, mas útil
+	window.vectorLayer = vectorLayer;
+
 	return { map, vectorLayer, vectorSource, osmLayer, arcgisLayer };
 }
