@@ -1,26 +1,60 @@
-import { utilities } from '../utils/utilities.js';
+// js/map/mapUtilities.js
+
 import { WKTUtilities } from '../classes/WKTUtilities.js';
+import { utilities } from '../utils/utilities.js';
 import { featureUtilities } from '../utils/featureUtilities.js';
 
 export const mapUtilities = {
-	async loadWKTs(readcb = false, frompaste = false) {
+	async loadWKTs(readClipboard = false, fromPaste = false) {
 		WKTUtilities.load();
-		let wkts = WKTUtilities.get();
+		const wkts = WKTUtilities.get();
+
+		// Elementos essenciais
 		const textarea = document.querySelector("#wktdefault textarea");
 		const format = new ol.format.WKT();
-		const featureCollection = window.map.getLayers().getArray().find(l => l instanceof ol.layer.Vector).getSource();
 
-		if (readcb) {
-			const clipboard = await utilities.readClipboard();
-			if (clipboard) {
-				const lines = clipboard.trim().split("\n");
+		// Vector source (não collection!)
+		const vectorLayer = window.map.getLayers().getArray().find(l => l instanceof ol.layer.Vector);
+		const vectorSource = vectorLayer.getSource();
+
+		// 1. Carrega primeiro os WKTs persistentes do localStorage
+		vectorSource.clear(); // limpa o que estiver no mapa
+		wkts.forEach(item => {
+			try {
+				const feature = format.readFeature(item.wkt);
+				feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+				feature.setId(item.id);
+				vectorSource.addFeature(feature);
+			} catch (e) {
+				console.warn("WKT persistente inválido ignorado:", item.id);
+			}
+		});
+
+		// 2. Se pediu para ler o clipboard...
+		if (readClipboard) {
+			const clipboardText = await utilities.readClipboard();
+			if (clipboardText) {
+				const lines = clipboardText.trim().split(/\n/).filter(line => line.trim());
+
 				for (const line of lines) {
-					if (line.trim()) {
-						const checksum = await utilities.generateChecksum(line);
-						if (!wkts.some(i => i.id === checksum)) {
-							wkts.push({ id: checksum, wkt: line });
-							const newFeature = featureUtilities.addToFeatures(checksum, line, textarea, featureCollection, format);
-							if (frompaste && newFeature) featureUtilities.centerOnFeature(newFeature, window.map);
+					const checksum = await utilities.generateChecksum(line);
+
+					// Evita duplicados
+					if (wkts.some(item => item.id === checksum)) continue;
+
+					// Adiciona o novo
+					const newFeature = featureUtilities.addToFeatures(
+						checksum,
+						line,
+						textarea,
+						vectorSource,   // ← agora passa o source
+						format
+					);
+
+					if (newFeature) {
+						wkts.push({ id: checksum, wkt: line });
+						if (fromPaste) {
+							featureUtilities.centerOnFeature(newFeature, window.map);
 						}
 					}
 				}
@@ -28,15 +62,10 @@ export const mapUtilities = {
 			}
 		}
 
-		// Load existing
-		featureCollection.clear();
-		wkts.forEach(item => {
-			try {
-				const f = format.readFeature(item.wkt);
-				f.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-				f.setId(item.id);
-				featureCollection.addFeature(f);
-			} catch (e) { console.error(e); }
-		});
+		// Atualiza o textarea com todos os WKTs (opcional, mas útil)
+		if (vectorSource.getFeatures().length > 0) {
+			const allWKTs = featureUtilities.convertFeaturesToWKT(vectorLayer);
+			textarea.value = allWKTs.join("\n");
+		}
 	}
 };
