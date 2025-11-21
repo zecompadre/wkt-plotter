@@ -34,7 +34,16 @@
 	<link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 
-	<script type="module" src="/app.js?v=202412171910"></script>
+	<script type="module">
+		// Cache-buster automático para TODOS os módulos importados
+		const bust = Date.now(); // muda a cada carregamento da página
+		import('./js/app.js?t=' + bust)
+			.then(module => module.App.init())
+			.catch(err => {
+				console.error('Erro ao carregar a app:', err);
+				document.body.innerHTML += '<h1 style="color:red">Erro ao carregar JS – abre o console (F12)</h1>';
+			});
+	</script>
 	<link href="/main.css?v=202412171910" rel="stylesheet">
 	<link href="/theme1.css?v=202412171910" rel="stylesheet">
 
