@@ -6,7 +6,7 @@ import { Translation } from './classes/Translation.js';
 import { TabSystem } from './classes/TabSystem.js';
 import { LightUI } from './classes/LightUI.js';
 
-class App {
+export class App {
 	static async init() {
 		const { map, vectorLayer, loading } = setupMap();
 
