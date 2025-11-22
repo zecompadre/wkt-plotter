@@ -1,6 +1,6 @@
 // js/utils/featureUtilities.js
 
-import { map, vectorLayer, format } from '../map/setupMap.js';
+import { map, vectorLayer, format, featureCollection } from '../map/setupMap.js';
 import { utilities } from './utilities.js';
 import { projections } from './constants.js';
 
