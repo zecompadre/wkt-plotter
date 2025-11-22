@@ -2,7 +2,7 @@
 
 import Loading from '../classes/Loading.js';
 import { colors, projections, mapDefaults } from './constants.js';
-import { vectorLayer, format, featureCollection } from '../map/setupMap.js';
+import { format, featureCollection } from '../map/setupMap.js';
 
 // Instância única do Loading (usada em toda a app)
 export const loading = new Loading({ dotCount: 4, dotSize: 25 });
@@ -68,11 +68,13 @@ export const utilities = {
 
 	// Cria a camada vetorial
 	createVectorLayer: () => {
-		vectorLayer = new ol.layer.Vector({
+		// Cria uma camada nova e retorna
+		const layer = new ol.layer.Vector({
 			source: new ol.source.Vector({ features: featureCollection }),
-			style: utilities.genericStyleFunction(colors.normal),
+			style: utilities.genericStyleFunction(colors.normal)
 		});
-		vectorLayer.set('displayInLayerSwitcher', false);
+		layer.set('displayInLayerSwitcher', false);
+		return layer; // Retorna a camada!
 	},
 
 	// Cria controle de atribuição personalizado
