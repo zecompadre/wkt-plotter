@@ -2,7 +2,7 @@
 
 import Loading from '../classes/Loading.js';
 import { colors, projections, mapDefaults } from './constants.js';
-import { map, vectorLayer, format, featureCollection } from '../map/setupMap.js';
+import { vectorLayer, format, featureCollection } from '../map/setupMap.js';
 
 // Instância única do Loading (usada em toda a app)
 export const loading = new Loading({ dotCount: 4, dotSize: 25 });
