@@ -2,8 +2,9 @@
 
 import Loading from '../classes/Loading.js';
 import { colors, projections, mapDefaults } from './constants.js';
-import { format, featureCollection } from '../map/setupMap.js';
 import { osmLayer, arcgisLayer } from '../map/layers.js';
+import { format, featureCollection } from '../map/setupMap.js';
+
 // Instância única do Loading (usada em toda a app)
 export const loading = new Loading({ dotCount: 4, dotSize: 25 });
 
