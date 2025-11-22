@@ -218,19 +218,44 @@ export const utilities = {
 
 	// Lê clipboard (procura por POLYGON)
 	readClipboard: async function () {
-		let returnVal = "";
+		// 1. Primeiro tenta o método normal (funciona se já tiver foco ou permissão)
 		try {
-			const permission = await navigator.permissions.query({ name: "clipboard-read" });
-			if (permission.state === "denied") throw new Error("Not allowed to read clipboard.");
 			const text = await navigator.clipboard.readText();
-			if (text.includes("POLYGON")) {
-				returnVal = text;
-				await navigator.clipboard.writeText("");
+			if (text?.includes("POLYGON") || text?.includes("MULTIPOLYGON")) {
+				console.log("Clipboard lido diretamente!");
+				return text.trim();
 			}
-		} catch (error) {
-			console.error("Error reading clipboard:", error.message);
+		} catch (err) {
+			// Silencia o erro esperado "Document is not focused"
+			if (!err.message.includes("not focused")) console.error(err);
 		}
-		return returnVal;
+
+		// 2. Truque mágico: cria um textarea invisível, dá foco, executa "paste" e lê
+		return new Promise((resolve) => {
+			const textarea = document.createElement('textarea');
+			textarea.style.position = 'fixed';
+			textarea.style.opacity = 0;
+			textarea.style.pointerEvents = 'none';
+			document.body.appendChild(textarea);
+
+			textarea.focus();
+			textarea.select();
+
+			// Força o comando Paste (funciona mesmo sem interação real do utilizador em muitos casos)
+			document.execCommand('paste');
+
+			setTimeout(() => {
+				const text = textarea.value;
+				document.body.removeChild(textarea);
+
+				if (text?.includes("POLYGON") || text?.includes("MULTIPOLYGON")) {
+					console.log("Clipboard lido com truque execCommand!");
+					resolve(text.trim());
+				} else {
+					resolve(""); // nada útil no clipboard
+				}
+			}, 50);
+		});
 	},
 
 	// Cola WKT do clipboard
