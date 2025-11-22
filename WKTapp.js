@@ -10,8 +10,6 @@ import { loading, utilities } from './utils/utilities.js';
 import { mapUtilities } from './utils/mapUtilities.js';
 
 (async () => {
-	console.log("Auto exec!");
-
 	// 1. UI básica
 	new LightUI();
 
