@@ -52,49 +52,70 @@ export const mapUtilities = {
 
 	// js/utils/mapUtilities.js
 	loadWKTs: async function (readcb = false, frompaste = false) {
+		const self = this; // Capture the correct context
 		let newfeature = null;
-		WKTUtilities.load();
-		let wkts = WKTUtilities.get() || [];
+		try {
+			// Load existing WKT entries from localStorage
+			WKTUtilities.load();
+			let wkts = WKTUtilities.get();
 
-		const textarea = document.querySelector("#wktdefault textarea");
-		textarea?.focus();
-
-		let wkt = "";
-
-		// Só tenta ler clipboard se for uma ação do usuário (frompaste) ou se a página já tem foco
-		if (readcb && (frompaste || document.hasFocus())) {
-			try {
-				wkt = await utilities.readClipboard();
-				console.log("Clipboard lido com sucesso!");
-			} catch (err) {
-				console.log("Clipboard ignorado (sem foco ou bloqueado) – normal no carregamento");
-				wkt = "";
+			if (!Array.isArray(wkts)) {
+				wkts = [];
 			}
-		}
 
-		const arrWKT = wkt ? wkt.split("\n").map(line => line.trim()).filter(Boolean) : [];
+			// Focus on textarea to prepare for possible WKT paste
+			textarea.focus();
 
-		for (const singleWkt of arrWKT) {
-			const checksum = await utilities.generateChecksum(singleWkt);
-			const exists = wkts.some(item => item.id === checksum);
+			let wkt = readcb ? await utilities.readClipboard() : "";
 
-			if (!exists) {
-				newfeature = featureUtilities.addToFeatures(checksum, singleWkt);
-				wkts.push({ id: checksum, wkt: singleWkt });
-			} else {
-				featureUtilities.addToFeatures(checksum, singleWkt); // atualiza
-			}
-		}
+			// Ensure wkts is an array
 
-		map.set("wkts", wkts);
-		WKTUtilities.save();
-		await featureUtilities.addFeatures();
-		await mapUtilities.reviewLayout(!frompaste);
+			let arrWKT = wkt.split("\n");
+			(async () => {
+				for (const wkt of arrWKT) {
+					console.dir(arrWKT);
 
-		console.log(`Carregados ${arrWKT.length} WKTs${frompaste ? " do clipboard" : ""}. newfeature:`, newfeature);
+					// Generate checksum for the WKT string
+					const checksum = await utilities.generateChecksum(wkt);
 
-		if (frompaste && newfeature) {
-			featureUtilities.centerOnFeature(newfeature);
+					// Check for existing WKT entries and add them to features
+					let exists = false;
+					wkts.forEach(item => {
+						if (checksum && item.id === checksum) {
+							exists = true;
+						}
+						featureUtilities.addToFeatures(item.id, item.wkt);
+					});
+
+					// Add the new WKT if it doesn't exist
+					if (wkt && !exists) {
+						wkts.push({
+							id: checksum,
+							wkt
+						});
+						newfeature = featureUtilities.addToFeatures(checksum, wkt);
+					}
+				}
+
+				// Save the updated WKT list
+				map.set("wkts", wkts);
+
+				WKTUtilities.save();
+
+				// Add features to the map and review layout
+				await featureUtilities.addFeatures();
+
+				await self.reviewLayout(!frompaste);
+
+				// console.log(newfeature);
+
+				if (frompaste && newfeature) {
+					featureUtilities.centerOnFeature(newfeature);
+				}
+			})();
+
+		} catch (error) {
+			console.error('Error loading WKTs:', error);
 		}
 	}
 };
