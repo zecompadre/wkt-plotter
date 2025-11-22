@@ -101,7 +101,7 @@ export const mapUtilities = {
 		await this.reviewLayout(!frompaste);  // ← correto: !frompaste
 
 		// 6. ZOOM SÓ QUANDO FOR DO CLIPBOARD!
-		if (frompaste && newfeature) {
+		if (/*!frompaste && */newfeature) {
 			featureUtilities.centerOnFeature(newfeature);
 		}
 	},
