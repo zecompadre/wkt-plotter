@@ -33,11 +33,17 @@
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 
 	<script type="module">
+		console.log("Iniciando carregamento do WKTapp.js...");
+
+		// Força download novo SEMPRE
 		const version = new Date().getTime();
-		import(`./WKTapp.js?v=${version}`).catch(() => {
-			// fallback se falhar
-			import('./WKTapp.js');
-		});
+		import(`./WKTapp.js?v=${version}`)
+			.then(module => {
+				console.log("WKTapp.js carregado com sucesso às", new Date().toLocaleTimeString());
+			})
+			.catch(err => {
+				console.error("Erro ao carregar WKTapp.js:", err);
+			});
 	</script>
 	<link href="/main.css?v=202412171910" rel="stylesheet">
 	<link href="/theme1.css?v=202412171910" rel="stylesheet">
