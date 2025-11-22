@@ -34,8 +34,6 @@
 
 	<script type="module">
 		console.log("Iniciando carregamento do WKTapp.js...");
-
-		// Força download novo SEMPRE
 		const version = new Date().getTime();
 		import(`./WKTapp.js?v=${version}`)
 			.then(module => {
