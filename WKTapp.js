@@ -30,19 +30,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	// 3. INICIA O MAPA (agora com await!)
 	loading.show();
-	try {
-		await setupMap();                    // ← AQUI ESTAVA O PROBLEMA!
-		console.log("Mapa iniciado com sucesso!");
-	} catch (err) {
-		console.error("Erro ao iniciar o mapa:", err);
-	}
+	// try {
+	// 	await setupMap();                    // ← AQUI ESTAVA O PROBLEMA!
+	// 	console.log("Mapa iniciado com sucesso!");
+	// } catch (err) {
+	// 	console.error("Erro ao iniciar o mapa:", err);
+	// }
 
-	// 4. Carrega WKTs do clipboard + localStorage
-	await mapUtilities.loadWKTs(true, false);
+	// // 4. Carrega WKTs do clipboard + localStorage
+	// await mapUtilities.loadWKTs(true, false);
 
-	// 5. IP (opcional)
-	utilities.getIP()
-		.then(ip => console.log('IP:', ip))
-		.catch(console.error)
-		.finally(() => loading.hide());
+	// // 5. IP (opcional)
+	// utilities.getIP()
+	// 	.then(ip => console.log('IP:', ip))
+	// 	.catch(console.error)
+	// 	.finally(() => loading.hide());
 });
