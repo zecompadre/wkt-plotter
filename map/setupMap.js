@@ -29,7 +29,7 @@ defaultCenter = utilities.transformCoordinates(
 );
 
 // Cria camada vetorial
-utilities.createVectorLayer();
+vectorLayer = utilities.createVectorLayer();
 
 // Cria controle de atribuição customizado
 attributionControl = utilities.createAttributeControl();
