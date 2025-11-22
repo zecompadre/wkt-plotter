@@ -53,6 +53,7 @@ export const mapUtilities = {
 	// js/utils/mapUtilities.js
 	loadWKTs: async function (readcb = false, frompaste = false) {
 		const self = this; // Capture the correct context
+		const textarea = document.querySelector("#wktdefault textarea");
 		let newfeature = null;
 		try {
 			// Load existing WKT entries from localStorage
