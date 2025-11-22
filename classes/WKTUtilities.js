@@ -1,4 +1,4 @@
-import { lfkey } from '../constants.js';
+import { lfkey } from '../utils/constants.js';
 import { map } from '../map/setupMap.js';
 import { utilities } from '../utils/utilities.js';
 

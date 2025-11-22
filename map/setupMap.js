@@ -1,7 +1,7 @@
 // js/map/setupMap.js
 
 import { utilities, formatArea } from '../utils/utilities.js';
-import { mapDefaults, projections } from '../constants.js';
+import { mapDefaults, projections } from '../utils/constants.js';
 import { osmLayer, arcgisLayer } from './layers.js';
 
 export let map;

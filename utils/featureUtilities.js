@@ -1,8 +1,8 @@
 // js/utils/featureUtilities.js
 
 import { map, vectorLayer, format } from '../map/setupMap.js';
-import { utilities } from './utilities.js';
-import { projections } from '../constants.js';
+import { utilities } from './utils/utilities.js';
+import { projections } from '../utils/constants.js';
 import WKTUtilities from '../classes/WKTUtilities.js';
 
 export const featureUtilities = {
