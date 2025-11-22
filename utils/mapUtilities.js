@@ -2,7 +2,7 @@
 
 import { map, vectorLayer, featureCollection, defaultCenter } from '../map/setupMap.js';
 import { featureUtilities } from './featureUtilities.js';
-import { utilities } from './utils/utilities.js';
+import { utilities } from './utilities.js';
 import WKTUtilities from '../classes/WKTUtilities.js';
 import { osmLayer, arcgisLayer } from '../map/layers.js';
 

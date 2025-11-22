@@ -1,7 +1,7 @@
 // js/utils/utilities.js
 
 import Loading from '../classes/Loading.js';
-import { colors, projections, mapDefaults } from '../utils/constants.js';
+import { colors, projections, mapDefaults } from './constants.js';
 import { map, vectorLayer, format, featureCollection } from '../map/setupMap.js';
 
 // Instância única do Loading (usada em toda a app)
