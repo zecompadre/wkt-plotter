@@ -9,9 +9,8 @@ import WKTUtilities from './classes/WKTUtilities.js';
 import { loading, utilities } from './utils/utilities.js';
 import { mapUtilities } from './utils/mapUtilities.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-
-	alert(1)
+(async () => {
+	console.log("Auto exec!");
 
 	// 1. UI básica
 	new LightUI();
@@ -48,4 +47,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 		.then(ip => console.log('IP:', ip))
 		.catch(console.error)
 		.finally(() => loading.hide());
-});
+})();
