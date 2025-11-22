@@ -95,11 +95,7 @@ export const featureUtilities = {
 
 	addToFeatures: (id, wkt) => {
 		const textarea = document.querySelector("#wktdefault textarea");
-		console.log("Adicionando WKT às features:", textarea);
-
 		const wktString = wkt || textarea.value;
-
-		console.log("Adicionando WKT às features:", wktString);
 
 		if (!wktString) {
 			textarea.style.borderColor = "red";

@@ -91,6 +91,8 @@ export const mapUtilities = {
 		await featureUtilities.addFeatures();
 		await mapUtilities.reviewLayout(!frompaste);
 
+		console.log(`Carregados ${arrWKT.length} WKTs${frompaste ? " do clipboard" : ""}. newfeature:`, newfeature);
+
 		if (frompaste && newfeature) {
 			featureUtilities.centerOnFeature(newfeature);
 		}
