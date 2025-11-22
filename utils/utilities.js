@@ -196,7 +196,32 @@ export const utilities = {
 			);
 		});
 	},
+	// js/utils/utilities.js
+	readClipboard: async function () {
+		// Só tenta ler se houver foco/permissão (nunca falha silenciosamente)
+		try {
+			const permission = await navigator.permissions.query({ name: "clipboard-read" });
+			if (permission.state === "denied") {
+				console.warn("Permissão de clipboard negada");
+				return "";
+			}
 
+			const text = await navigator.clipboard.readText();
+			if (/POLYGON|MULTIPOLYGON/i.test(text)) {
+				console.log("WKT colado com sucesso!");
+				await navigator.clipboard.writeText(""); // limpa
+				return text.trim();
+			}
+		} catch (err) {
+			// Erro normal ao carregar página → ignoramos
+			if (err.message.includes("not focused") || err.message.includes("Illegal invocation")) {
+				console.log("Clipboard: página sem foco (normal ao carregar)");
+			} else {
+				console.error("Erro real no clipboard:", err);
+			}
+		}
+		return "";
+	},
 	// Captura screenshot do mapa
 	imageCanvas: function (feature) {
 		const mapEl = document.getElementById("map");
@@ -214,48 +239,6 @@ export const utilities = {
 				console.error('oops, something went wrong!', error);
 				loading.hide();
 			});
-	},
-
-	// Lê clipboard (procura por POLYGON)
-	readClipboard: async function () {
-		// 1. Primeiro tenta o método normal (funciona se já tiver foco ou permissão)
-		try {
-			const text = await navigator.clipboard.readText();
-			if (text?.includes("POLYGON") || text?.includes("MULTIPOLYGON")) {
-				console.log("Clipboard lido diretamente!");
-				return text.trim();
-			}
-		} catch (err) {
-			// Silencia o erro esperado "Document is not focused"
-			if (!err.message.includes("not focused")) console.error(err);
-		}
-
-		// 2. Truque mágico: cria um textarea invisível, dá foco, executa "paste" e lê
-		return new Promise((resolve) => {
-			const textarea = document.createElement('textarea');
-			textarea.style.position = 'fixed';
-			textarea.style.opacity = 0;
-			textarea.style.pointerEvents = 'none';
-			document.body.appendChild(textarea);
-
-			textarea.focus();
-			textarea.select();
-
-			// Força o comando Paste (funciona mesmo sem interação real do utilizador em muitos casos)
-			document.execCommand('paste');
-
-			setTimeout(() => {
-				const text = textarea.value;
-				document.body.removeChild(textarea);
-
-				if (text?.includes("POLYGON") || text?.includes("MULTIPOLYGON")) {
-					console.log("Clipboard lido com truque execCommand!");
-					resolve(text.trim());
-				} else {
-					resolve(""); // nada útil no clipboard
-				}
-			}, 50);
-		});
 	},
 
 	// Cola WKT do clipboard

@@ -50,27 +50,39 @@ export const mapUtilities = {
 		return vl ? vl.getSource().getFeatures().length : 0;
 	},
 
+	// js/utils/mapUtilities.js
 	loadWKTs: async function (readcb = false, frompaste = false) {
 		let newfeature = null;
 		WKTUtilities.load();
 		let wkts = WKTUtilities.get() || [];
 
 		const textarea = document.querySelector("#wktdefault textarea");
-		textarea.focus();
+		textarea?.focus();
 
-		let wkt = readcb ? await utilities.readClipboard() : "";
-		let arrWKT = wkt ? wkt.split("\n") : [];
+		let wkt = "";
+
+		// Só tenta ler clipboard se for uma ação do usuário (frompaste) ou se a página já tem foco
+		if (readcb && (frompaste || document.hasFocus())) {
+			try {
+				wkt = await utilities.readClipboard();
+				console.log("Clipboard lido com sucesso!");
+			} catch (err) {
+				console.log("Clipboard ignorado (sem foco ou bloqueado) – normal no carregamento");
+				wkt = "";
+			}
+		}
+
+		const arrWKT = wkt ? wkt.split("\n").map(line => line.trim()).filter(Boolean) : [];
 
 		for (const singleWkt of arrWKT) {
-			if (!singleWkt.trim()) continue;
 			const checksum = await utilities.generateChecksum(singleWkt);
-			let exists = wkts.some(item => item.id === checksum);
+			const exists = wkts.some(item => item.id === checksum);
 
 			if (!exists) {
 				newfeature = featureUtilities.addToFeatures(checksum, singleWkt);
 				wkts.push({ id: checksum, wkt: singleWkt });
 			} else {
-				featureUtilities.addToFeatures(checksum, singleWkt);
+				featureUtilities.addToFeatures(checksum, singleWkt); // atualiza
 			}
 		}
 
