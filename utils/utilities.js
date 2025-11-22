@@ -1,5 +1,3 @@
-// js/utils/utilities.js
-
 import Loading from '../classes/Loading.js';
 import { colors, projections, mapDefaults } from './constants.js';
 import { osmLayer, arcgisLayer } from '../map/layers.js';
