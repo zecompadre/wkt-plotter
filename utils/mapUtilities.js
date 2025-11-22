@@ -100,8 +100,10 @@ export const mapUtilities = {
 		await featureUtilities.addFeatures();
 		await this.reviewLayout(!frompaste);  // ← correto: !frompaste
 
+		featureUtilities.centerOnVector();
+
 		// 6. ZOOM SÓ QUANDO FOR DO CLIPBOARD!
-		if (/*!frompaste && */newfeature) {
+		if (!frompaste && newfeature) {
 			featureUtilities.centerOnFeature(newfeature);
 		}
 	},
