@@ -164,12 +164,22 @@ export const featureUtilities = {
 			const oldCenter = map.getView().getCenter();
 			const oldRes = map.getView().getResolution();
 
+			const allFeatures = vectorLayer.getSource().getFeatures();
+
+			// ESCONDE TODAS AS OUTRAS FEATURES
+			allFeatures.forEach(f => {
+				if (f !== newFeature) f.setStyle(new ol.style.Style({})); // invisível
+			});
+
 			const extent = newFeature.getGeometry().getExtent();
 			const resolution = map.getView().getResolutionForExtent(extent, map.getSize());
 			const newCenter = ol.extent.getCenter(extent);
 
 			map.getView().setCenter(newCenter);
 			map.getView().setResolution(resolution * 0.7);
+
+			const controls = document.querySelectorAll('.ol-control');
+			controls.forEach(el => el.style.setProperty('display', 'none', 'important'));
 
 			map.once('rendercomplete', () => {
 				domtoimage.toPng(document.getElementById('map'), {
@@ -178,6 +188,8 @@ export const featureUtilities = {
 					.then(dataUrl => {
 						img.src = dataUrl;
 						img.style.opacity = '1';
+
+						allFeatures.forEach(f => f.setStyle(undefined));
 
 						// VOLTA AO ZOOM GERAL
 						map.getView().setCenter(oldCenter);
@@ -225,7 +237,7 @@ export const featureUtilities = {
 			li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 		}
 
-		textarea.value = "";  // ← LIMPA A TEXTAREA!
+		textarea.value = "";
 		textarea.style.borderColor = "";
 		textarea.style.backgroundColor = "";
 
