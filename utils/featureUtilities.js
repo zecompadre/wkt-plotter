@@ -156,7 +156,9 @@ export const featureUtilities = {
 			list.appendChild(li);
 
 			// CHAMA A FUNÇÃO SEPARADA!
-			requestAnimationFrame(() => drawShapePreview(canvas, newFeature));
+			requestAnimationFrame(() => {
+				drawShapePreview(canvas, newFeature);
+			});
 
 			li.addEventListener('click', () => {
 				const f = vectorLayer.getSource().getFeatureById(id);
