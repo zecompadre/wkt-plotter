@@ -53,61 +53,70 @@ export const mapUtilities = {
 	// js/utils/mapUtilities.js
 	// js/utils/mapUtilities.js → VERSÃO DEFINITIVA E CORRETA!
 	loadWKTs: async function (readcb = false, frompaste = false) {
+		const self = this; // Capture the correct context
 		let newfeature = null;
+		try {
+			// Load existing WKT entries from localStorage
+			WKTUtilities.load();
+			let wkts = WKTUtilities.get();
 
-		// 1. Carrega os WKTs existentes do localStorage
-		WKTUtilities.load();
-		let wkts = WKTUtilities.get() || [];
-
-		console.log(`WKTs carregados do localStorage: ${wkts.length}`);
-
-		const textarea = document.querySelector("#wktdefault textarea");
-		textarea?.focus();
-
-		// 2. Lê do clipboard se pedido
-		let clipboardText = "";
-		if (readcb) {
-			clipboardText = await utilities.readClipboard();
-		}
-
-		const newLines = clipboardText
-			? clipboardText.split("\n").map(l => l.trim()).filter(Boolean)
-			: [];
-
-		// 3. Processa apenas os NOVOS WKTs (não os antigos!)
-		for (const singleWkt of newLines) {
-			if (!singleWkt) continue;
-
-			const checksum = await utilities.generateChecksum(singleWkt);
-			const exists = wkts.some(item => item.id === checksum);
-
-			if (!exists) {
-				// NOVO WKT → adiciona
-				newfeature = featureUtilities.addToFeatures(checksum, singleWkt);
-				wkts.push({ id: checksum, wkt: singleWkt });
-			} else {
-				// Já existe → só atualiza (opcional)
-				featureUtilities.addToFeatures(checksum, singleWkt);
-				newfeature = vectorLayer.getSource().getFeatureById(checksum);
+			if (!Array.isArray(wkts)) {
+				wkts = [];
 			}
+
+			// Focus on textarea to prepare for possible WKT paste
+			textarea.focus();
+
+			let wkt = readcb ? await utilities.readClipboard() : "";
+
+			// Ensure wkts is an array
+
+			let arrWKT = wkt.split("\n");
+			(async () => {
+				for (const wkt of arrWKT) {
+					console.dir(arrWKT);
+
+					// Generate checksum for the WKT string
+					const checksum = await utilities.generateChecksum(wkt);
+
+					// Check for existing WKT entries and add them to features
+					let exists = false;
+					wkts.forEach(item => {
+						if (checksum && item.id === checksum) {
+							exists = true;
+						}
+						featureUtilities.addToFeatures(item.id, item.wkt);
+					});
+
+					// Add the new WKT if it doesn't exist
+					if (wkt && !exists) {
+						wkts.push({
+							id: checksum,
+							wkt
+						});
+						newfeature = featureUtilities.addToFeatures(checksum, wkt);
+					}
+				}
+
+				// Save the updated WKT list
+				map.set("wkts", wkts);
+
+				WKTUtilities.save();
+
+				// Add features to the map and review layout
+				await featureUtilities.addFeatures();
+
+				await self.reviewLayout(!frompaste);
+
+				// console.log(newfeature);
+
+				if (frompaste && newfeature) {
+					featureUtilities.centerOnFeature(newfeature);
+				}
+			})();
+
+		} catch (error) {
+			console.error('Error loading WKTs:', error);
 		}
-
-		// 4. Só salva se houver algo novo
-		if (newLines.length > 0) {
-			map.set("wkts", wkts);
-			WKTUtilities.save();
-		}
-
-		// 5. Atualiza o mapa
-		await featureUtilities.addFeatures();
-
-		await this.reviewLayout(!frompaste);  // ← correto: !frompaste
-
-		featureUtilities.centerOnVector();
-
-		// 6. ZOOM SÓ QUANDO FOR DO CLIPBOARD!
-		if (!frompaste && newfeature) {
-			featureUtilities.centerOnFeature(newfeature);
-		}
-	},
+	}
 };
