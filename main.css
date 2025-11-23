@@ -1,7 +1,7 @@
 :root {
 	--header-height: 60px;
-	--map-width: 75%;
-	--controls-width: 25%;
+	--map-width: calc(100% - 300px);
+	--controls-width: 300px;
 	--button-size: 36px;
 	/* --navbar-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px; */
 	/* --navbar-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset; */
@@ -411,23 +411,25 @@ textarea {
 }
 
 /* ========================================= */
-/* LISTA DE WKTs – MOBILE-FRIENDLY & RESPONSIVA */
+/* LISTA DE WKTs – OTIMIZADA PARA #controls 25% */
 /* ========================================= */
 
 #wkt-list {
 	list-style: none;
 	padding: 0;
-	margin: 15px 0 0 0;
-	max-height: calc(100vh - 320px);
+	margin: 15px 8px 0 8px;
+	max-height: calc(100vh - 340px);
+	/* Ajustado para teu header + textarea */
 	overflow-y: auto;
 	border: 1px solid #4a5568;
 	border-radius: 12px;
 	background: #1a202c;
 	scrollbar-width: thin;
 	scrollbar-color: #4299e1 #2d3748;
+	font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Scroll bonito (Chrome/Edge/Safari) */
+/* Scroll bonito */
 #wkt-list::-webkit-scrollbar {
 	width: 8px;
 }
@@ -446,11 +448,11 @@ textarea {
 	background: #63b3ed;
 }
 
-/* Item base (desktop) */
+/* Item da lista – flex responsivo */
 #wkt-list li {
 	display: flex;
 	align-items: center;
-	gap: 14px;
+	gap: 12px;
 	padding: 14px;
 	margin: 8px;
 	background: #2d3748;
@@ -460,11 +462,12 @@ textarea {
 	border-left: 5px solid #4299e1;
 	transition: all 0.3s ease;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-	font-family: system-ui, -apple-system, sans-serif;
+	overflow: hidden;
+	/* Evita overflow */
 }
 
 #wkt-list li:hover {
-	transform: translateX(6px);
+	transform: translateX(4px);
 	background: #4a5568;
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
@@ -475,20 +478,21 @@ textarea {
 	opacity: 1 !important;
 }
 
-/* Canvas preview */
+/* Canvas preview – tamanho fixo */
 #wkt-list canvas {
+	width: 90px;
+	height: 70px;
 	border-radius: 10px;
-	background: #1a202c;
+	background: #0f172a;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-	width: 100px;
-	height: 80px;
 	flex-shrink: 0;
 }
 
 /* Texto */
 #wkt-list strong {
 	color: #63b3ed;
-	font-size: 1.1em;
+	font-size: 1.05em;
+	margin-bottom: 4px;
 }
 
 #wkt-list small {
@@ -496,19 +500,19 @@ textarea {
 	font-size: 0.8em;
 }
 
-/* MOBILE: texto por baixo da imagem + sem scroll horizontal */
-@media (max-width: 640px) {
+/* RESPONSIVO: quando #controls for estreito (25%) → texto por baixo */
+@media (max-width: 1024px) {
 	#wkt-list li {
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 12px;
+		gap: 10px;
 		padding: 16px;
 	}
 
 	#wkt-list canvas {
 		align-self: center;
-		width: 120px;
-		height: 90px;
+		width: 110px;
+		height: 85px;
 	}
 
 	#wkt-list li:hover {
@@ -517,8 +521,12 @@ textarea {
 	}
 }
 
-/* Tablet pequeno */
+/* Mobile pequeno */
 @media (max-width: 480px) {
+	#wkt-list {
+		margin: 15px 4px 0 4px;
+	}
+
 	#wkt-list canvas {
 		width: 100px;
 		height: 75px;
