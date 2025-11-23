@@ -19,6 +19,8 @@ export function drawShapePreview(canvas, feature) {
 	geom.transform('EPSG:4326', 'EPSG:3857');
 	const extent = geom.getExtent();
 
+	console.log('Drawing preview for geometry type:', geom.getType());
+
 	// Evita polígonos gigantes ou minúsculos
 	if (!ol.extent.isEmpty(extent)) {
 		// Cores bonitas e visíveis
