@@ -111,7 +111,7 @@ export const mapUtilities = {
 
 				// console.log(newfeature);
 
-				if (frompaste && newfeature) {
+				if (newfeature) {
 					featureUtilities.centerOnFeature(newfeature);
 				}
 			})();
