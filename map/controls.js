@@ -37,6 +37,7 @@ export function initializeMapControls() {
 		active: true
 	});
 	editBar.addControl(selectCtrl);
+	selectCtrl.getInteraction().on('select', handleSelectEvents);
 	mapControls.selectCtrl = selectCtrl;
 
 	// Delete Button
@@ -192,4 +193,23 @@ export function initializeMapControls() {
 			})
 			.catch(console.error);
 	}
+
+	function handleSelectEvents(evt) {
+		utilities.restoreDefaultColors();
+		if (evt.deselected.length > 0) {
+			evt.deselected.forEach(feature => {
+				textarea.value = utilities.getFeatureWKT(feature);
+				WKTUtilities.update(feature.getId(), textarea.value);
+				featureUtilities.createFromAllFeatures();
+			});
+			mapControls.selectBar.setVisible(false);
+		}
+		if (evt.selected.length > 0) {
+			evt.selected.forEach(feature => {
+				textarea.value = utilities.getFeatureWKT(feature);
+			});
+			mapControls.selectBar.setVisible(true);
+		}
+	}
+
 }
