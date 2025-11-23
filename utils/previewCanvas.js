@@ -1,49 +1,51 @@
-// js/utils/previewCanvas.js
 export function drawShapePreview(canvas, feature) {
 	if (!canvas || !feature) return;
 
 	const ctx = canvas.getContext('2d');
 	if (!ctx) return;
 
-	// Limpa tudo
+	// Limpa o canvas
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	// Fundo preto (como na tua imagem)
+	// Fundo preto puro (como na tua imagem)
 	ctx.fillStyle = '#000000';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	// Usa geometria já em mercator (correto!)
 	const geom = feature.getGeometry();
 	const extent = geom.getExtent();
 
-	// Evita erro se extent for inválido
 	if (ol.extent.isEmpty(extent)) return;
 
-	// Cores finais (exatamente como queres)
-	ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';   // verde com transparência
-	ctx.strokeStyle = '#10b981';                // verde neon
-	ctx.lineWidth = 3;
-
-	// Extrai coordenadas corretas
+	// Extrai coordenadas corretas (Polygon ou MultiPolygon)
 	let coordinates = [];
 	if (geom.getType() === 'Polygon') {
 		coordinates = geom.getCoordinates()[0];
 	} else if (geom.getType() === 'MultiPolygon') {
-		coordinates = geom.getCoordinates()[0][0]; // primeiro anel do primeiro polígono
+		// Usa o primeiro polígono do primeiro MultiPolygon
+		coordinates = geom.getCoordinates()[0][0];
 	} else {
-		return; // não suportado
+		return;
 	}
 
-	// Calcula escala e offset (PERFEITO!)
-	const padding = 12;
+	// Cálculo PERFEITO de escala e offset
+	const padding = 14;
 	const worldWidth = extent[2] - extent[0];
 	const worldHeight = extent[3] - extent[1];
+
 	const scaleX = (canvas.width - padding * 2) / worldWidth;
 	const scaleY = (canvas.height - padding * 2) / worldHeight;
 	const scale = Math.min(scaleX, scaleY);
 
+	// Centraliza perfeitamente
 	const offsetX = padding + (canvas.width - worldWidth * scale) / 2 - extent[0] * scale;
 	const offsetY = padding + (canvas.height - worldHeight * scale) / 2 - extent[3] * scale;
+
+	// Verde neon + preenchimento (exatamente como na tua foto)
+	ctx.fillStyle = 'rgba(16, 185, 129, 0.5)';
+	ctx.strokeStyle = '#10b981';
+	ctx.lineWidth = 2.5;
+	ctx.lineJoin = 'round';
+	ctx.lineCap = 'round';
 
 	// Desenha o polígono
 	ctx.beginPath();
@@ -57,13 +59,16 @@ export function drawShapePreview(canvas, feature) {
 	ctx.fill();
 	ctx.stroke();
 
-	// Ponto central (amarelo)
+	// Triângulo pequeno no centro (como na tua foto!)
 	const center = ol.extent.getCenter(extent);
 	const cx = center[0] * scale + offsetX;
 	const cy = canvas.height - (center[1] * scale + offsetY);
 
-	ctx.fillStyle = '#fbbf24';
+	ctx.fillStyle = '#10b981';
 	ctx.beginPath();
-	ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+	ctx.moveTo(cx, cy - 8);
+	ctx.lineTo(cx - 6, cy + 4);
+	ctx.lineTo(cx + 6, cy + 4);
+	ctx.closePath();
 	ctx.fill();
 }
