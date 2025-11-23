@@ -500,6 +500,7 @@ textarea {
 }
 
 /* RESPONSIVO: quando #controls for estreito (25%) → texto por baixo */
+/*
 @media (max-width: 1024px) {
 
 	#controls {
@@ -528,8 +529,10 @@ textarea {
 		background: #3d4758;
 	}
 }
+*/
 
 /* Mobile pequeno */
+/*
 @media (max-width: 480px) {
 	#controls {
 		width: calc(var(--controls-width));
@@ -548,3 +551,4 @@ textarea {
 		height: 75px;
 	}
 }
+	*/
