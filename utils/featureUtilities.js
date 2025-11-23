@@ -146,7 +146,7 @@ export const featureUtilities = {
 			li.querySelector('img').replaceWith(img);
 			list.appendChild(li);
 
-			featureUtilities.featureToImage(newFeature);
+			//featureUtilities.featureToImage(newFeature);
 
 			// === CLIQUE NA LISTA ===
 			li.addEventListener('click', () => {
