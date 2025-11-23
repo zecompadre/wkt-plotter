@@ -409,3 +409,87 @@ textarea {
 .ol-tooltip-static:before {
 	border-top-color: #ffcc33;
 }
+
+/* ========================================= */
+/* LISTA DE WKTs com preview e scroll bonito */
+/* ========================================= */
+
+#wkt-list {
+	list-style: none;
+	padding: 0;
+	margin: 15px 0 0 0;
+	max-height: calc(100vh - 320px);
+	/* Ajusta este valor conforme a tua layout */
+	overflow-y: auto;
+	border: 1px solid #4a5568;
+	border-radius: 12px;
+	background: #1a202c;
+	scrollbar-width: thin;
+	scrollbar-color: #4299e1 #2d3748;
+}
+
+/* Scrollbar bonita no Chrome/Edge/Safari */
+#wkt-list::-webkit-scrollbar {
+	width: 8px;
+}
+
+#wkt-list::-webkit-scrollbar-track {
+	background: #2d3748;
+	border-radius: 10px;
+}
+
+#wkt-list::-webkit-scrollbar-thumb {
+	background: #4299e1;
+	border-radius: 10px;
+}
+
+#wkt-list::-webkit-scrollbar-thumb:hover {
+	background: #63b3ed;
+}
+
+/* Cada item da lista */
+#wkt-list li {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 14px;
+	margin: 8px;
+	background: #2d3748;
+	color: white;
+	border-radius: 12px;
+	cursor: pointer;
+	border-left: 5px solid #4299e1;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	font-family: system-ui, -apple-system, sans-serif;
+}
+
+#wkt-list li:hover {
+	transform: translateX(6px);
+	background: #4a5568;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+#wkt-list li.selected {
+	border-left-color: #48bb78 !important;
+	background: #2d3748 !important;
+	opacity: 1 !important;
+}
+
+/* Canvas preview */
+#wkt-list canvas {
+	border-radius: 8px;
+	background: #1a202c;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Texto dentro do item */
+#wkt-list strong {
+	color: #63b3ed;
+	font-size: 1.1em;
+}
+
+#wkt-list small {
+	opacity: 0.7;
+	font-size: 0.8em;
+}
