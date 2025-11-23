@@ -488,11 +488,11 @@ textarea {
 }
 
 #wkt-list img {
-	width: 120px;
-	height: 90px;
-	border-radius: 12px;
-	background: #000;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+	width: 90px;
+	height: 70px;
+	border-radius: 10px;
+	background: #f0f0f0;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 	object-fit: fill;
 	object-position: center;
 	image-rendering: -webkit-optimize-contrast;
