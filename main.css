@@ -1,7 +1,7 @@
 :root {
 	--header-height: 60px;
-	--map-width: calc(100% - 300px);
-	--controls-width: 300px;
+	--controls-width: 450px;
+	--map-width: calc(100% - var(--controls-width));
 	--button-size: 36px;
 	/* --navbar-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px; */
 	/* --navbar-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset; */
