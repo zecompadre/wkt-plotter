@@ -196,31 +196,75 @@ export const utilities = {
 			);
 		});
 	},
-	// js/utils/utilities.js
 	readClipboard: async function () {
-		// Só tenta ler se houver foco/permissão (nunca falha silenciosamente)
+		let rawText = "";
 		try {
 			const permission = await navigator.permissions.query({ name: "clipboard-read" });
-			if (permission.state === "denied") {
-				console.warn("Permissão de clipboard negada");
-				return "";
-			}
-
-			const text = await navigator.clipboard.readText();
-			if (/POLYGON|MULTIPOLYGON/i.test(text)) {
-				console.log("WKT colado com sucesso!");
-				await navigator.clipboard.writeText(""); // limpa
-				return text.trim();
+			if (permission.state === "granted" || permission.state === "prompt") {
+				rawText = await navigator.clipboard.readText();
 			}
 		} catch (err) {
-			// Erro normal ao carregar página → ignoramos
-			if (err.message.includes("not focused") || err.message.includes("Illegal invocation")) {
-				console.log("Clipboard: página sem foco (normal ao carregar)");
-			} else {
-				console.error("Erro real no clipboard:", err);
-			}
+			if (!err.message.includes("not focused")) console.error(err);
 		}
-		return "";
+
+		// Fallback se falhar
+		if (!rawText) {
+			rawText = await this.fallbackClipboardRead();
+		}
+
+		if (!rawText) return "";
+
+		// Normaliza quebras de linha
+		const text = rawText.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
+		// Lista de tipos WKT válidos
+		const validTypes = [
+			'POINT', 'MULTIPOINT',
+			'LINESTRING', 'MULTILINESTRING',
+			'POLYGON', 'MULTIPOLYGON',
+			'GEOMETRYCOLLECTION'
+		];
+
+		const typeRegex = new RegExp(`^\\s*(${validTypes.join('|')})\\s*\\(`, 'i');
+
+		// Filtra apenas linhas que COMECEM com um tipo WKT válido
+		const validLines = text
+			.split('\n')
+			.map(line => line.trim())
+			.filter(line => line && typeRegex.test(line));
+
+		if (validLines.length === 0) {
+			console.log("Nenhum WKT válido encontrado (deve começar com POLYGON, POINT, etc.)");
+			return "";
+		}
+
+		// Junta com quebras de linha
+		const finalWKT = validLines.join("\n");
+		console.log(`Encontrados ${validLines.length} WKT(s) válido(s) no clipboard`);
+
+		// Limpa o clipboard
+		try {
+			await navigator.clipboard.writeText("");
+		} catch (err) { /* ignora */ }
+
+		return finalWKT;
+	},
+
+	// Fallback seguro
+	fallbackClipboardRead: async function () {
+		return new Promise(resolve => {
+			const ta = document.createElement('textarea');
+			ta.style.position = 'fixed';
+			ta.style.opacity = '0';
+			document.body.appendChild(ta);
+			ta.focus();
+			document.execCommand('paste');
+			setTimeout(() => {
+				const text = ta.value || "";
+				document.body.removeChild(ta);
+				resolve(text);
+			}, 50);
+		});
 	},
 	// Captura screenshot do mapa
 	imageCanvas: function (feature) {
