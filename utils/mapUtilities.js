@@ -54,6 +54,7 @@ export const mapUtilities = {
 	// js/utils/mapUtilities.js → VERSÃO DEFINITIVA E CORRETA!
 	loadWKTs: async function (readcb = false, frompaste = false) {
 		const self = this; // Capture the correct context
+		const textarea = document.querySelector("#wktdefault textarea");
 		let newfeature = null;
 		try {
 			// Load existing WKT entries from localStorage
@@ -65,7 +66,6 @@ export const mapUtilities = {
 			}
 
 			// Focus on textarea to prepare for possible WKT paste
-			const textarea = document.querySelector("#wktdefault textarea");
 			textarea.focus();
 
 			let wkt = readcb ? await utilities.readClipboard() : "";
