@@ -50,8 +50,6 @@ export const mapUtilities = {
 		return vl ? vl.getSource().getFeatures().length : 0;
 	},
 
-	// js/utils/mapUtilities.js
-	// js/utils/mapUtilities.js → VERSÃO DEFINITIVA E CORRETA!
 	loadWKTs: async function (readcb = false, frompaste = false) {
 		const self = this; // Capture the correct context
 		const textarea = document.querySelector("#wktdefault textarea");
@@ -109,7 +107,7 @@ export const mapUtilities = {
 
 				await self.reviewLayout(!frompaste);
 
-				if (newfeature) {
+				if (frompaste || newfeature) {
 					featureUtilities.centerOnFeature(newfeature);
 				}
 				else if (wkts.length > 0) {
