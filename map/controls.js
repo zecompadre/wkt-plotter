@@ -195,6 +195,7 @@ export function initializeMapControls() {
 	}
 
 	function handleSelectEvents(evt) {
+		const textarea = document.querySelector("#wktdefault textarea");
 		utilities.restoreDefaultColors();
 		if (evt.deselected.length > 0) {
 			evt.deselected.forEach(feature => {
