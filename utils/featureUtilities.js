@@ -94,41 +94,18 @@ export const featureUtilities = {
 		featureUtilities.createFromAllFeatures();
 	},
 
-	addToFeatures: (id, wkt) => {
-		const textarea = document.querySelector("#wktdefault textarea");
-		const wktString = wkt || textarea.value;
-
-		if (!wktString.trim()) {
-			// textarea.style.borderColor = "red";
-			// textarea.style.backgroundColor = "#F7E8F3";
-			return null;
-		}
-
-		console.log('Adding WKT to features:', wktString);
-
-		let newFeature;
-		try {
-			newFeature = format.readFeature(wktString);
-		} catch (err) {
-			console.error('Error reading WKT:', err);
-			// textarea.style.borderColor = "red";
-			// textarea.style.backgroundColor = "#F7E8F3";
-			return null;
-		}
-
-		if (!newFeature) {
-			// textarea.style.borderColor = "red";
-			// textarea.style.backgroundColor = "#F7E8F3";
-			return null;
-		}
+	addToFeatures: async (id, wkt) => {
+		// ... teu código até criar newFeature ...
 
 		newFeature.getGeometry().transform(projections.geodetic, projections.mercator);
 		newFeature.setId(id);
 		featureCollection.push(newFeature);
 
-		// textarea.style.borderColor = "";
-		// textarea.style.backgroundColor = "";
+		textarea.value = "";
+		textarea.style.borderColor = "";
+		textarea.style.backgroundColor = "";
 
+		// === CRIA O ITEM NA LISTA ===
 		const list = document.getElementById('wkt-list');
 		if (list) {
 			list.querySelectorAll(`li[data-id="${id}"]`).forEach(el => el.remove());
@@ -143,6 +120,7 @@ export const featureUtilities = {
 			img.style.borderRadius = '12px';
 			img.style.background = '#000';
 			img.style.boxShadow = '0 4px 16px rgba(0,0,0,0.6)';
+			img.style.opacity = '0.7';
 
 			const center = ol.extent.getCenter(newFeature.getGeometry().getExtent());
 			const [lon, lat] = ol.proj.toLonLat(center);
@@ -158,7 +136,7 @@ export const featureUtilities = {
 			li.querySelector('img').replaceWith(img);
 			list.appendChild(li);
 
-			// === imageCanvas com zoom na feature! ===
+			// === ZOOM + PRINT SCREEN DA FEATURE ISOLADA! ===
 			const oldCenter = map.getView().getCenter();
 			const oldRes = map.getView().getResolution();
 
@@ -167,28 +145,36 @@ export const featureUtilities = {
 			const newCenter = ol.extent.getCenter(extent);
 
 			map.getView().setCenter(newCenter);
-			map.getView().setResolution(resolution * 0.8);
+			map.getView().setResolution(resolution * 0.7);
 
 			map.once('rendercomplete', () => {
-				domtoimage.toPng(document.getElementById('map'))
+				domtoimage.toPng(document.getElementById('map'), {
+					bgcolor: '#000000'
+				})
 					.then(dataUrl => {
 						img.src = dataUrl;
+						img.style.opacity = '1';
 
-						// Volta ao estado anterior
+						// VOLTA AO ZOOM GERAL
 						map.getView().setCenter(oldCenter);
 						map.getView().setResolution(oldRes);
+
+						// No final da lista → zoom geral
+						if (list.lastElementChild === li) {
+							setTimeout(() => featureUtilities.centerOnVector(), 400);
+						}
 					})
 					.catch(err => {
 						console.error("Erro no preview:", err);
-						img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjkwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwMDAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InN5c3RlbS11aSIgZm9udC1zaXplPSIxMiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIHByZXZpZXc8L3RleHQ+PC9zdmc+";
+						img.src = "data:image/svg+xml;base64,...";
 						map.getView().setCenter(oldCenter);
 						map.getView().setResolution(oldRes);
 					});
 			});
 
-			map.renderSync();
+			map.renderSync(); // força render
 
-			// Clique → seleciona + mostra WKT
+			// === CLIQUE NA LISTA ===
 			li.addEventListener('click', () => {
 				const f = vectorLayer.getSource().getFeatureById(id);
 				if (f) {
@@ -214,10 +200,6 @@ export const featureUtilities = {
 
 			li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 		}
-
-		textarea.value = "";  // ← LIMPA A TEXTAREA!
-		textarea.style.borderColor = "";
-		textarea.style.backgroundColor = "";
 
 		return newFeature;
 	},
