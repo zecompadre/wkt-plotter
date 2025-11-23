@@ -98,6 +98,7 @@ export const mapUtilities = {
 
 		// 5. Atualiza o mapa
 		await featureUtilities.addFeatures();
+
 		await this.reviewLayout(!frompaste);  // ← correto: !frompaste
 
 		featureUtilities.centerOnVector();
