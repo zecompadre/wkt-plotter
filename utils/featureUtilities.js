@@ -141,10 +141,17 @@ export const featureUtilities = {
 			const img = document.createElement('img');
 			img.width = 120;
 			img.height = 90;
-			img.style.borderRadius = '12px';
-			img.style.background = '#000';
-			img.style.boxShadow = '0 4px 16px rgba(0,0,0,0.6)';
-			img.style.opacity = '0.7';
+			img.style.cssText = `
+  width: 120px;
+  height: 90px;
+  border-radius: 12px;
+  background: #000;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  object-fit: contain;     /* ← A IMAGEM FICA CONTIDA! */
+  object-position: center;
+  image-rendering: -webkit-optimize-contrast;
+  flex-shrink: 0;
+`;
 
 			const center = ol.extent.getCenter(newFeature.getGeometry().getExtent());
 			const [lon, lat] = ol.proj.toLonLat(center);
