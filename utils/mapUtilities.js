@@ -59,6 +59,8 @@ export const mapUtilities = {
 		WKTUtilities.load();
 		let wkts = WKTUtilities.get() || [];
 
+		console.log(`WKTs carregados do localStorage: ${wkts.length}`);
+
 		const textarea = document.querySelector("#wktdefault textarea");
 		textarea?.focus();
 
