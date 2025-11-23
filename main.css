@@ -487,6 +487,18 @@ textarea {
 	flex-shrink: 0;
 }
 
+#wkt-list img {
+	width: 120px;
+	height: 90px;
+	border-radius: 12px;
+	background: #000;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+	object-fit: fill;
+	object-position: center;
+	image-rendering: -webkit-optimize-contrast;
+	flex-shrink: 0;
+}
+
 /* Texto */
 #wkt-list strong {
 	color: #63b3ed;

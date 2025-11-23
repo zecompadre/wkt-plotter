@@ -99,8 +99,6 @@ export const featureUtilities = {
 		const wktString = wkt || textarea.value;
 
 		if (!wktString.trim()) {
-			// textarea.style.borderColor = "red";
-			// textarea.style.backgroundColor = "#F7E8F3";
 			return null;
 		}
 
@@ -111,14 +109,10 @@ export const featureUtilities = {
 			newFeature = format.readFeature(wktString);
 		} catch (err) {
 			console.error('Error reading WKT:', err);
-			// textarea.style.borderColor = "red";
-			// textarea.style.backgroundColor = "#F7E8F3";
 			return null;
 		}
 
 		if (!newFeature) {
-			// textarea.style.borderColor = "red";
-			// textarea.style.backgroundColor = "#F7E8F3";
 			return null;
 		}
 
@@ -126,10 +120,6 @@ export const featureUtilities = {
 		newFeature.setId(id);
 		featureCollection.push(newFeature);
 
-		// textarea.style.borderColor = "";
-		// textarea.style.backgroundColor = "";
-
-		// === CRIA O ITEM NA LISTA ===
 		const list = document.getElementById('wkt-list');
 		if (list) {
 			list.querySelectorAll(`li[data-id="${id}"]`).forEach(el => el.remove());
@@ -141,17 +131,6 @@ export const featureUtilities = {
 			const img = document.createElement('img');
 			img.width = 120;
 			img.height = 90;
-			img.style.cssText = `
-  width: 120px;
-  height: 90px;
-  border-radius: 12px;
-  background: #000;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-  object-fit: contain;     /* ← A IMAGEM FICA CONTIDA! */
-  object-position: center;
-  image-rendering: -webkit-optimize-contrast;
-  flex-shrink: 0;
-`;
 
 			const center = ol.extent.getCenter(newFeature.getGeometry().getExtent());
 			const [lon, lat] = ol.proj.toLonLat(center);
@@ -167,55 +146,7 @@ export const featureUtilities = {
 			li.querySelector('img').replaceWith(img);
 			list.appendChild(li);
 
-			// === ZOOM + PRINT SCREEN DA FEATURE ISOLADA! ===
-			const oldCenter = map.getView().getCenter();
-			const oldRes = map.getView().getResolution();
-
-			const allFeatures = vectorLayer.getSource().getFeatures();
-
-			// ESCONDE TODAS AS OUTRAS FEATURES
-			allFeatures.forEach(f => {
-				if (f !== newFeature) f.setStyle(new ol.style.Style({})); // invisível
-			});
-
-			const extent = newFeature.getGeometry().getExtent();
-			const resolution = map.getView().getResolutionForExtent(extent, map.getSize());
-			const newCenter = ol.extent.getCenter(extent);
-
-			map.getView().setCenter(newCenter);
-			map.getView().setResolution(resolution * 0.7);
-
-			const controls = document.querySelectorAll('.ol-control');
-			controls.forEach(el => el.style.setProperty('display', 'none', 'important'));
-
-			map.once('rendercomplete', () => {
-				domtoimage.toPng(document.getElementById('map'), {
-					bgcolor: '#000000'
-				})
-					.then(dataUrl => {
-						img.src = dataUrl;
-						img.style.opacity = '1';
-
-						allFeatures.forEach(f => f.setStyle(undefined));
-
-						// VOLTA AO ZOOM GERAL
-						map.getView().setCenter(oldCenter);
-						map.getView().setResolution(oldRes);
-
-						// No final da lista → zoom geral
-						if (list.lastElementChild === li) {
-							setTimeout(() => featureUtilities.centerOnVector(), 400);
-						}
-					})
-					.catch(err => {
-						console.error("Erro no preview:", err);
-						img.src = "data:image/svg+xml;base64,...";
-						map.getView().setCenter(oldCenter);
-						map.getView().setResolution(oldRes);
-					});
-			});
-
-			map.renderSync(); // força render
+			featureUtilities.featureToImage(newFeature);
 
 			// === CLIQUE NA LISTA ===
 			li.addEventListener('click', () => {
@@ -250,4 +181,58 @@ export const featureUtilities = {
 
 		return newFeature;
 	},
+	featureToImage: async (feature) => {
+
+		const id = feature.getId();
+
+		const img = document.querySelector(`li[data-id="${id}"] img`);
+
+		const oldCenter = map.getView().getCenter();
+		const oldRes = map.getView().getResolution();
+
+		const allFeatures = vectorLayer.getSource().getFeatures();
+
+		allFeatures.forEach(f => {
+			if (f !== feature) f.setStyle(new ol.style.Style({})); // invisível
+		});
+
+		const extent = feature.getGeometry().getExtent();
+		const resolution = map.getView().getResolutionForExtent(extent, map.getSize());
+		const newCenter = ol.extent.getCenter(extent);
+
+		map.getView().setCenter(newCenter);
+		map.getView().setResolution(resolution * 0.7);
+
+		const controls = document.querySelectorAll('.ol-control');
+		controls.forEach(el => el.style.setProperty('display', 'none', 'important'));
+
+		map.once('rendercomplete', () => {
+			domtoimage.toPng(document.getElementById('map'), {
+				bgcolor: '#000000'
+			})
+				.then(dataUrl => {
+					img.src = dataUrl;
+					img.style.opacity = '1';
+
+					allFeatures.forEach(f => f.setStyle(undefined));
+
+					// VOLTA AO ZOOM GERAL
+					map.getView().setCenter(oldCenter);
+					map.getView().setResolution(oldRes);
+
+					// No final da lista → zoom geral
+					if (list.lastElementChild === li) {
+						setTimeout(() => featureUtilities.centerOnVector(), 400);
+					}
+				})
+				.catch(err => {
+					console.error("Erro no preview:", err);
+					img.src = "data:image/svg+xml;base64,...";
+					map.getView().setCenter(oldCenter);
+					map.getView().setResolution(oldRes);
+				});
+		});
+		map.renderSync(); // força render
+	},
+
 };
