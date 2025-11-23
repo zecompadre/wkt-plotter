@@ -522,6 +522,15 @@ textarea {
 
 /* Mobile pequeno */
 @media (max-width: 480px) {
+
+	#controls {
+		width: 250px;
+	}
+
+	#map {
+		width: calc(100% - 250px);
+	}
+
 	#wkt-list {
 		margin: 15px 4px 0 4px;
 	}
