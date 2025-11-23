@@ -454,7 +454,7 @@ textarea {
 	gap: 12px;
 	padding: 14px;
 	margin: 8px;
-	background: #2d3748;
+	/* background: #2d3748; */
 	color: white;
 	border-radius: 12px;
 	cursor: pointer;

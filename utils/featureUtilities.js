@@ -160,19 +160,51 @@ export const featureUtilities = {
 				drawShapePreview(canvas, newFeature);
 			});
 
-			li.addEventListener('click', () => {
-				const f = vectorLayer.getSource().getFeatureById(id);
-				if (f) {
-					const select = map.getInteractions().getArray().find(i => i instanceof ol.interaction.Select);
-					if (select) { select.getFeatures().clear(); select.getFeatures().push(f); }
-					featureUtilities.centerOnFeature(f);
+			// Dentro do clique do <li> em addToFeatures
+			li.addEventListener('click', (e) => {
+				e.stopPropagation(); // evita conflitos
+
+				const featureId = li.dataset.id;
+				const feature = vectorLayer.getSource().getFeatureById(featureId);
+
+				if (!feature) return;
+
+				// Verifica se já está selecionada
+				const selectInteraction = map.getInteractions().getArray()
+					.find(i => i instanceof ol.interaction.Select);
+
+				const alreadySelected = selectInteraction?.getFeatures().getArray().includes(feature);
+
+				if (alreadySelected) {
+					// === DESELECIONA + LIMPA TEXTAREA ===
+					selectInteraction.getFeatures().clear();
+					document.querySelector("#wktdefault textarea").value = "";
 					list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
-					li.classList.add('selected');
+					return;
 				}
+
+				// === SELECIONA + MOSTRA WKT NA TEXTAREA ===
+				selectInteraction.getFeatures().clear();
+				selectInteraction.getFeatures().push(feature);
+
+				// Mostra o WKT na textarea
+				const wktText = utilities.getFeatureWKT(feature);
+				document.querySelector("#wktdefault textarea").value = wktText;
+
+				// Destaca visualmente
+				list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
+				li.classList.add('selected');
+
+				// Centra no mapa
+				featureUtilities.centerOnFeature(feature);
 			});
 
 			li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 		}
+
+		textarea.value = "";  // ← LIMPA A TEXTAREA!
+		textarea.style.borderColor = "";
+		textarea.style.backgroundColor = "";
 
 		return newFeature;
 	},
