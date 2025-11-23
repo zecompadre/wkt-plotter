@@ -99,24 +99,26 @@ export const featureUtilities = {
 		const wktString = wkt || textarea.value;
 
 		if (!wktString.trim()) {
-			textarea.style.borderColor = "red";
-			textarea.style.backgroundColor = "#F7E8F3";
+			// textarea.style.borderColor = "red";
+			// textarea.style.backgroundColor = "#F7E8F3";
 			return null;
 		}
+
+		console.log('Adding WKT to features:', wktString);
 
 		let newFeature;
 		try {
 			newFeature = format.readFeature(wktString);
 		} catch (err) {
 			console.error('Error reading WKT:', err);
-			textarea.style.borderColor = "red";
-			textarea.style.backgroundColor = "#F7E8F3";
+			// textarea.style.borderColor = "red";
+			// textarea.style.backgroundColor = "#F7E8F3";
 			return null;
 		}
 
 		if (!newFeature) {
-			textarea.style.borderColor = "red";
-			textarea.style.backgroundColor = "#F7E8F3";
+			// textarea.style.borderColor = "red";
+			// textarea.style.backgroundColor = "#F7E8F3";
 			return null;
 		}
 
@@ -124,8 +126,8 @@ export const featureUtilities = {
 		newFeature.setId(id);
 		featureCollection.push(newFeature);
 
-		textarea.style.borderColor = "";
-		textarea.style.backgroundColor = "";
+		// textarea.style.borderColor = "";
+		// textarea.style.backgroundColor = "";
 
 		// ============ LISTA VISUAL ============
 		const list = document.getElementById('wkt-list');
