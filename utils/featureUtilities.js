@@ -129,7 +129,6 @@ export const featureUtilities = {
 		// textarea.style.borderColor = "";
 		// textarea.style.backgroundColor = "";
 
-		// ============ LISTA VISUAL ============
 		const list = document.getElementById('wkt-list');
 		if (list) {
 			list.querySelectorAll(`li[data-id="${id}"]`).forEach(el => el.remove());
@@ -138,64 +137,78 @@ export const featureUtilities = {
 			li.dataset.id = id;
 			li.className = 'wkt-item';
 
-			const canvas = document.createElement('canvas');
-			canvas.width = 120;
-			canvas.height = 90;
+			const img = document.createElement('img');
+			img.width = 120;
+			img.height = 90;
+			img.style.borderRadius = '12px';
+			img.style.background = '#000';
+			img.style.boxShadow = '0 4px 16px rgba(0,0,0,0.6)';
 
-			const geom = newFeature.getGeometry();
-			const type = geom.getType();
-			const [lon, lat] = ol.proj.toLonLat(ol.extent.getCenter(geom.getExtent()));
+			const center = ol.extent.getCenter(newFeature.getGeometry().getExtent());
+			const [lon, lat] = ol.proj.toLonLat(center);
 
 			li.innerHTML = `
-      <canvas></canvas>
+      <img>
       <div>
-        <strong>${type}</strong>
+        <strong>${newFeature.getGeometry().getType()}</strong>
         <div>lat: ${lat.toFixed(6)} | lon: ${lon.toFixed(6)}</div>
         <small>#${id.slice(0, 8)}</small>
       </div>
     `;
-			li.querySelector('canvas').replaceWith(canvas);
+			li.querySelector('img').replaceWith(img);
 			list.appendChild(li);
 
-			// CHAMA A FUNÇÃO SEPARADA!
-			requestAnimationFrame(() => {
-				drawShapePreview(canvas, newFeature);
+			// === imageCanvas com zoom na feature! ===
+			const oldCenter = map.getView().getCenter();
+			const oldRes = map.getView().getResolution();
+
+			const extent = newFeature.getGeometry().getExtent();
+			const resolution = map.getView().getResolutionForExtent(extent, map.getSize());
+			const newCenter = ol.extent.getCenter(extent);
+
+			map.getView().setCenter(newCenter);
+			map.getView().setResolution(resolution * 0.8);
+
+			map.once('rendercomplete', () => {
+				domtoimage.toPng(document.getElementById('map'))
+					.then(dataUrl => {
+						img.src = dataUrl;
+
+						// Volta ao estado anterior
+						map.getView().setCenter(oldCenter);
+						map.getView().setResolution(oldRes);
+					})
+					.catch(err => {
+						console.error("Erro no preview:", err);
+						img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjkwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwMDAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9InN5c3RlbS11aSIgZm9udC1zaXplPSIxMiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIHByZXZpZXc8L3RleHQ+PC9zdmc+";
+						map.getView().setCenter(oldCenter);
+						map.getView().setResolution(oldRes);
+					});
 			});
 
-			// Dentro do clique do <li> em addToFeatures
-			li.addEventListener('click', (e) => {
-				e.stopPropagation();
+			map.renderSync();
 
-				const featureId = li.dataset.id;
-				const feature = vectorLayer.getSource().getFeatureById(featureId);
-				if (!feature) return;
-
-				const selectInteraction = map.getInteractions().getArray()
-					.find(i => i instanceof ol.interaction.Select);
-
-				const features = selectInteraction.getFeatures();
-				const isSelected = features.getArray().includes(feature);
-
-				if (isSelected) {
-					// === DESELECIONA + LIMPA + ZOOM PARA TODOS ===
-					features.clear();
-					textarea.value = "";
-					list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
-
-					// ZOOM PARA TODOS OS OBJETOS!
-					featureUtilities.centerOnVector();  // ← usa a tua função que já tens!
-				} else {
-					// === SELECIONA + MOSTRA WKT + CENTRA ===
-					features.clear();
-					features.push(feature);
-
-					const wktText = utilities.getFeatureWKT(feature);
-					textarea.value = wktText;
-
-					list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
-					li.classList.add('selected');
-
-					featureUtilities.centerOnFeature(feature);
+			// Clique → seleciona + mostra WKT
+			li.addEventListener('click', () => {
+				const f = vectorLayer.getSource().getFeatureById(id);
+				if (f) {
+					const select = map.getInteractions().getArray().find(i => i instanceof ol.interaction.Select);
+					if (select) {
+						const isSelected = select.getFeatures().getArray().includes(f);
+						if (isSelected) {
+							select.getFeatures().clear();
+							textarea.value = "";
+							list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
+							featureUtilities.centerOnVector();
+						} else {
+							select.getFeatures().clear();
+							select.getFeatures().push(f);
+							textarea.value = utilities.getFeatureWKT(f);
+							list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
+							li.classList.add('selected');
+							featureUtilities.centerOnFeature(f);
+						}
+					}
 				}
 			});
 

@@ -916,43 +916,80 @@ var app = (function () {
 				);
 			});
 		},
-		/**
-		 * Captures a screenshot of the map element and appends it as an image to the body of the document.
-		 *
-		 * This function uses the `domtoimage` library to generate a PNG image of the map element (identified by the "map" ID).
-		 * The image is created with the current dimensions of the map. If the screenshot is successfully created, it is
-		 * appended to the document body as an image. If an error occurs during the process, it logs the error to the console.
-		 *
-		 * @param {Object} feature - The feature associated with the map (currently unused, but could be extended for specific use cases).
-		 * @returns {void} This function does not return any value.
-		 */
-		imageCanvas: function (feature) {
-			// Get the map element and its dimensions
-			const map = document.getElementById("map");
-			const width = map.offsetWidth;
-			const height = map.offsetHeight;
-			loading.show(); // Show the loading overlay while generating the image
-			// Use domtoimage to capture a PNG image of the map
-			domtoimage.toPng(map, {
-				"width": width,
-				"height": height
-			})
-				.then(function (dataUrl) {
-					// Create an image element and set its source to the data URL
-					var img = new Image();
-					img.src = dataUrl;
+		// js/utils/utilities.js → imageCanvas FINAL (zoom + captura!)
+		imageCanvas: function (feature = null) {
+			const mapEl = document.getElementById("map");
+			if (!mapEl) return;
 
-					// Append the image to the body of the document
-					document.body.appendChild(img);
-					loading.hide(); // Hide the loading overlay once the image is generated
-				})
-				.catch(function (error) {
-					// Log any errors that occur during the image generation
-					console.error('oops, something went wrong!', error);
-					loading.hide(); // Hide the loading overlay if an error occurs
-				});
+			loading.show();
+
+			// Se não houver feature → mapa inteiro
+			if (!feature) {
+				domtoimage.toPng(mapEl)
+					.then(dataUrl => {
+						const img = new Image();
+						img.src = dataUrl;
+						img.style.maxWidth = "90%";
+						img.style.border = "2px solid #4299e1";
+						img.style.borderRadius = "12px";
+						img.style.boxShadow = "0 10px 30px rgba(0,0,0,0.5)";
+						document.body.appendChild(img);
+						loading.hide();
+					})
+					.catch(err => {
+						console.error("Erro ao capturar mapa:", err);
+						loading.hide();
+					});
+				return;
+			}
+
+			// === COM FEATURE → ZOOM + CAPTURA ===
+			const geom = feature.getGeometry();
+			const extent = geom.getExtent();
+			const view = map.getView();
+			const size = map.getSize();
+
+			// Salva estado atual
+			const oldCenter = view.getCenter();
+			const oldResolution = view.getResolution();
+
+			// Calcula zoom perfeito
+			const resolution = view.getResolutionForExtent(extent, size);
+			const center = ol.extent.getCenter(extent);
+
+			// Aplica zoom temporário
+			view.setCenter(center);
+			view.setResolution(resolution * 0.7); // 0.7 = zoom mais próximo
+
+			// Força renderização completa
+			map.once('rendercomplete', () => {
+				domtoimage.toPng(mapEl)
+					.then(dataUrl => {
+						const img = new Image();
+						img.src = dataUrl;
+						img.style.maxWidth = "90%";
+						img.style.border = "4px solid #10b981";
+						img.style.borderRadius = "12px";
+						img.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)";
+						document.body.appendChild(img);
+
+						// Volta ao estado anterior
+						view.setCenter(oldCenter);
+						view.setResolution(oldResolution);
+						loading.hide();
+					})
+					.catch(err => {
+						console.error("Erro ao capturar com zoom:", err);
+						// Volta mesmo se falhar
+						view.setCenter(oldCenter);
+						view.setResolution(oldResolution);
+						loading.hide();
+					});
+			});
+
+			// Força render
+			map.renderSync();
 		},
-
 		/**
 		 * Reads text from the clipboard, focusing on text containing "POLYGON".
 		 * @async
