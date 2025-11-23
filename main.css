@@ -421,7 +421,6 @@ textarea {
 	max-height: calc(100vh - 340px);
 	/* Ajustado para teu header + textarea */
 	overflow-y: auto;
-	border: 1px solid #4a5568;
 	border-radius: 12px;
 	background: #1a202c;
 	scrollbar-width: thin;
