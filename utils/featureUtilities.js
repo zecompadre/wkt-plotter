@@ -187,6 +187,9 @@ export const featureUtilities = {
 
 		const img = document.querySelector(`li[data-id="${id}"] img`);
 
+		console.log('Generating preview for feature ID:', id);
+		console.log(img);
+
 		const oldCenter = map.getView().getCenter();
 		const oldRes = map.getView().getResolution();
 
