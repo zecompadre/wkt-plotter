@@ -411,7 +411,7 @@ textarea {
 }
 
 /* ========================================= */
-/* LISTA DE WKTs com preview e scroll bonito */
+/* LISTA DE WKTs – MOBILE-FRIENDLY & RESPONSIVA */
 /* ========================================= */
 
 #wkt-list {
@@ -419,7 +419,6 @@ textarea {
 	padding: 0;
 	margin: 15px 0 0 0;
 	max-height: calc(100vh - 320px);
-	/* Ajusta este valor conforme a tua layout */
 	overflow-y: auto;
 	border: 1px solid #4a5568;
 	border-radius: 12px;
@@ -428,7 +427,7 @@ textarea {
 	scrollbar-color: #4299e1 #2d3748;
 }
 
-/* Scrollbar bonita no Chrome/Edge/Safari */
+/* Scroll bonito (Chrome/Edge/Safari) */
 #wkt-list::-webkit-scrollbar {
 	width: 8px;
 }
@@ -447,7 +446,7 @@ textarea {
 	background: #63b3ed;
 }
 
-/* Cada item da lista */
+/* Item base (desktop) */
 #wkt-list li {
 	display: flex;
 	align-items: center;
@@ -478,12 +477,15 @@ textarea {
 
 /* Canvas preview */
 #wkt-list canvas {
-	border-radius: 8px;
+	border-radius: 10px;
 	background: #1a202c;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+	width: 100px;
+	height: 80px;
+	flex-shrink: 0;
 }
 
-/* Texto dentro do item */
+/* Texto */
 #wkt-list strong {
 	color: #63b3ed;
 	font-size: 1.1em;
@@ -492,4 +494,33 @@ textarea {
 #wkt-list small {
 	opacity: 0.7;
 	font-size: 0.8em;
+}
+
+/* MOBILE: texto por baixo da imagem + sem scroll horizontal */
+@media (max-width: 640px) {
+	#wkt-list li {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+		padding: 16px;
+	}
+
+	#wkt-list canvas {
+		align-self: center;
+		width: 120px;
+		height: 90px;
+	}
+
+	#wkt-list li:hover {
+		transform: none;
+		background: #3d4758;
+	}
+}
+
+/* Tablet pequeno */
+@media (max-width: 480px) {
+	#wkt-list canvas {
+		width: 100px;
+		height: 75px;
+	}
 }

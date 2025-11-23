@@ -3,6 +3,7 @@
 import { map, vectorLayer, format, featureCollection } from '../map/setupMap.js';
 import { utilities } from './utilities.js';
 import { projections } from './constants.js';
+import { drawShapePreview } from './previewCanvas.js';
 
 export const featureUtilities = {
 	deselectCurrentFeature: (active) => {
@@ -94,30 +95,7 @@ export const featureUtilities = {
 	},
 
 	addToFeatures: (id, wkt) => {
-		const textarea = document.querySelector("#wktdefault textarea");
-		const wktString = wkt || textarea.value;
-
-		if (!wktString.trim()) {
-			textarea.style.borderColor = "red";
-			textarea.style.backgroundColor = "#F7E8F3";
-			return null;
-		}
-
-		let newFeature;
-		try {
-			newFeature = format.readFeature(wktString);
-		} catch (err) {
-			console.error('Error reading WKT:', err);
-			textarea.style.borderColor = "red";
-			textarea.style.backgroundColor = "#F7E8F3";
-			return null;
-		}
-
-		if (!newFeature) {
-			textarea.style.borderColor = "red";
-			textarea.style.backgroundColor = "#F7E8F3";
-			return null;
-		}
+		// ... teu código atual até criar newFeature ...
 
 		newFeature.getGeometry().transform(projections.geodetic, projections.mercator);
 		newFeature.setId(id);
@@ -126,27 +104,36 @@ export const featureUtilities = {
 		textarea.style.borderColor = "";
 		textarea.style.backgroundColor = "";
 
-		// Dentro do addToFeatures → parte da lista
+		// ============ LISTA VISUAL ============
 		const list = document.getElementById('wkt-list');
 		if (list) {
 			list.querySelectorAll(`li[data-id="${id}"]`).forEach(el => el.remove());
 
 			const li = document.createElement('li');
 			li.dataset.id = id;
-			li.className = 'wkt-item';  // ← usa classe CSS
+			li.className = 'wkt-item';
 
 			const canvas = document.createElement('canvas');
-			canvas.width = 100;
-			canvas.height = 80;
+			canvas.width = 120;
+			canvas.height = 90;
 
 			const geom = newFeature.getGeometry();
 			const type = geom.getType();
-			const center = ol.extent.getCenter(geom.getExtent());
-			const [lon, lat] = ol.proj.toLonLat(center);
+			const [lon, lat] = ol.proj.toLonLat(ol.extent.getCenter(geom.getExtent()));
 
-			li.innerHTML = `<canvas></canvas><div><strong>${type}</strong><div>lat: ${lat.toFixed(6)} | lon: ${lon.toFixed(6)}</div><small>#${id.slice(0, 8)}</small></div>`;
-
+			li.innerHTML = `
+      <canvas></canvas>
+      <div>
+        <strong>${type}</strong>
+        <div>lat: ${lat.toFixed(6)} | lon: ${lon.toFixed(6)}</div>
+        <small>#${id.slice(0, 8)}</small>
+      </div>
+    `;
 			li.querySelector('canvas').replaceWith(canvas);
+			list.appendChild(li);
+
+			// CHAMA A FUNÇÃO SEPARADA!
+			requestAnimationFrame(() => drawShapePreview(canvas, newFeature));
 
 			li.addEventListener('click', () => {
 				const f = vectorLayer.getSource().getFeatureById(id);
@@ -154,17 +141,12 @@ export const featureUtilities = {
 					const select = map.getInteractions().getArray().find(i => i instanceof ol.interaction.Select);
 					if (select) { select.getFeatures().clear(); select.getFeatures().push(f); }
 					featureUtilities.centerOnFeature(f);
-
-					// Destaca visualmente
 					list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
 					li.classList.add('selected');
 				}
 			});
 
-			list.appendChild(li);
-
-			// Desenha o preview no canvas (mesmo código de antes)
-			// ... (o mesmo desenho que tinhas)
+			li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 		}
 
 		return newFeature;
