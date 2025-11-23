@@ -109,10 +109,11 @@ export const mapUtilities = {
 
 				await self.reviewLayout(!frompaste);
 
-				// console.log(newfeature);
-
 				if (newfeature) {
 					featureUtilities.centerOnFeature(newfeature);
+				}
+				else if (wkts.length > 0) {
+					featureUtilities.centerOnVector();
 				}
 			})();
 
