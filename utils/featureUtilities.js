@@ -162,41 +162,39 @@ export const featureUtilities = {
 
 			// Dentro do clique do <li> em addToFeatures
 			li.addEventListener('click', (e) => {
-				e.stopPropagation(); // evita conflitos
+				e.stopPropagation();
 
 				const featureId = li.dataset.id;
 				const feature = vectorLayer.getSource().getFeatureById(featureId);
-
 				if (!feature) return;
 
-				// Verifica se já está selecionada
 				const selectInteraction = map.getInteractions().getArray()
 					.find(i => i instanceof ol.interaction.Select);
 
-				const alreadySelected = selectInteraction?.getFeatures().getArray().includes(feature);
+				const features = selectInteraction.getFeatures();
+				const isSelected = features.getArray().includes(feature);
 
-				if (alreadySelected) {
-					// === DESELECIONA + LIMPA TEXTAREA ===
-					selectInteraction.getFeatures().clear();
-					document.querySelector("#wktdefault textarea").value = "";
+				if (isSelected) {
+					// === DESELECIONA + LIMPA + ZOOM PARA TODOS ===
+					features.clear();
+					textarea.value = "";
 					list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
-					return;
+
+					// ZOOM PARA TODOS OS OBJETOS!
+					featureUtilities.centerOnVector();  // ← usa a tua função que já tens!
+				} else {
+					// === SELECIONA + MOSTRA WKT + CENTRA ===
+					features.clear();
+					features.push(feature);
+
+					const wktText = utilities.getFeatureWKT(feature);
+					textarea.value = wktText;
+
+					list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
+					li.classList.add('selected');
+
+					featureUtilities.centerOnFeature(feature);
 				}
-
-				// === SELECIONA + MOSTRA WKT NA TEXTAREA ===
-				selectInteraction.getFeatures().clear();
-				selectInteraction.getFeatures().push(feature);
-
-				// Mostra o WKT na textarea
-				const wktText = utilities.getFeatureWKT(feature);
-				document.querySelector("#wktdefault textarea").value = wktText;
-
-				// Destaca visualmente
-				list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
-				li.classList.add('selected');
-
-				// Centra no mapa
-				featureUtilities.centerOnFeature(feature);
 			});
 
 			li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

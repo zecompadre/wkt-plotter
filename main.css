@@ -422,7 +422,7 @@ textarea {
 	/* Ajustado para teu header + textarea */
 	overflow-y: auto;
 	border-radius: 12px;
-	background: #1a202c;
+	/* background: #1a202c; */
 	scrollbar-width: thin;
 	scrollbar-color: #4299e1 #2d3748;
 	font-family: system-ui, -apple-system, sans-serif;
@@ -454,7 +454,7 @@ textarea {
 	gap: 12px;
 	padding: 14px;
 	margin: 8px;
-	/* background: #2d3748; */
+	background: #2d3748;
 	color: white;
 	border-radius: 12px;
 	cursor: pointer;
