@@ -182,7 +182,7 @@ export const featureUtilities = {
 		return newFeature;
 	},
 	featureToImage: async (feature) => {
-
+		await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 		const id = feature.getId();
 
 		const img = document.querySelector(`li[data-id="${id}"] img`);
