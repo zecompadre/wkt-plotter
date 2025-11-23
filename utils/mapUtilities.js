@@ -65,6 +65,7 @@ export const mapUtilities = {
 			}
 
 			// Focus on textarea to prepare for possible WKT paste
+			const textarea = document.querySelector("#wktdefault textarea");
 			textarea.focus();
 
 			let wkt = readcb ? await utilities.readClipboard() : "";
