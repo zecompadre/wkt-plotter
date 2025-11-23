@@ -94,16 +94,40 @@ export const featureUtilities = {
 		featureUtilities.createFromAllFeatures();
 	},
 
-	addToFeatures: async (id, wkt) => {
-		// ... teu código até criar newFeature ...
+	addToFeatures: (id, wkt) => {
+		const textarea = document.querySelector("#wktdefault textarea");
+		const wktString = wkt || textarea.value;
+
+		if (!wktString.trim()) {
+			// textarea.style.borderColor = "red";
+			// textarea.style.backgroundColor = "#F7E8F3";
+			return null;
+		}
+
+		console.log('Adding WKT to features:', wktString);
+
+		let newFeature;
+		try {
+			newFeature = format.readFeature(wktString);
+		} catch (err) {
+			console.error('Error reading WKT:', err);
+			// textarea.style.borderColor = "red";
+			// textarea.style.backgroundColor = "#F7E8F3";
+			return null;
+		}
+
+		if (!newFeature) {
+			// textarea.style.borderColor = "red";
+			// textarea.style.backgroundColor = "#F7E8F3";
+			return null;
+		}
 
 		newFeature.getGeometry().transform(projections.geodetic, projections.mercator);
 		newFeature.setId(id);
 		featureCollection.push(newFeature);
 
-		textarea.value = "";
-		textarea.style.borderColor = "";
-		textarea.style.backgroundColor = "";
+		// textarea.style.borderColor = "";
+		// textarea.style.backgroundColor = "";
 
 		// === CRIA O ITEM NA LISTA ===
 		const list = document.getElementById('wkt-list');
@@ -200,6 +224,10 @@ export const featureUtilities = {
 
 			li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 		}
+
+		textarea.value = "";  // ← LIMPA A TEXTAREA!
+		textarea.style.borderColor = "";
+		textarea.style.backgroundColor = "";
 
 		return newFeature;
 	},
