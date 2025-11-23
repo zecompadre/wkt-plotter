@@ -32,6 +32,8 @@
 	<link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 
+	<link href="/main.css" version rel="stylesheet">
+	<link href="/theme1.css" version rel="stylesheet">
 	<script type="module">
 		console.log("Iniciando carregamento do WKTapp.js...");
 		const version = new Date().getTime();
@@ -42,9 +44,15 @@
 			.catch(err => {
 				console.error("Erro ao carregar WKTapp.js:", err);
 			});
+
+		document.querySelectorAll('link[version]').forEach(el => {
+			const url = new URL(el.href || el.src, location.href);
+			url.searchParams.set('v', version);
+			if (el.href) el.href = url;
+			if (el.src) el.src = url;
+			el.removeAttribute('version');
+		});
 	</script>
-	<link href="/main.css?v=202412171910" rel="stylesheet">
-	<link href="/theme1.css?v=202412171910" rel="stylesheet">
 
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-HQWSTRZMSN"></script>
