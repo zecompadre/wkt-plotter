@@ -251,7 +251,7 @@ export const featureUtilities = {
 			return null;
 		}
 
-		// 1. Bounding box real da geometria
+		// 1. Bounding box
 		const [west, south, east, north] = Terraformer.Tools.calculateBounds(geojson);
 		const geoW = east - west || 0.0001;
 		const geoH = north - south || 0.0001;
@@ -262,48 +262,47 @@ export const featureUtilities = {
 		canvas.height = 70;
 		const ctx = canvas.getContext('2d');
 
-		// 3. Fundo mapa (a tua imagem)
+		// 3. Fundo do mapa
 		const bg = new Image();
 		bg.src = 'map-background.jpg';
 		await new Promise(r => { bg.onload = r; bg.onerror = r; });
 		ctx.drawImage(bg, 0, 0, 90, 70);
 
-		// 4. CÁLCULO DE CENTRALIZAÇÃO CORRETO (agora sim!)
-		const paddingFactor = 1.35; // 35% de zoom out (ajustado visualmente = PLOTTER)
-		const paddedW = geoW * paddingFactor;
-		const paddedH = geoH * paddingFactor;
+		// 4. Zoom out (padding) — 35% extra (idêntico ao PLOTTER)
+		const paddingFactor = 1.35;
+		const viewW = geoW * paddingFactor;
+		const viewH = geoH * paddingFactor;
 
-		// Escala uniforme (nunca distorce)
-		const scale = Math.min(90 / paddedW, 70 / paddedH);
+		// 5. Escala uniforme (preserva proporção)
+		const scale = Math.min(90 / viewW, 70 / viewH);
 
-		// Centro da geometria no mundo
-		const centerX = west + geoW / 2;
-		const centerY = south + geoH / 2;
+		// 6. Centro da geometria (em coordenadas reais)
+		const centerLon = west + geoW / 2;
+		const centerLat = south + geoH / 2;
 
-		// Centro do canvas
+		// 7. Centro do canvas (em pixels)
 		const canvasCenterX = 45;
 		const canvasCenterY = 35;
 
-		// Offset para alinhar os dois centros
-		const offsetX = canvasCenterX - centerX * scale;
-		const offsetY = canvasCenterY - (north - centerY) * scale; // Y invertido
+		// 8. Transformação correta: mundo → pixel, com centro alinhado
+		const toPixel = (lon, lat) => {
+			const x = (lon - centerLon) * scale + canvasCenterX;
+			const y = (centerLat - lat) * scale + canvasCenterY;  // Y invertido corretamente
+			return { x, y };
+		};
 
-		const toPixel = (lon, lat) => ({
-			x: offsetX + lon * scale,
-			y: offsetY - lat * scale   // Y invertido
-		});
-
-		// 5. Desenho da feature (azul 50% + contorno)
-		ctx.fillStyle = '#00AAFFBF';  // 50% opacity
-		ctx.strokeStyle = '#141414BF';
-		ctx.lineWidth = Math.max(1.6, scale * 0.0022 * geoW);
+		// 9. Desenho da feature
+		ctx.fillStyle = '#00AAFFBF';     // azul ~70% opacity (ajusta se quiser 50% → #00AAFF80)
+		ctx.strokeStyle = '#141414';
+		ctx.lineWidth = Math.max(1.6, scale * 0.0028 * geoW);
 		ctx.lineJoin = ctx.lineCap = 'round';
 
 		const drawRing = ring => {
 			ctx.beginPath();
 			ring.forEach((c, i) => {
 				const p = toPixel(c[0], c[1]);
-				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+				if (i === 0) ctx.moveTo(p.x, p.y);
+				else ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
 			ctx.fill('evenodd');
@@ -321,7 +320,7 @@ export const featureUtilities = {
 				pts.forEach(c => {
 					const p = toPixel(c[0], c[1]);
 					ctx.beginPath();
-					ctx.arc(p.x, p.y, ctx.lineWidth * 2.2, 0, Math.PI * 2);
+					ctx.arc(p.x, p.y, ctx.lineWidth * 2.5, 0, Math.PI * 2);
 					ctx.fill();
 					ctx.stroke();
 				});
@@ -330,7 +329,7 @@ export const featureUtilities = {
 
 		draw(geojson);
 
-		// 6. Retorna blob URL
+		// 10. Retorna blob URL
 		return new Promise(resolve => {
 			canvas.toBlob(blob => resolve(URL.createObjectURL(blob)), 'image/png');
 		});
