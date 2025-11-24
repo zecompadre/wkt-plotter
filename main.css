@@ -473,8 +473,15 @@ textarea {
 
 #wkt-list li.selected {
 	border-left-color: #48bb78 !important;
-	background: #2d3748 !important;
+	background: #48bb78 !important;
 	opacity: 1 !important;
+	color: #2d3748 !important;
+}
+
+#wkt-list li.selected strong {
+	color: #2d3748;
+	font-size: 1.05em;
+	margin-bottom: 4px;
 }
 
 /* Canvas preview – tamanho fixo */
