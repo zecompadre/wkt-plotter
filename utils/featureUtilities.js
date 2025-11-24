@@ -242,67 +242,63 @@ export const featureUtilities = {
 		map.renderSync(); // força render
 	},
 	wktToPngBlobUrl: async function (wkt) {
-
 		if (!wkt || wkt.trim() === '') return null;
 
 		let geojson;
 		try {
 			geojson = Terraformer.WKT.parse(wkt);
 		} catch (e) {
-			console.warn("WKT inválido → ignorado", e);
+			console.warn('WKT inválido', e);
 			return null;
 		}
 
 		// 1. Bounding box
 		const [west, south, east, north] = Terraformer.Tools.calculateBounds(geojson);
-		const geoWidth = east - west || 0.0001;
-		const geoHeight = north - south || 0.0001;
+		const geoW = east - west || 0.0001;
+		const geoH = north - south || 0.0001;
 
-		// 2. Padding 15% (igual ao PLOTTER)
+		// 2. Padding 15 % (igual ao PLOTTER)
 		const padding = 0.15;
-		const worldW = geoWidth * (1 + 2 * padding);
-		const worldH = geoHeight * (1 + 2 * padding);
+		const worldW = geoW * (1 + 2 * padding);
+		const worldH = geoH * (1 + 2 * padding);
 
-		// 3. Canvas temporário em alta resolução (proporção correta)
-		const SCALE = 14; // 90×14 = 1260px → qualidade excelente e rápido
-		let tempW = 90 * SCALE;
-		let tempH = 70 * SCALE;
-
-		if (worldW / worldH > 90 / 70) {
-			tempH = Math.round(tempW * worldH / worldW);
-		} else {
-			tempW = Math.round(tempH * worldW / worldH);
-		}
-
-		// Cria canvas dinamicamente → nunca dá null!
-		const tempCanvas = document.createElement('canvas');
-		tempCanvas.width = tempW;
-		tempCanvas.height = tempH;
-		const ctx = tempCanvas.getContext('2d');
+		// 3. Canvas FINAL 90×70 (é o único que usamos!)
+		const canvas = document.createElement('canvas');
+		canvas.width = 90;
+		canvas.height = 70;
+		const ctx = canvas.getContext('2d');
 
 		// Fundo branco
 		ctx.fillStyle = 'white';
-		ctx.fillRect(0, 0, tempW, tempH);
+		ctx.fillRect(0, 0, 90, 70);
 
-		// Conversão coordenadas → pixels
+		// 4. Transformação direta mundo → pixel (sem canvas intermediário = zero distorção)
+		const scaleX = 90 / worldW;
+		const scaleY = 70 / worldH;
+		const scale = Math.min(scaleX, scaleY);   // escala uniforme → proporção perfeita
+
+		const offsetX = (90 - scale * worldW) / 2; // centraliza horizontal
+		const offsetY = (70 - scale * worldH) / 2; // centraliza vertical
+
 		const toPixel = (x, y) => ({
-			x: ((x - west) / worldW) * tempW,
-			y: ((north - y) / worldH) * tempH
+			x: offsetX + (x - west) * scale,
+			y: offsetY + (north - y) * scale   // Y invertido
 		});
 
 		// Estilo idêntico ao PLOTTER
 		ctx.fillStyle = ctx.strokeStyle = 'black';
-		ctx.lineWidth = Math.max(2, tempW * 0.0016);
+		ctx.lineWidth = Math.max(1.4, scale * 0.0008 * geoW); // espessura proporcional
 		ctx.lineJoin = ctx.lineCap = 'round';
 
 		const drawRing = ring => {
 			ctx.beginPath();
 			ring.forEach((c, i) => {
 				const p = toPixel(c[0], c[1]);
-				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+				if (i === 0) ctx.moveTo(p.x, p.y);
+				else ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
-			ctx.fill('evenodd');  // suporta buracos
+			ctx.fill('evenodd');
 			ctx.stroke();
 		};
 
@@ -311,10 +307,8 @@ export const featureUtilities = {
 			switch (g.type) {
 				case 'Polygon': g.coordinates.forEach(drawRing); break;
 				case 'MultiPolygon': g.coordinates.forEach(p => p.forEach(drawRing)); break;
-				case 'LineString':
-				case 'MultiLineString':
-					(g.type === 'LineString' ? [g.coordinates] : g.coordinates).forEach(drawRing);
-					break;
+				case 'LineString': drawRing(g.coordinates); break;
+				case 'MultiLineString': g.coordinates.forEach(drawRing); break;
 				case 'Point':
 				case 'MultiPoint':
 					const pts = g.type === 'Point' ? [g.coordinates] : g.coordinates;
@@ -330,21 +324,11 @@ export const featureUtilities = {
 
 		drawGeometry(geojson);
 
-		// 4. Canvas final 90×70
-		const finalCanvas = document.createElement('canvas');
-		finalCanvas.width = 90;
-		finalCanvas.height = 70;
-		const fctx = finalCanvas.getContext('2d');
-		fctx.imageSmoothingEnabled = true;
-		fctx.imageSmoothingQuality = 'high';
-		fctx.drawImage(tempCanvas, 0, 0, 90, 70);
-
-		// 5. Retorna Blob URL
+		// 5. Converte direto para Blob URL
 		return new Promise(resolve => {
-			finalCanvas.toBlob(blob => {
+			canvas.toBlob(blob => {
 				resolve(URL.createObjectURL(blob));
 			}, 'image/png');
 		});
-
 	}
 };
