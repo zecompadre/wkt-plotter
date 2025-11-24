@@ -300,15 +300,20 @@ export const featureUtilities = {
 			});
 			ctx.closePath();
 
-			// 1. Contorno MUITO FINO e nítido (igual ao PLOTTER)
-			ctx.lineWidth = Math.max(0.9, scale * 0.0012 * geoW);  // ← linha super fina e proporcional
-			ctx.strokeStyle = colors.normal;
-			ctx.globalAlpha = 1;
+			// 1. CONTORNO 100% OPACO (sempre por baixo)
+			ctx.globalAlpha = 1;                    // ← FORÇA opacidade total
+			ctx.lineWidth = Math.max(0.9, scale * 0.0012 * geoW);
+			ctx.strokeStyle = '#141414';
 			ctx.stroke();
 
-			// 2. Fill azul semi-transparente (75% opacity = visual do PLOTTER)
-			ctx.fillStyle = utilities.hexToRgbA(colors.create, '0.25');
+			// 2. PREENCHIMENTO AZUL SEMI-TRANSPARENTE (por cima do contorno)
+			ctx.globalAlpha = 0.25;                 // ← AQUI ESTÁ A OPACIDADE (75% = igual ao PLOTTER)
+			ctx.fillStyle = '#00AAFF';            // ← cor sólida (sem alpha no HEX)
 			ctx.fill('evenodd');
+
+			// Reset para não afetar outros desenhos
+			ctx.globalAlpha = 1;
+
 		};
 
 		const draw = g => {
