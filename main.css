@@ -488,16 +488,10 @@ textarea {
 }
 
 #wkt-list li:hover {
-	transform: translateX(4px);
 	background: var(--text-area-color);
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 2px 10px var(--button-hover-background);
 }
 
 #wkt-list li.selected {
 	background: var(--color-theme-primary);
-	color: var(--primary-text-color);
-}
-
-#wkt-list li.selected strong {
-	color: var(--primary-text-color);
 }
