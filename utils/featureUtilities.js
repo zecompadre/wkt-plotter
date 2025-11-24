@@ -242,133 +242,99 @@ export const featureUtilities = {
 		map.renderSync(); // força render
 	},
 	wktToPngBlobUrl: async function (wktString) {
-		if (!wktString || wktString.trim() === '') return null;
+		if (!wkt || wkt.trim() === '') return null;
 
-		// ------------------------------------------------------------------
-		// 1. Parse WKT → GeoJSON
-		// ------------------------------------------------------------------
 		let geojson;
 		try {
-			geojson = Terraformer.WKT.parse(wktString);
+			geojson = Terraformer.WKT.parse(wkt);
 		} catch (e) {
-			console.error("WKT inválido:", e);
+			console.warn('WKT inválido:', e);
 			return null;
 		}
 
-		// ------------------------------------------------------------------
-		// 2. Calcula bounding box + padding
-		// ------------------------------------------------------------------
-		const bbox = Terraformer.Tools.calculateBounds(geojson); // [west, south, east, north]
-		let [xmin, ymin, xmax, ymax] = bbox;
+		// Bounding box
+		const bbox = Terraformer.Tools.calculateBounds(geojson);
+		const [west, south, east, north] = bbox;
 
-		const worldW = xmax - xmin || 1;   // evita divisão por zero
-		const worldH = ymax - ymin || 1;
+		const width = east - west || 0.0001;
+		const height = north - south || 0.0001;
 
-		const padding = 0.12; // 12% de margem (fica bonito)
-		const paddedW = worldW * (1 + 2 * padding);
-		const paddedH = worldH * (1 + 2 * padding);
+		// Padding de 15% em cada lado (fica idêntico ao seu PLOTTER)
+		const padding = 0.15;
+		const worldW = width * (1 + 2 * padding);
+		const worldH = height * (1 + 2 * padding);
 
-		// ------------------------------------------------------------------
-		// 3. Cria canvas temporário em alta resolução (mantém proporção exata)
-		// ------------------------------------------------------------------
-		const TEMP_SCALE = 12; // qualidade boa e rápido (90×12 = 1080px máx)
-		let tempW, tempH;
+		// Canvas temporário em alta resolução (proporção preservada)
+		const SCALE = 15; // 90×15 = 1350px → qualidade excelente
+		let tempW = 90 * SCALE;
+		let tempH = 70 * SCALE;
 
-		if (paddedW / paddedH > 90 / 70) {
-			tempW = 90 * TEMP_SCALE;
-			tempH = Math.round(tempW * paddedH / paddedW);
+		if (worldW / worldH > 90 / 70) {
+			tempH = Math.round(tempW * worldH / worldW);
 		} else {
-			tempH = 70 * TEMP_SCALE;
-			tempW = Math.round(tempH * paddedW / paddedH);
+			tempW = Math.round(tempH * worldW / worldH);
 		}
 
-		const tempCanvas = document.createElement('canvas');
-		tempCanvas.width = tempW;
-		tempCanvas.height = tempH;
-		const ctx = tempCanvas.getContext('2d');
+		const canvas = document.createElement('canvas');
+		canvas.width = tempW;
+		canvas.height = tempH;
+		const ctx = canvas.getContext('2d');
 
-		// Fundo branco
 		ctx.fillStyle = 'white';
 		ctx.fillRect(0, 0, tempW, tempH);
 
-		// Transformação mundo → pixel
 		const toPixel = (x, y) => ({
-			x: ((x - xmin) / paddedW) * tempW,
-			y: ((ymax - y) / paddedH) * tempH   // Y invertido
+			x: ((x - west) / worldW) * tempW,
+			y: ((north - y) / worldH) * tempH   // Y invertido
 		});
 
-		// Estilo
 		ctx.fillStyle = ctx.strokeStyle = '#000000';
-		ctx.lineWidth = Math.max(1.5, tempW / 400);
-		ctx.lineJoin = ctx.lineCap = 'round';
+		ctx.lineWidth = Math.max(2, tempW * 0.0018);
+		ctx.lineJoin = 'round';
+		ctx.lineCap = 'round';
 
-		// ------------------------------------------------------------------
-		// 4. Desenha a geometria
-		// ------------------------------------------------------------------
-		const drawRing = (ring) => {
+		const drawRing = ring => {
 			ctx.beginPath();
 			ring.forEach((c, i) => {
 				const p = toPixel(c[0], c[1]);
 				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
-			ctx.fill('evenodd'); // suporta ilhas/buracos
+			ctx.fill('evenodd');
 			ctx.stroke();
 		};
 
-		const drawGeometry = (g) => {
-			if (!g || !g.type) return;
-
-			switch (g.type) {
-				case 'Polygon':
-					g.coordinates.forEach(drawRing);
-					break;
-				case 'MultiPolygon':
-					g.coordinates.forEach(poly => poly.forEach(drawRing));
-					break;
-				case 'LineString':
-					drawRing(g.coordinates);
-					break;
-				case 'MultiLineString':
-					g.coordinates.forEach(drawRing);
-					break;
-				case 'Point':
-					const p = toPixel(g.coordinates[0], g.coordinates[1]);
+		const draw = g => {
+			if (!g) return;
+			if (g.type === 'Polygon') g.coordinates.forEach(drawRing);
+			if (g.type === 'MultiPolygon') g.coordinates.forEach(p => p.forEach(drawRing));
+			if (g.type === 'LineString') drawRing(g.coordinates);
+			if (g.type === 'MultiLineString') g.coordinates.forEach(drawRing);
+			if (g.type === 'Point' || g.type === 'MultiPoint') {
+				const points = g.type === 'Point' ? [g.coordinates] : g.coordinates;
+				points.forEach(c => {
+					const p = toPixel(c[0], c[1]);
 					ctx.beginPath();
-					ctx.arc(p.x, p.y, ctx.lineWidth * 2, 0, Math.PI * 2);
+					ctx.arc(p.x, p.y, ctx.lineWidth * 2.5, 0, Math.PI * 2);
 					ctx.fill();
-					break;
-				case 'MultiPoint':
-					g.coordinates.forEach(c => {
-						const p = toPixel(c[0], c[1]);
-						ctx.beginPath();
-						ctx.arc(p.x, p.y, ctx.lineWidth * 2, 0, Math.PI * 2);
-						ctx.fill();
-					});
-					break;
+				});
 			}
 		};
 
-		drawGeometry(geojson);
+		draw(geojson);
 
-		// ------------------------------------------------------------------
-		// 5. Redimensiona para exatamente 90×70 px (qualidade máxima)
-		// ------------------------------------------------------------------
-		const finalCanvas = document.createElement('canvas');
-		finalCanvas.width = 90;
-		finalCanvas.height = 70;
-		const fctx = finalCanvas.getContext('2d');
+		// Canvas final 90×70
+		const final = document.createElement('canvas');
+		final.width = 90;
+		final.height = 70;
+		const fctx = final.getContext('2d');
 		fctx.imageSmoothingEnabled = true;
 		fctx.imageSmoothingQuality = 'high';
-		fctx.drawImage(tempCanvas, 0, 0, 90, 70);
+		fctx.drawImage(canvas, 0, 0, 90, 70);
 
-		// ------------------------------------------------------------------
-		// 6. Converte para Blob URL
-		// ------------------------------------------------------------------
 		return new Promise(resolve => {
-			finalCanvas.toBlob(blob => {
-				const url = URL.createObjectURL(blob);
-				resolve(url);
+			final.toBlob(blob => {
+				resolve(URL.createObjectURL(blob));
 			}, 'image/png');
 		});
 	}
