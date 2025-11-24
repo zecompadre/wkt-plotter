@@ -94,7 +94,7 @@ export const featureUtilities = {
 		featureUtilities.createFromAllFeatures();
 	},
 
-	addToFeatures: (id, wkt) => {
+	addToFeatures: async (id, wkt) => {
 		const textarea = document.querySelector("#wktdefault textarea");
 		const wktString = wkt || textarea.value;
 
@@ -131,6 +131,10 @@ export const featureUtilities = {
 			const img = document.createElement('img');
 			img.width = 120;
 			img.height = 90;
+
+			const blobUrl = await featureUtilities.wktToPngBlobUrl(wktString);
+
+			img.src = blobUrl;
 
 			const center = ol.extent.getCenter(newFeature.getGeometry().getExtent());
 			const [lon, lat] = ol.proj.toLonLat(center);
@@ -237,5 +241,77 @@ export const featureUtilities = {
 		});
 		map.renderSync(); // força render
 	},
+	wktToPngBlobUrl: async function (wktString) {
+		const canvas = document.getElementById('hidden');
+		const ctx = canvas.getContext('2d');
 
+		// Reset canvas
+		ctx.fillStyle = 'white';
+		ctx.fillRect(0, 0, 90, 70);
+
+		const geojson = Terraformer.WKT.parse(wktString);
+		const bbox = Terraformer.Tools.calculateBounds(geojson);
+		const [xmin, ymin, xmax, ymax] = bbox;
+
+		const worldWidth = xmax - xmin;
+		const worldHeight = ymax - ymin;
+		const padding = 0.1; // 10% padding around the geometry
+
+		function toPixel(x, y) {
+			const px = (x - xmin) / worldWidth;
+			const py = (ymax - y) / worldHeight; // Y flip
+			return {
+				x: (px * (1 - 2 * padding) + padding) * 90,
+				y: (py * (1 - 2 * padding) + padding) * 70
+			};
+		}
+
+		ctx.fillStyle = 'black';
+		ctx.strokeStyle = 'black';
+		ctx.lineWidth = 1.2;
+
+		function drawRing(ring) {
+			ctx.beginPath();
+			ring.forEach((coord, i) => {
+				const p = toPixel(coord[0], coord[1]);
+				if (i === 0) ctx.moveTo(p.x, p.y);
+				else ctx.lineTo(p.x, p.y);
+			});
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}
+
+		function drawGeometry(g) {
+			switch (g.type) {
+				case 'Polygon':
+					g.coordinates.forEach(ring => drawRing(ring));
+					break;
+				case 'MultiPolygon':
+					g.coordinates.forEach(poly => poly.forEach(ring => drawRing(ring)));
+					break;
+				case 'LineString':
+					drawRing(g.coordinates); // reuse (no close/fill)
+					ctx.fill(); // no fill for lines
+					break;
+				case 'Point':
+					const p = toPixel(g.coordinates[0], g.coordinates[1]);
+					ctx.beginPath();
+					ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+					ctx.fill();
+					break;
+				// Add MultiLineString, GeometryCollection etc. if you need
+			}
+		}
+
+		drawGeometry(geojson);
+
+		// Convert canvas → Blob → Object URL
+		return new Promise(resolve => {
+			canvas.toBlob(blob => {
+				const url = URL.createObjectURL(blob);
+				resolve(url);
+			}, 'image/png');
+		});
+	}
 };

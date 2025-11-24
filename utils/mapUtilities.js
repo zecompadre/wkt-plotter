@@ -80,11 +80,11 @@ export const mapUtilities = {
 
 					// Check for existing WKT entries and add them to features
 					let exists = false;
-					wkts.forEach(item => {
+					for (const item of wkts) await (async () => {
 						if (checksum && item.id === checksum) {
 							exists = true;
 						}
-						featureUtilities.addToFeatures(item.id, item.wkt);
+						await featureUtilities.addToFeatures(item.id, item.wkt);
 					});
 
 					// Add the new WKT if it doesn't exist
@@ -93,7 +93,7 @@ export const mapUtilities = {
 							id: checksum,
 							wkt
 						});
-						newfeature = featureUtilities.addToFeatures(checksum, wkt);
+						newfeature = await featureUtilities.addToFeatures(checksum, wkt);
 					}
 				}
 
