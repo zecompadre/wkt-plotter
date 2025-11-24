@@ -493,5 +493,5 @@ textarea {
 }
 
 #wkt-list li.selected {
-	background: var(--color-theme-primary);
+	background: var(--header-color-text);
 }
