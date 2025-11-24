@@ -309,7 +309,6 @@ export const featureUtilities = {
 			ctx.fillStyle = '#21BCFF';
 			ctx.fill('evenodd');
 
-			// Reset para não afetar outros desenhos
 			ctx.globalAlpha = 1;
 
 		};
