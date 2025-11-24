@@ -2,8 +2,7 @@
 
 import { map, vectorLayer, format, featureCollection } from '../map/setupMap.js';
 import { utilities } from './utilities.js';
-import { projections } from './constants.js';
-import { drawShapePreview } from './previewCanvas.js';
+import { projections, colors } from './constants.js';
 
 export const featureUtilities = {
 	deselectCurrentFeature: (active) => {
@@ -252,50 +251,61 @@ export const featureUtilities = {
 			return null;
 		}
 
-		// 1. Bounding box
 		const [west, south, east, north] = Terraformer.Tools.calculateBounds(geojson);
 		const geoW = east - west || 0.0001;
 		const geoH = north - south || 0.0001;
 
-		// 2. Padding 15 % (igual ao PLOTTER)
 		const padding = 0.15;
 		const worldW = geoW * (1 + 2 * padding);
 		const worldH = geoH * (1 + 2 * padding);
 
-		// 3. Canvas FINAL 90×70 (é o único que usamos!)
 		const canvas = document.createElement('canvas');
 		canvas.width = 90;
 		canvas.height = 70;
 		const ctx = canvas.getContext('2d');
 
-		// Fundo branco
-		ctx.fillStyle = 'white';
+		// ==================== BACKGROUND "FAKE MAPA" ====================
+		// Cor de fundo do PLOTTER
+		ctx.fillStyle = '#E8ECEF';
 		ctx.fillRect(0, 0, 90, 70);
 
-		// 4. Transformação direta mundo → pixel (sem canvas intermediário = zero distorção)
-		const scaleX = 90 / worldW;
-		const scaleY = 70 / worldH;
-		const scale = Math.min(scaleX, scaleY);   // escala uniforme → proporção perfeita
+		// Linhas de ruas falsas (exatamente como no PLOTTER)
+		ctx.strokeStyle = '#C8D6E0';
+		ctx.lineWidth = 0.8;
+		for (let i = 8; i < 90; i += 14) {
+			ctx.beginPath();
+			ctx.moveTo(i, 0);
+			ctx.lineTo(i + 6, 70);
+			ctx.stroke();
+		}
+		for (let i = 8; i < 70; i += 12) {
+			ctx.beginPath();
+			ctx.moveTo(0, i);
+			ctx.lineTo(90, i + 5);
+			ctx.stroke();
+		}
 
-		const offsetX = (90 - scale * worldW) / 2; // centraliza horizontal
-		const offsetY = (70 - scale * worldH) / 2; // centraliza vertical
+		// ==================== ESCALA E CENTRALIZAÇÃO ====================
+		const scale = Math.min(90 / worldW, 70 / worldH);
+		const offsetX = (90 - scale * worldW) / 2;
+		const offsetY = (70 - scale * worldH) / 2;
 
 		const toPixel = (x, y) => ({
 			x: offsetX + (x - west) * scale,
-			y: offsetY + (north - y) * scale   // Y invertido
+			y: offsetY + (north - y) * scale
 		});
 
-		// Estilo idêntico ao PLOTTER
-		ctx.fillStyle = ctx.strokeStyle = 'black';
-		ctx.lineWidth = Math.max(1.4, scale * 0.0008 * geoW); // espessura proporcional
+		// ==================== DESENHO DA GEOMETRIA ====================
+		ctx.fillStyle = colors.create;
+		ctx.strokeStyle = colors.normal;
+		ctx.lineWidth = Math.max(1.3, scale * 0.0014 * geoW);
 		ctx.lineJoin = ctx.lineCap = 'round';
 
 		const drawRing = ring => {
 			ctx.beginPath();
 			ring.forEach((c, i) => {
 				const p = toPixel(c[0], c[1]);
-				if (i === 0) ctx.moveTo(p.x, p.y);
-				else ctx.lineTo(p.x, p.y);
+				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
 			ctx.fill('evenodd');
@@ -315,8 +325,9 @@ export const featureUtilities = {
 					pts.forEach(c => {
 						const p = toPixel(c[0], c[1]);
 						ctx.beginPath();
-						ctx.arc(p.x, p.y, ctx.lineWidth * 2, 0, Math.PI * 2);
+						ctx.arc(p.x, p.y, ctx.lineWidth * 2.2, 0, Math.PI * 2);
 						ctx.fill();
+						ctx.stroke();
 					});
 					break;
 			}
@@ -324,7 +335,7 @@ export const featureUtilities = {
 
 		drawGeometry(geojson);
 
-		// 5. Converte direto para Blob URL
+		// Retorna Blob URL
 		return new Promise(resolve => {
 			canvas.toBlob(blob => {
 				resolve(URL.createObjectURL(blob));
