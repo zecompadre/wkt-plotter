@@ -292,22 +292,24 @@ export const featureUtilities = {
 		};
 
 		// 9. Desenho da feature
-		ctx.fillStyle = 'rgba(0, 170, 255, 0.75)';
-		ctx.strokeStyle = '#141414BF';
-		ctx.globalAlpha = 1;
-		ctx.lineWidth = Math.max(0.9, scale * 0.0012 * geoW);
-		ctx.lineJoin = ctx.lineCap = 'round';
 
 		const drawRing = ring => {
 			ctx.beginPath();
 			ring.forEach((c, i) => {
 				const p = toPixel(c[0], c[1]);
-				if (i === 0) ctx.moveTo(p.x, p.y);
-				else ctx.lineTo(p.x, p.y);
+				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
-			ctx.fill('evenodd');
+
+			// 1. Contorno MUITO FINO e nítido (igual ao PLOTTER)
+			ctx.lineWidth = Math.max(0.9, scale * 0.0012 * geoW);  // ← linha super fina e proporcional
+			ctx.strokeStyle = '#141414';
+			ctx.globalAlpha = 1;
 			ctx.stroke();
+
+			// 2. Fill azul semi-transparente (75% opacity = visual do PLOTTER)
+			ctx.fillStyle = 'rgba(0, 170, 255, 0.75)';
+			ctx.fill('evenodd');
 		};
 
 		const draw = g => {
