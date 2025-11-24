@@ -292,9 +292,10 @@ export const featureUtilities = {
 		};
 
 		// 9. Desenho da feature
-		ctx.fillStyle = '#00AAFFBF';     // azul ~70% opacity (ajusta se quiser 50% → #00AAFF80)
-		ctx.strokeStyle = '#141414';
-		ctx.lineWidth = Math.max(1.6, scale * 0.0028 * geoW);
+		ctx.fillStyle = 'rgba(0, 170, 255, 0.75)';
+		ctx.strokeStyle = '#141414BF';
+		ctx.globalAlpha = 1;
+		ctx.lineWidth = Math.max(0.9, scale * 0.0012 * geoW);
 		ctx.lineJoin = ctx.lineCap = 'round';
 
 		const drawRing = ring => {
