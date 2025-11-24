@@ -308,7 +308,7 @@ export const featureUtilities = {
 
 			// 2. PREENCHIMENTO AZUL SEMI-TRANSPARENTE (por cima do contorno)
 			ctx.globalAlpha = 0.25;                 // ← AQUI ESTÁ A OPACIDADE (75% = igual ao PLOTTER)
-			ctx.fillStyle = '#A2F4FD';            // ← cor sólida (sem alpha no HEX)
+			ctx.fillStyle = '#21BCFF';            // ← cor sólida (sem alpha no HEX)
 			ctx.fill('evenodd');
 
 			// Reset para não afetar outros desenhos
