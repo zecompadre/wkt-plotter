@@ -251,59 +251,58 @@ export const featureUtilities = {
 			return null;
 		}
 
-		// 1. Bounding box da geometria
+		// 1. Bounding box real da geometria
 		const [west, south, east, north] = Terraformer.Tools.calculateBounds(geojson);
-		const geoWidth = east - west || 0.0001;
-		const geoHeight = north - south || 0.0001;
+		const geoW = east - west || 0.0001;
+		const geoH = north - south || 0.0001;
 
-		// 2. Padding de 18% (testado visualmente idêntico ao PLOTTER)
-		const padding = 0.18;
-		const worldW = geoWidth * (1 + 2 * padding);
-		const worldH = geoHeight * (1 + 2 * padding);
-
-		// 3. Canvas final 90×70
+		// 2. Canvas 90×70
 		const canvas = document.createElement('canvas');
 		canvas.width = 90;
 		canvas.height = 70;
 		const ctx = canvas.getContext('2d');
 
-		// 4. Desenha imagem de fundo (a que você enviou)
-		const bgImg = new Image();
-		bgImg.src = 'map-background.jpg'; // ← coloca a imagem na pasta do projeto
+		// 3. Fundo mapa (a tua imagem)
+		const bg = new Image();
+		bg.src = 'map-background.jpg';
+		await new Promise(r => { bg.onload = r; bg.onerror = r; });
+		ctx.drawImage(bg, 0, 0, 90, 70);
 
-		await new Promise(resolve => {
-			bgImg.onload = () => {
-				ctx.drawImage(bgImg, 0, 0, 90, 70);
-				resolve();
-			};
-			bgImg.onerror = () => {
-				ctx.fillStyle = '#E8ECEF';
-				ctx.fillRect(0, 0, 90, 70);
-				resolve();
-			};
-		});
+		// 4. CÁLCULO DE CENTRALIZAÇÃO CORRETO (agora sim!)
+		const paddingFactor = 1.35; // 35% de zoom out (ajustado visualmente = PLOTTER)
+		const paddedW = geoW * paddingFactor;
+		const paddedH = geoH * paddingFactor;
 
-		// 5. CÁLCULO DE CENTRALIZAÇÃO PERFEITA (escala uniforme + offset)
-		const scale = Math.min(90 / worldW, 70 / worldH); // nunca distorce
+		// Escala uniforme (nunca distorce)
+		const scale = Math.min(90 / paddedW, 70 / paddedH);
 
-		const offsetX = (90 - worldW * scale) / 2;
-		const offsetY = (70 - worldH * scale) / 2;
+		// Centro da geometria no mundo
+		const centerX = west + geoW / 2;
+		const centerY = south + geoH / 2;
+
+		// Centro do canvas
+		const canvasCenterX = 45;
+		const canvasCenterY = 35;
+
+		// Offset para alinhar os dois centros
+		const offsetX = canvasCenterX - centerX * scale;
+		const offsetY = canvasCenterY - (north - centerY) * scale; // Y invertido
 
 		const toPixel = (lon, lat) => ({
-			x: offsetX + (lon - west) * scale,
-			y: offsetY + (north - lat) * scale   // Y invertido
+			x: offsetX + lon * scale,
+			y: offsetY - lat * scale   // Y invertido
 		});
 
-		// 6. Desenha a feature (azul + contorno escuro)
-		ctx.fillStyle = '#00AAFF80';
+		// 5. Desenho da feature (azul 50% + contorno)
+		ctx.fillStyle = '#00AAFF80';  // 50% opacity
 		ctx.strokeStyle = '#141414';
-		ctx.lineWidth = Math.max(1.6, scale * 0.0018 * geoWidth);
+		ctx.lineWidth = Math.max(1.6, scale * 0.0022 * geoW);
 		ctx.lineJoin = ctx.lineCap = 'round';
 
 		const drawRing = ring => {
 			ctx.beginPath();
-			ring.forEach((coord, i) => {
-				const p = toPixel(coord[0], coord[1]);
+			ring.forEach((c, i) => {
+				const p = toPixel(c[0], c[1]);
 				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
@@ -311,30 +310,27 @@ export const featureUtilities = {
 			ctx.stroke();
 		};
 
-		const drawGeometry = g => {
+		const draw = g => {
 			if (!g) return;
-			switch (g.type) {
-				case 'Polygon': g.coordinates.forEach(drawRing); break;
-				case 'MultiPolygon': g.coordinates.forEach(poly => poly.forEach(drawRing)); break;
-				case 'LineString': drawRing(g.coordinates); break;
-				case 'MultiLineString': g.coordinates.forEach(drawRing); break;
-				case 'Point':
-				case 'MultiPoint':
-					const points = g.type === 'Point' ? [g.coordinates] : g.coordinates;
-					points.forEach(c => {
-						const p = toPixel(c[0], c[1]);
-						ctx.beginPath();
-						ctx.arc(p.x, p.y, ctx.lineWidth * 2.2, 0, Math.PI * 2);
-						ctx.fill();
-						ctx.stroke();
-					});
-					break;
+			if (g.type === 'Polygon') g.coordinates.forEach(drawRing);
+			if (g.type === 'MultiPolygon') g.coordinates.forEach(p => p.forEach(drawRing));
+			if (g.type === 'LineString') drawRing(g.coordinates);
+			if (g.type === 'MultiLineString') g.coordinates.forEach(drawRing);
+			if (g.type === 'Point' || g.type === 'MultiPoint') {
+				const pts = g.type === 'Point' ? [g.coordinates] : g.coordinates;
+				pts.forEach(c => {
+					const p = toPixel(c[0], c[1]);
+					ctx.beginPath();
+					ctx.arc(p.x, p.y, ctx.lineWidth * 2.2, 0, Math.PI * 2);
+					ctx.fill();
+					ctx.stroke();
+				});
 			}
 		};
 
-		drawGeometry(geojson);
+		draw(geojson);
 
-		// 7. Retorna Blob URL
+		// 6. Retorna blob URL
 		return new Promise(resolve => {
 			canvas.toBlob(blob => resolve(URL.createObjectURL(blob)), 'image/png');
 		});
