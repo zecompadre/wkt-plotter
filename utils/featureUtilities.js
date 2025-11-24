@@ -241,31 +241,30 @@ export const featureUtilities = {
 		});
 		map.renderSync(); // força render
 	},
-	wktToPngBlobUrl: async function (wktString) {
+	wktToPngBlobUrl: async function (wkt) {
+
 		if (!wkt || wkt.trim() === '') return null;
 
 		let geojson;
 		try {
 			geojson = Terraformer.WKT.parse(wkt);
 		} catch (e) {
-			console.warn('WKT inválido:', e);
+			console.warn("WKT inválido → ignorado", e);
 			return null;
 		}
 
-		// Bounding box
-		const bbox = Terraformer.Tools.calculateBounds(geojson);
-		const [west, south, east, north] = bbox;
+		// 1. Bounding box
+		const [west, south, east, north] = Terraformer.Tools.calculateBounds(geojson);
+		const geoWidth = east - west || 0.0001;
+		const geoHeight = north - south || 0.0001;
 
-		const width = east - west || 0.0001;
-		const height = north - south || 0.0001;
-
-		// Padding de 15% em cada lado (fica idêntico ao seu PLOTTER)
+		// 2. Padding 15% (igual ao PLOTTER)
 		const padding = 0.15;
-		const worldW = width * (1 + 2 * padding);
-		const worldH = height * (1 + 2 * padding);
+		const worldW = geoWidth * (1 + 2 * padding);
+		const worldH = geoHeight * (1 + 2 * padding);
 
-		// Canvas temporário em alta resolução (proporção preservada)
-		const SCALE = 15; // 90×15 = 1350px → qualidade excelente
+		// 3. Canvas temporário em alta resolução (proporção correta)
+		const SCALE = 14; // 90×14 = 1260px → qualidade excelente e rápido
 		let tempW = 90 * SCALE;
 		let tempH = 70 * SCALE;
 
@@ -275,23 +274,26 @@ export const featureUtilities = {
 			tempW = Math.round(tempH * worldW / worldH);
 		}
 
-		const canvas = document.createElement('canvas');
-		canvas.width = tempW;
-		canvas.height = tempH;
-		const ctx = canvas.getContext('2d');
+		// Cria canvas dinamicamente → nunca dá null!
+		const tempCanvas = document.createElement('canvas');
+		tempCanvas.width = tempW;
+		tempCanvas.height = tempH;
+		const ctx = tempCanvas.getContext('2d');
 
+		// Fundo branco
 		ctx.fillStyle = 'white';
 		ctx.fillRect(0, 0, tempW, tempH);
 
+		// Conversão coordenadas → pixels
 		const toPixel = (x, y) => ({
 			x: ((x - west) / worldW) * tempW,
-			y: ((north - y) / worldH) * tempH   // Y invertido
+			y: ((north - y) / worldH) * tempH
 		});
 
-		ctx.fillStyle = ctx.strokeStyle = '#000000';
-		ctx.lineWidth = Math.max(2, tempW * 0.0018);
-		ctx.lineJoin = 'round';
-		ctx.lineCap = 'round';
+		// Estilo idêntico ao PLOTTER
+		ctx.fillStyle = ctx.strokeStyle = 'black';
+		ctx.lineWidth = Math.max(2, tempW * 0.0016);
+		ctx.lineJoin = ctx.lineCap = 'round';
 
 		const drawRing = ring => {
 			ctx.beginPath();
@@ -300,42 +302,49 @@ export const featureUtilities = {
 				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
-			ctx.fill('evenodd');
+			ctx.fill('evenodd');  // suporta buracos
 			ctx.stroke();
 		};
 
-		const draw = g => {
+		const drawGeometry = g => {
 			if (!g) return;
-			if (g.type === 'Polygon') g.coordinates.forEach(drawRing);
-			if (g.type === 'MultiPolygon') g.coordinates.forEach(p => p.forEach(drawRing));
-			if (g.type === 'LineString') drawRing(g.coordinates);
-			if (g.type === 'MultiLineString') g.coordinates.forEach(drawRing);
-			if (g.type === 'Point' || g.type === 'MultiPoint') {
-				const points = g.type === 'Point' ? [g.coordinates] : g.coordinates;
-				points.forEach(c => {
-					const p = toPixel(c[0], c[1]);
-					ctx.beginPath();
-					ctx.arc(p.x, p.y, ctx.lineWidth * 2.5, 0, Math.PI * 2);
-					ctx.fill();
-				});
+			switch (g.type) {
+				case 'Polygon': g.coordinates.forEach(drawRing); break;
+				case 'MultiPolygon': g.coordinates.forEach(p => p.forEach(drawRing)); break;
+				case 'LineString':
+				case 'MultiLineString':
+					(g.type === 'LineString' ? [g.coordinates] : g.coordinates).forEach(drawRing);
+					break;
+				case 'Point':
+				case 'MultiPoint':
+					const pts = g.type === 'Point' ? [g.coordinates] : g.coordinates;
+					pts.forEach(c => {
+						const p = toPixel(c[0], c[1]);
+						ctx.beginPath();
+						ctx.arc(p.x, p.y, ctx.lineWidth * 2, 0, Math.PI * 2);
+						ctx.fill();
+					});
+					break;
 			}
 		};
 
-		draw(geojson);
+		drawGeometry(geojson);
 
-		// Canvas final 90×70
-		const final = document.createElement('canvas');
-		final.width = 90;
-		final.height = 70;
-		const fctx = final.getContext('2d');
+		// 4. Canvas final 90×70
+		const finalCanvas = document.createElement('canvas');
+		finalCanvas.width = 90;
+		finalCanvas.height = 70;
+		const fctx = finalCanvas.getContext('2d');
 		fctx.imageSmoothingEnabled = true;
 		fctx.imageSmoothingQuality = 'high';
-		fctx.drawImage(canvas, 0, 0, 90, 70);
+		fctx.drawImage(tempCanvas, 0, 0, 90, 70);
 
+		// 5. Retorna Blob URL
 		return new Promise(resolve => {
-			final.toBlob(blob => {
+			finalCanvas.toBlob(blob => {
 				resolve(URL.createObjectURL(blob));
 			}, 'image/png');
 		});
+
 	}
 };
