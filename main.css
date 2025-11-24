@@ -454,8 +454,8 @@ textarea {
 	gap: 12px;
 	padding: 14px;
 	margin: 8px;
-	background: #2d3748;
-	color: white;
+	background: var(--color-theme-primary);
+	color: var(--color-base-white);
 	border-radius: 12px;
 	cursor: pointer;
 	transition: all 0.3s ease;
@@ -468,7 +468,7 @@ textarea {
 	width: 90px;
 	height: 70px;
 	border-radius: 10px;
-	background: #f0f0f0;
+	background: var(--color-base-white);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 	object-fit: fill;
 	object-position: center;
@@ -478,7 +478,6 @@ textarea {
 
 /* Texto */
 #wkt-list strong {
-	color: #63b3ed;
 	font-size: 1.05em;
 	margin-bottom: 4px;
 }
@@ -490,18 +489,15 @@ textarea {
 
 #wkt-list li:hover {
 	transform: translateX(4px);
-	background: #4a5568;
+	background: var(--text-area-color);
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 #wkt-list li.selected {
-	background: #48bb78;
-	opacity: 1;
-	color: #2d3748;
+	background: var(--color-theme-primary);
+
 }
 
 #wkt-list li.selected strong {
-	color: #2d3748;
-	font-size: 1.05em;
-	margin-bottom: 4px;
+	color: var(--primary-text-color);
 }
