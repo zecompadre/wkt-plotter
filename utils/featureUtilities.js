@@ -300,15 +300,13 @@ export const featureUtilities = {
 			});
 			ctx.closePath();
 
-			// 1. CONTORNO 100% OPACO (sempre por baixo)
-			ctx.globalAlpha = 1;                    // ← FORÇA opacidade total
+			ctx.globalAlpha = 1;
 			ctx.lineWidth = Math.max(0.9, scale * 0.0012 * geoW);
 			ctx.strokeStyle = '#141414';
 			ctx.stroke();
 
-			// 2. PREENCHIMENTO AZUL SEMI-TRANSPARENTE (por cima do contorno)
-			ctx.globalAlpha = 0.25;                 // ← AQUI ESTÁ A OPACIDADE (75% = igual ao PLOTTER)
-			ctx.fillStyle = '#21BCFF';            // ← cor sólida (sem alpha no HEX)
+			ctx.globalAlpha = 0.50;
+			ctx.fillStyle = '#21BCFF';
 			ctx.fill('evenodd');
 
 			// Reset para não afetar outros desenhos
