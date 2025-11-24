@@ -242,75 +242,93 @@ export const featureUtilities = {
 		map.renderSync(); // força render
 	},
 	wktToPngBlobUrl: async function (wktString) {
-		const canvas = document.getElementById('hidden');
-		const ctx = canvas.getContext('2d');
-
-		// Reset canvas
-		ctx.fillStyle = 'white';
-		ctx.fillRect(0, 0, 90, 70);
-
 		const geojson = Terraformer.WKT.parse(wktString);
-		const bbox = Terraformer.Tools.calculateBounds(geojson);
+		const bbox = Terraformer.Tools.calculateBounds(geojson); // [west, south, east, north]
 		const [xmin, ymin, xmax, ymax] = bbox;
 
 		const worldWidth = xmax - xmin;
 		const worldHeight = ymax - ymin;
-		const padding = 0.1; // 10% padding around the geometry
+		if (worldWidth === 0 || worldHeight === 0) throw "Geometria sem área";
 
+		const padding = 0.1; // 10% de margem em cada lado
+		const paddedW = worldWidth * (1 + 2 * padding);
+		const paddedH = worldHeight * (1 + 2 * padding);
+
+		// Calcula a proporção original (sem distorcer)
+		const aspectRatio = paddedW / paddedH;
+
+		// Tamanho do canvas temporário que mantém a proporção exata
+		let tempWidth, tempHeight;
+		if (aspectRatio > 90 / 70) {
+			tempWidth = 900;           // resolução 10× para ficar bonito
+			tempHeight = Math.round(900 / aspectRatio);
+		} else {
+			tempHeight = 700;
+			tempWidth = Math.round(700 * aspectRatio);
+		}
+
+		const canvas = document.getElementById('offscreen');
+		canvas.width = tempWidth;
+		canvas.height = tempHeight;
+		const ctx = canvas.getContext('2d');
+
+		// Fundo branco
+		ctx.fillStyle = 'white';
+		ctx.fillRect(0, 0, tempWidth, tempHeight);
+
+		// Transformação de coordenadas mundo → pixel (com padding)
 		function toPixel(x, y) {
-			const px = (x - xmin) / worldWidth;
-			const py = (ymax - y) / worldHeight; // Y flip
+			const px = (x - xmin) / paddedW;
+			const py = (ymax - y) / paddedH; // Y invertido
 			return {
-				x: (px * (1 - 2 * padding) + padding) * 90,
-				y: (py * (1 - 2 * padding) + padding) * 70
+				x: px * tempWidth,
+				y: py * tempHeight
 			};
 		}
 
-		ctx.fillStyle = 'black';
-		ctx.strokeStyle = 'black';
-		ctx.lineWidth = 1.2;
+		// Desenho
+		ctx.fillStyle = ctx.strokeStyle = 'black';
+		ctx.lineWidth = tempWidth / 300; // linha proporcional ao tamanho
 
 		function drawRing(ring) {
 			ctx.beginPath();
-			ring.forEach((coord, i) => {
-				const p = toPixel(coord[0], coord[1]);
-				if (i === 0) ctx.moveTo(p.x, p.y);
-				else ctx.lineTo(p.x, p.y);
+			ring.forEach((c, i) => {
+				const p = toPixel(c[0], c[1]);
+				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
-			ctx.fill();
+			ctx.fill('evenodd'); // suporta buracos
 			ctx.stroke();
 		}
 
 		function drawGeometry(g) {
-			switch (g.type) {
-				case 'Polygon':
-					g.coordinates.forEach(ring => drawRing(ring));
-					break;
-				case 'MultiPolygon':
-					g.coordinates.forEach(poly => poly.forEach(ring => drawRing(ring)));
-					break;
-				case 'LineString':
-					drawRing(g.coordinates); // reuse (no close/fill)
-					ctx.fill(); // no fill for lines
-					break;
-				case 'Point':
-					const p = toPixel(g.coordinates[0], g.coordinates[1]);
-					ctx.beginPath();
-					ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-					ctx.fill();
-					break;
-				// Add MultiLineString, GeometryCollection etc. if you need
+			if (g.type === 'Polygon') g.coordinates.forEach(drawRing);
+			if (g.type === 'MultiPolygon') g.coordinates.forEach(poly => poly.forEach(drawRing));
+			if (g.type === 'LineString') { drawRing(g.coordinates); ctx.fillStyle = 'transparent'; }
+			if (g.type === 'Point') {
+				const p = toPixel(g.coordinates[0], g.coordinates[1]);
+				ctx.beginPath(); ctx.arc(p.x, p.y, ctx.lineWidth * 2, 0, Math.PI * 2); ctx.fill();
 			}
 		}
 
 		drawGeometry(geojson);
 
-		// Convert canvas → Blob → Object URL
+		// === Redimensiona para exatamente 90×70 com qualidade máxima ===
+		const finalCanvas = document.createElement('canvas');
+		finalCanvas.width = 90;
+		finalCanvas.height = 70;
+		const fctx = finalCanvas.getContext('2d');
+
+		// Melhor qualidade possível no browser
+		fctx.imageSmoothingEnabled = true;
+		fctx.imageSmoothingQuality = 'high';
+
+		fctx.drawImage(canvas, 0, 0, 90, 70);
+
+		// Converte para Blob URL
 		return new Promise(resolve => {
-			canvas.toBlob(blob => {
-				const url = URL.createObjectURL(blob);
-				resolve(url);
+			finalCanvas.toBlob(blob => {
+				resolve(URL.createObjectURL(blob));
 			}, 'image/png');
 		});
 	}
