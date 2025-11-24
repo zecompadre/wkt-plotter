@@ -251,41 +251,40 @@ export const featureUtilities = {
 			return null;
 		}
 
+		// Bounding box da geometria
 		const [west, south, east, north] = Terraformer.Tools.calculateBounds(geojson);
 		const geoW = east - west || 0.0001;
 		const geoH = north - south || 0.0001;
 
+		// Padding 15% (igual ao PLOTTER)
 		const padding = 0.15;
 		const worldW = geoW * (1 + 2 * padding);
 		const worldH = geoH * (1 + 2 * padding);
 
+		// Canvas final
 		const canvas = document.createElement('canvas');
 		canvas.width = 90;
 		canvas.height = 70;
 		const ctx = canvas.getContext('2d');
 
-		// ==================== BACKGROUND "FAKE MAPA" ====================
-		// Cor de fundo do PLOTTER
-		ctx.fillStyle = '#E8ECEF';
-		ctx.fillRect(0, 0, 90, 70);
+		// === 1. CARREGA A IMAGEM DE FUNDO ===
+		const bgImg = new Image();
+		bgImg.src = 'map-background.jpg'; // ← imagem que você enviou
 
-		// Linhas de ruas falsas (exatamente como no PLOTTER)
-		ctx.strokeStyle = '#C8D6E0';
-		ctx.lineWidth = 0.8;
-		for (let i = 8; i < 90; i += 14) {
-			ctx.beginPath();
-			ctx.moveTo(i, 0);
-			ctx.lineTo(i + 6, 70);
-			ctx.stroke();
-		}
-		for (let i = 8; i < 70; i += 12) {
-			ctx.beginPath();
-			ctx.moveTo(0, i);
-			ctx.lineTo(90, i + 5);
-			ctx.stroke();
-		}
+		await new Promise((resolve, reject) => {
+			bgImg.onload = resolve;
+			bgImg.onerror = () => {
+				console.warn('Imagem de fundo não encontrada, usando cor sólida como fallback');
+				ctx.fillStyle = '#E8ECEF';
+				ctx.fillRect(0, 0, 90, 70);
+				resolve();
+			};
+		});
 
-		// ==================== ESCALA E CENTRALIZAÇÃO ====================
+		// Desenha a imagem de fundo cobrindo todo o canvas
+		ctx.drawImage(bgImg, 0, 0, 90, 70);
+
+		// === 2. CENTRALIZA E DESENHA O WKT ===
 		const scale = Math.min(90 / worldW, 70 / worldH);
 		const offsetX = (90 - scale * worldW) / 2;
 		const offsetY = (70 - scale * worldH) / 2;
@@ -295,10 +294,9 @@ export const featureUtilities = {
 			y: offsetY + (north - y) * scale
 		});
 
-		// ==================== DESENHO DA GEOMETRIA ====================
-		ctx.fillStyle = colors.create;
-		ctx.strokeStyle = colors.normal;
-		ctx.lineWidth = Math.max(1.3, scale * 0.0014 * geoW);
+		ctx.fillStyle = '#00AAFF';
+		ctx.strokeStyle = '#141414';
+		ctx.lineWidth = Math.max(1.4, scale * 0.0016 * geoW);
 		ctx.lineJoin = ctx.lineCap = 'round';
 
 		const drawRing = ring => {
@@ -325,7 +323,7 @@ export const featureUtilities = {
 					pts.forEach(c => {
 						const p = toPixel(c[0], c[1]);
 						ctx.beginPath();
-						ctx.arc(p.x, p.y, ctx.lineWidth * 2.2, 0, Math.PI * 2);
+						ctx.arc(p.x, p.y, ctx.lineWidth * 2.5, 0, Math.PI * 2);
 						ctx.fill();
 						ctx.stroke();
 					});
@@ -335,7 +333,7 @@ export const featureUtilities = {
 
 		drawGeometry(geojson);
 
-		// Retorna Blob URL
+		// === 3. RETORNA BLOB URL ===
 		return new Promise(resolve => {
 			canvas.toBlob(blob => {
 				resolve(URL.createObjectURL(blob));
