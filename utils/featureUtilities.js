@@ -292,7 +292,6 @@ export const featureUtilities = {
 		};
 
 		// 9. Desenho da feature
-
 		const drawRing = ring => {
 			ctx.beginPath();
 			ring.forEach((c, i) => {

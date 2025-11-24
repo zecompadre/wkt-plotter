@@ -55,7 +55,9 @@ export const utilities = {
 		const r = (bigint >> 16) & 255;
 		const g = (bigint >> 8) & 255;
 		const b = bigint & 255;
-		return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+		const rgba = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+		console.log(`Converted ${hex} to ${rgba}`);
+		return rgba;
 	},
 
 	// Obtém WKT de uma feature
