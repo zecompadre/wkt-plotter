@@ -303,12 +303,12 @@ export const featureUtilities = {
 
 			// 1. Contorno MUITO FINO e nítido (igual ao PLOTTER)
 			ctx.lineWidth = Math.max(0.9, scale * 0.0012 * geoW);  // ← linha super fina e proporcional
-			ctx.strokeStyle = '#141414';
+			ctx.strokeStyle = colors.normal;
 			ctx.globalAlpha = 1;
 			ctx.stroke();
 
 			// 2. Fill azul semi-transparente (75% opacity = visual do PLOTTER)
-			ctx.fillStyle = 'rgba(0, 170, 255, 0.75)';
+			ctx.fillStyle = utilities.hexToRgbA(colors.create, '0.25');
 			ctx.fill('evenodd');
 		};
 

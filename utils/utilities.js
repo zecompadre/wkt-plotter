@@ -20,6 +20,18 @@ const formatArea = function (feature) {
 };
 
 export const utilities = {
+
+	hexToRgba: function (hex, alpha = 1) {
+		// Remove # se existir
+		hex = hex.replace('#', '');
+
+		// Converte para RGB
+		const r = parseInt(hex.substr(0, 2), 16);
+		const g = parseInt(hex.substr(2, 2), 16);
+		const b = parseInt(hex.substr(4, 2), 16);
+
+		return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+	},
 	// Transforma coordenadas entre projeções
 	transformCoordinates: (coords, from, to) => ol.proj.transform(coords, from, to),
 
