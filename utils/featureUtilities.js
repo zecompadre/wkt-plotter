@@ -242,93 +242,133 @@ export const featureUtilities = {
 		map.renderSync(); // força render
 	},
 	wktToPngBlobUrl: async function (wktString) {
-		const geojson = Terraformer.WKT.parse(wktString);
-		const bbox = Terraformer.Tools.calculateBounds(geojson); // [west, south, east, north]
-		const [xmin, ymin, xmax, ymax] = bbox;
+		if (!wktString || wktString.trim() === '') return null;
 
-		const worldWidth = xmax - xmin;
-		const worldHeight = ymax - ymin;
-		if (worldWidth === 0 || worldHeight === 0) throw "Geometria sem área";
-
-		const padding = 0.1; // 10% de margem em cada lado
-		const paddedW = worldWidth * (1 + 2 * padding);
-		const paddedH = worldHeight * (1 + 2 * padding);
-
-		// Calcula a proporção original (sem distorcer)
-		const aspectRatio = paddedW / paddedH;
-
-		// Tamanho do canvas temporário que mantém a proporção exata
-		let tempWidth, tempHeight;
-		if (aspectRatio > 90 / 70) {
-			tempWidth = 900;           // resolução 10× para ficar bonito
-			tempHeight = Math.round(900 / aspectRatio);
-		} else {
-			tempHeight = 700;
-			tempWidth = Math.round(700 * aspectRatio);
+		// ------------------------------------------------------------------
+		// 1. Parse WKT → GeoJSON
+		// ------------------------------------------------------------------
+		let geojson;
+		try {
+			geojson = Terraformer.WKT.parse(wktString);
+		} catch (e) {
+			console.error("WKT inválido:", e);
+			return null;
 		}
 
-		const canvas = document.getElementById('offscreen');
-		canvas.width = tempWidth;
-		canvas.height = tempHeight;
-		const ctx = canvas.getContext('2d');
+		// ------------------------------------------------------------------
+		// 2. Calcula bounding box + padding
+		// ------------------------------------------------------------------
+		const bbox = Terraformer.Tools.calculateBounds(geojson); // [west, south, east, north]
+		let [xmin, ymin, xmax, ymax] = bbox;
+
+		const worldW = xmax - xmin || 1;   // evita divisão por zero
+		const worldH = ymax - ymin || 1;
+
+		const padding = 0.12; // 12% de margem (fica bonito)
+		const paddedW = worldW * (1 + 2 * padding);
+		const paddedH = worldH * (1 + 2 * padding);
+
+		// ------------------------------------------------------------------
+		// 3. Cria canvas temporário em alta resolução (mantém proporção exata)
+		// ------------------------------------------------------------------
+		const TEMP_SCALE = 12; // qualidade boa e rápido (90×12 = 1080px máx)
+		let tempW, tempH;
+
+		if (paddedW / paddedH > 90 / 70) {
+			tempW = 90 * TEMP_SCALE;
+			tempH = Math.round(tempW * paddedH / paddedW);
+		} else {
+			tempH = 70 * TEMP_SCALE;
+			tempW = Math.round(tempH * paddedW / paddedH);
+		}
+
+		const tempCanvas = document.createElement('canvas');
+		tempCanvas.width = tempW;
+		tempCanvas.height = tempH;
+		const ctx = tempCanvas.getContext('2d');
 
 		// Fundo branco
 		ctx.fillStyle = 'white';
-		ctx.fillRect(0, 0, tempWidth, tempHeight);
+		ctx.fillRect(0, 0, tempW, tempH);
 
-		// Transformação de coordenadas mundo → pixel (com padding)
-		function toPixel(x, y) {
-			const px = (x - xmin) / paddedW;
-			const py = (ymax - y) / paddedH; // Y invertido
-			return {
-				x: px * tempWidth,
-				y: py * tempHeight
-			};
-		}
+		// Transformação mundo → pixel
+		const toPixel = (x, y) => ({
+			x: ((x - xmin) / paddedW) * tempW,
+			y: ((ymax - y) / paddedH) * tempH   // Y invertido
+		});
 
-		// Desenho
-		ctx.fillStyle = ctx.strokeStyle = 'black';
-		ctx.lineWidth = tempWidth / 300; // linha proporcional ao tamanho
+		// Estilo
+		ctx.fillStyle = ctx.strokeStyle = '#000000';
+		ctx.lineWidth = Math.max(1.5, tempW / 400);
+		ctx.lineJoin = ctx.lineCap = 'round';
 
-		function drawRing(ring) {
+		// ------------------------------------------------------------------
+		// 4. Desenha a geometria
+		// ------------------------------------------------------------------
+		const drawRing = (ring) => {
 			ctx.beginPath();
 			ring.forEach((c, i) => {
 				const p = toPixel(c[0], c[1]);
 				i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
 			});
 			ctx.closePath();
-			ctx.fill('evenodd'); // suporta buracos
+			ctx.fill('evenodd'); // suporta ilhas/buracos
 			ctx.stroke();
-		}
+		};
 
-		function drawGeometry(g) {
-			if (g.type === 'Polygon') g.coordinates.forEach(drawRing);
-			if (g.type === 'MultiPolygon') g.coordinates.forEach(poly => poly.forEach(drawRing));
-			if (g.type === 'LineString') { drawRing(g.coordinates); ctx.fillStyle = 'transparent'; }
-			if (g.type === 'Point') {
-				const p = toPixel(g.coordinates[0], g.coordinates[1]);
-				ctx.beginPath(); ctx.arc(p.x, p.y, ctx.lineWidth * 2, 0, Math.PI * 2); ctx.fill();
+		const drawGeometry = (g) => {
+			if (!g || !g.type) return;
+
+			switch (g.type) {
+				case 'Polygon':
+					g.coordinates.forEach(drawRing);
+					break;
+				case 'MultiPolygon':
+					g.coordinates.forEach(poly => poly.forEach(drawRing));
+					break;
+				case 'LineString':
+					drawRing(g.coordinates);
+					break;
+				case 'MultiLineString':
+					g.coordinates.forEach(drawRing);
+					break;
+				case 'Point':
+					const p = toPixel(g.coordinates[0], g.coordinates[1]);
+					ctx.beginPath();
+					ctx.arc(p.x, p.y, ctx.lineWidth * 2, 0, Math.PI * 2);
+					ctx.fill();
+					break;
+				case 'MultiPoint':
+					g.coordinates.forEach(c => {
+						const p = toPixel(c[0], c[1]);
+						ctx.beginPath();
+						ctx.arc(p.x, p.y, ctx.lineWidth * 2, 0, Math.PI * 2);
+						ctx.fill();
+					});
+					break;
 			}
-		}
+		};
 
 		drawGeometry(geojson);
 
-		// === Redimensiona para exatamente 90×70 com qualidade máxima ===
+		// ------------------------------------------------------------------
+		// 5. Redimensiona para exatamente 90×70 px (qualidade máxima)
+		// ------------------------------------------------------------------
 		const finalCanvas = document.createElement('canvas');
 		finalCanvas.width = 90;
 		finalCanvas.height = 70;
 		const fctx = finalCanvas.getContext('2d');
-
-		// Melhor qualidade possível no browser
 		fctx.imageSmoothingEnabled = true;
 		fctx.imageSmoothingQuality = 'high';
+		fctx.drawImage(tempCanvas, 0, 0, 90, 70);
 
-		fctx.drawImage(canvas, 0, 0, 90, 70);
-
-		// Converte para Blob URL
+		// ------------------------------------------------------------------
+		// 6. Converte para Blob URL
+		// ------------------------------------------------------------------
 		return new Promise(resolve => {
 			finalCanvas.toBlob(blob => {
-				resolve(URL.createObjectURL(blob));
+				const url = URL.createObjectURL(blob);
+				resolve(url);
 			}, 'image/png');
 		});
 	}
