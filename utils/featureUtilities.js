@@ -294,8 +294,8 @@ export const featureUtilities = {
 		});
 
 		// 5. Desenho da feature (azul 50% + contorno)
-		ctx.fillStyle = '#00AAFF80';  // 50% opacity
-		ctx.strokeStyle = '#141414';
+		ctx.fillStyle = '#00AAFFBF';  // 50% opacity
+		ctx.strokeStyle = '#141414BF';
 		ctx.lineWidth = Math.max(1.6, scale * 0.0022 * geoW);
 		ctx.lineJoin = ctx.lineCap = 'round';
 
