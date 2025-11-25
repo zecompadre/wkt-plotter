@@ -3,6 +3,7 @@
 import { map, vectorLayer, format, featureCollection } from '../map/setupMap.js';
 import { utilities } from './utilities.js';
 import { projections, colors } from './constants.js';
+import WKTUtilities from '../classes/WKTUtilities.js';
 
 export const featureUtilities = {
 	deselectCurrentFeature: (active) => {
