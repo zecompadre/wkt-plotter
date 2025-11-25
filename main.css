@@ -455,6 +455,7 @@ textarea {
 	padding: 14px;
 	margin: 8px;
 	background: var(--primary-text-color);
+	border: 1px solid var(--text-area-color);
 	color: var(--color-base-white);
 	border-radius: 12px;
 	cursor: pointer;
@@ -494,4 +495,6 @@ textarea {
 
 #wkt-list li.selected {
 	background: var(--header-color-text);
+	border: 1px solid var(--primary-text-color);
+	;
 }
