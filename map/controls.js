@@ -30,6 +30,7 @@ export function initializeMapControls() {
 		title: window.translator?.get("select") || "Select",
 		interaction: new ol.interaction.Select({
 			hitTolerance: 2,
+			multi: true,
 			style: utilities.genericStyleFunction('#ec7063')
 		}),
 		bar: selectBar,
@@ -200,46 +201,66 @@ export function initializeMapControls() {
 		const textarea = document.querySelector("#wktdefault textarea");
 		const wktList = document.getElementById('wkt-list');
 
-		// === DESELEÇÃO ===
-		if (evt.deselected.length > 0) {
-			evt.deselected.forEach(async (feature) => {
-				const changed = await updateListItemIfChanged(feature);
-				if (changed) {
-					console.log("Feature modificada e atualizada na lista");
-				}
-			});
+		// USA getSettingById CORRETAMENTE!
+		const multiSelectEnabled = window.settingsManager?.getSettingById('multi-select') === true;
 
-			// Limpa textarea e seleção visual
-			textarea.value = "";
-			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
-		}
+		const selectedFeatures = evt.target.getFeatures().getArray();
 
 		// === SELEÇÃO ===
 		if (evt.selected.length > 0) {
 			evt.selected.forEach(feature => {
-				textarea.value = utilities.getFeatureWKT(feature);
-			});
-			mapControls.selectBar.setVisible(true);
-
-			const selectedFeature = evt.selected[0];
-			const featureId = selectedFeature.getId();
-
-			console.log("Selected feature ID:", featureId);
-
-			if (wktList && featureId) {
-				const listItem = wktList.querySelector(`li[data-id="${featureId}"]`);
+				const featureId = feature.getId();
+				const listItem = wktList?.querySelector(`li[data-id="${featureId}"]`);
 				if (listItem) {
-					// Remove seleção anterior
-					wktList.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
-					// Seleciona o novo
 					listItem.classList.add('selected');
-					// Scroll suave para o item
 					listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
-			}
+			});
 
-			// Centra no mapa
-			featureUtilities.centerOnFeature(selectedFeature);
+			// MULTISELECT ATIVO → GERA MULTIPOLYGON
+			if (multiSelectEnabled && selectedFeatures.length > 1) {
+				const multiPoly = featureUtilities.featuresToMultiPolygon(selectedFeatures);
+				if (multiPoly) {
+					textarea.value = utilities.getFeatureWKT(multiPoly);
+				}
+			}
+			// Seleção única
+			else if (selectedFeatures.length === 1) {
+				textarea.value = utilities.getFeatureWKT(selectedFeatures[0]);
+			}
+		}
+
+		// === DESELEÇÃO ===
+		if (evt.deselected.length > 0) {
+			evt.deselected.forEach(feature => {
+				const featureId = feature.getId();
+				const listItem = wktList?.querySelector(`li[data-id="${featureId}"]`);
+				if (listItem) {
+					listItem.classList.remove('selected');
+				}
+			});
+
+			// Atualiza MultiPolygon após deseleção
+			if (multiSelectEnabled && selectedFeatures.length > 1) {
+				const remaining = selectedFeatures.filter(f => !evt.deselected.includes(f));
+				if (remaining.length > 1) {
+					const multiPoly = featureUtilities.featuresToMultiPolygon(remaining);
+					textarea.value = multiPoly ? utilities.getFeatureWKT(multiPoly) : "";
+				} else if (remaining.length === 1) {
+					textarea.value = utilities.getFeatureWKT(remaining[0]);
+				} else {
+					textarea.value = "";
+				}
+			} else if (selectedFeatures.length === 1) {
+				textarea.value = utilities.getFeatureWKT(selectedFeatures[0]);
+			} else {
+				textarea.value = "";
+			}
+		}
+
+		// Limpa seleção visual se nada estiver selecionado
+		if (selectedFeatures.length === 0) {
+			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
 		}
 	}
 
