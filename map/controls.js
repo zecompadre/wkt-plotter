@@ -204,70 +204,6 @@ export function initializeMapControls() {
 
 	}
 
-	function handleSelectEvents(evt) {
-		const textarea = document.querySelector("#wktdefault textarea");
-		const wktList = document.getElementById('wkt-list');
-		const multiSelectEnabled = window.settingsManager?.getSettingById('multi-select') === true;
-
-		const selectInteraction = evt.target;
-		const selectedFeatures = selectInteraction.getFeatures().getArray();
-
-		// === 1. ANTES DE ADICIONAR NOVA SELEÇÃO → VERIFICA SE ALGUMA ANTERIOR FOI MODIFICADA ===
-		if (evt.selected.length > 0) {
-			// Pega todas as features que estavam selecionadas ANTES desta ação
-			const previousSelection = [...selectedFeatures];
-			evt.selected.forEach(f => {
-				const index = previousSelection.indexOf(f);
-				if (index > -1) previousSelection.splice(index, 1);
-			});
-
-			// Verifica cada uma anterior se foi modificada
-			previousSelection.forEach(async (feature) => {
-				const changed = await featureUtilities.updateListItemIfChanged(feature);
-				if (changed) {
-					console.log("Feature anterior modificada → atualizada ao selecionar nova");
-				}
-			});
-		}
-
-		// === 2. DESELEÇÃO NORMAL (clicar fora, etc.) ===
-		if (evt.deselected.length > 0) {
-			evt.deselected.forEach(async (feature) => {
-				const changed = await featureUtilities.updateListItemIfChanged(feature);
-				if (changed) {
-					console.log("Feature deselecionada → atualizada");
-				}
-			});
-		}
-
-		// === 3. ATUALIZA LISTA E TEXTAREA ===
-		if (evt.selected.length > 0) {
-			evt.selected.forEach(feature => {
-				const id = feature.getId();
-				const li = wktList?.querySelector(`li[data-id="${id}"]`);
-				if (li) {
-					li.classList.add('selected');
-					li.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				}
-			});
-
-			if (multiSelectEnabled && selectedFeatures.length > 1) {
-				const multi = featureUtilities.featuresToMultiPolygon(selectedFeatures);
-				textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
-			} else if (selectedFeatures.length === 1) {
-				textarea.value = utilities.getFeatureWKT(selectedFeatures[0]);
-			}
-		}
-
-		// === 4. NENHUMA SELECIONADA ===
-		if (selectedFeatures.length === 0) {
-			textarea.value = "";
-			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
-		}
-
-		mapControls.selectBar.setVisible(selectedFeatures.length > 0);
-	}
-
 	let skipNextDeselectUpdate = false; // ← Variável de controlo
 
 	map.on('singleclick', (evt) => {
@@ -284,4 +220,47 @@ export function initializeMapControls() {
 			}
 		}
 	});
+
+	function handleSelectEvents(evt) {
+		const textarea = document.querySelector("#wktdefault textarea");
+		const wktList = document.getElementById('wkt-list');
+		const multiSelect = window.settingsManager?.getSettingById('multi-select') === true;
+
+		const selectedFeatures = evt.target.getFeatures().getArray();
+
+		// === 1. DESELEÇÃO → atualiza se houve mudança (exceto clique fora) ===
+		if (evt.deselected.length > 0 && !skipNextDeselectUpdate) {
+			evt.deselected.forEach(async (f) => {
+				await featureUtilities.updateListItemIfChanged(f);
+			});
+		}
+
+		// === 2. SELEÇÃO → destaca na lista + atualiza textarea ===
+		if (evt.selected.length > 0) {
+			evt.selected.forEach(f => {
+				const li = wktList?.querySelector(`li[data-id="${f.getId()}"]`);
+				if (li) {
+					li.classList.add('selected');
+					li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			});
+
+			if (multiSelect && selectedFeatures.length > 1) {
+				const multi = featureUtilities.featuresToMultiPolygon(selectedFeatures);
+				textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
+			} else if (selectedFeatures.length === 1) {
+				textarea.value = utilities.getFeatureWKT(selectedFeatures[0]);
+			}
+		}
+
+		// === 3. NENHUMA SELEÇÃO → limpa tudo ===
+		if (selectedFeatures.length === 0) {
+			textarea.value = "";
+			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+		}
+
+		// Mostra/esconde barra de seleção
+		mapControls.selectBar.setVisible(selectedFeatures.length > 0);
+	}
+
 }
