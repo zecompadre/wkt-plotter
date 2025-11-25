@@ -200,19 +200,22 @@ export function initializeMapControls() {
 			.catch(console.error);
 	}
 
+	function handleModifyEvents(evt) {
+
+	}
+
 	function handleSelectEvents(evt) {
 		const textarea = document.querySelector("#wktdefault textarea");
 		const wktList = document.getElementById('wkt-list');
-
 		const multiSelectEnabled = window.settingsManager?.getSettingById('multi-select') === true;
 
-		// === TODAS AS FEATURES SELECIONADAS (não só evt.selected!) ===
 		const selectInteraction = evt.target;
 		const selectedFeatures = selectInteraction.getFeatures().getArray();
 
 		// === DESELEÇÃO → ATUALIZA LISTA SE HOUVER MUDANÇA ===
 		if (evt.deselected.length > 0) {
 			evt.deselected.forEach(async (feature) => {
+				// AQUI ESTÁ A LINHA QUE TU PERGUNTASTE!
 				const changed = await featureUtilities.updateListItemIfChanged(feature);
 				if (changed) {
 					console.log("Feature modificada → lista e preview atualizados");
@@ -223,40 +226,32 @@ export function initializeMapControls() {
 			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
 		}
 
-		// === SELEÇÃO → ATUALIZA LISTA E TEXTAREA ===
+		// === SELEÇÃO ===
 		if (evt.selected.length > 0) {
 			evt.selected.forEach(feature => {
-				const featureId = feature.getId();
-				const listItem = wktList?.querySelector(`li[data-id="${featureId}"]`);
-				if (listItem) {
-					listItem.classList.add('selected');
-					listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				const id = feature.getId();
+				const li = wktList?.querySelector(`li[data-id="${id}"]`);
+				if (li) {
+					li.classList.add('selected');
+					li.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
 			});
 
-			// === MULTISELECT → MULTIPOLYGON ===
+			// Gera MultiPolygon ou WKT único
 			if (multiSelectEnabled && selectedFeatures.length > 1) {
-				const multiPoly = featureUtilities.featuresToMultiPolygon(selectedFeatures);
-				textarea.value = multiPoly ? utilities.getFeatureWKT(multiPoly) : "";
-			}
-			// Seleção única
-			else if (selectedFeatures.length === 1) {
+				const multi = featureUtilities.featuresToMultiPolygon(selectedFeatures);
+				textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
+			} else if (selectedFeatures.length === 1) {
 				textarea.value = utilities.getFeatureWKT(selectedFeatures[0]);
 			}
 		}
 
-		// === NENHUMA SELECIONADA → LIMPA TUDO ===
+		// === NENHUMA SELECIONADA ===
 		if (selectedFeatures.length === 0) {
 			textarea.value = "";
-			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
 		}
 
-		// Mostra/esconde barra de seleção
 		mapControls.selectBar.setVisible(selectedFeatures.length > 0);
-	}
-
-	function handleModifyEvents(evt) {
-
 	}
 
 	map.on('singleclick', (evt) => {
