@@ -183,7 +183,7 @@ export const featureUtilities = {
 		textarea.style.backgroundColor = "";
 
 		return newFeature;
-	},	
+	},
 	wktToPngBlobUrl: async function (wkt) {
 		if (!wkt || wkt.trim() === '') return null;
 
@@ -245,11 +245,11 @@ export const featureUtilities = {
 
 			ctx.globalAlpha = 1;
 			ctx.lineWidth = Math.max(0.9, scale * 0.0012 * geoW);
-			ctx.strokeStyle = '#141414';
+			ctx.strokeStyle = colors.normal;
 			ctx.stroke();
 
 			ctx.globalAlpha = 0.50;
-			ctx.fillStyle = '#21BCFF';
+			ctx.fillStyle = colors.snap;
 			ctx.fill('evenodd');
 
 			ctx.globalAlpha = 1;
