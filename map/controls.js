@@ -259,29 +259,6 @@ export function initializeMapControls() {
 
 	}
 
-	async function updateListItemIfChanged(feature) {
-		if (!feature) return;
 
-		const featureId = feature.getId();
-		const currentWKT = utilities.getFeatureWKT(feature);
-		const savedItem = WKTUtilities.get()?.find(item => item.id === featureId);
-
-		// SE NÃO MUDOU → NÃO FAZ NADA!
-		if (savedItem && savedItem.wkt === currentWKT) {
-			console.log("Nenhuma mudança detectada → não atualiza");
-			return false;
-		}
-
-		// SE MUDOU → atualiza tudo!
-		console.log("Mudança detectada → atualizando preview e lista");
-
-		// Atualiza no localStorage
-		WKTUtilities.update(featureId, currentWKT);
-
-		// Atualiza a lista
-		await featureUtilities.updateListItem(feature); // a tua função que já tens
-
-		return true; // mudou
-	}
 
 }
