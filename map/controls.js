@@ -196,7 +196,9 @@ export function initializeMapControls() {
 
 	function handleSelectEvents(evt) {
 		const textarea = document.querySelector("#wktdefault textarea");
-		utilities.restoreDefaultColors();
+		const wktList = document.getElementById('wkt-list');
+
+		// === DESELEÇÃO ===
 		if (evt.deselected.length > 0) {
 			evt.deselected.forEach(feature => {
 				textarea.value = utilities.getFeatureWKT(feature);
@@ -204,12 +206,35 @@ export function initializeMapControls() {
 				featureUtilities.createFromAllFeatures();
 			});
 			mapControls.selectBar.setVisible(false);
+
+			// Limpa seleção na lista
+			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
 		}
+
+		// === SELEÇÃO ===
 		if (evt.selected.length > 0) {
 			evt.selected.forEach(feature => {
 				textarea.value = utilities.getFeatureWKT(feature);
 			});
 			mapControls.selectBar.setVisible(true);
+
+			const selectedFeature = evt.selected[0];
+			const featureId = selectedFeature.getId();
+
+			if (wktList && featureId) {
+				const listItem = wktList.querySelector(`li[data-id="${featureId}"]`);
+				if (listItem) {
+					// Remove seleção anterior
+					wktList.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+					// Seleciona o novo
+					listItem.classList.add('selected');
+					// Scroll suave para o item
+					listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			}
+
+			// Centra no mapa
+			featureUtilities.centerOnFeature(selectedFeature);
 		}
 	}
 
