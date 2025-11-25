@@ -101,8 +101,6 @@ export const featureUtilities = {
 			return null;
 		}
 
-		console.log('Adding WKT to features:', wktString);
-
 		let newFeature;
 		try {
 			newFeature = format.readFeature(wktString);
@@ -248,7 +246,7 @@ export const featureUtilities = {
 			ctx.strokeStyle = colors.normal;
 			ctx.stroke();
 
-			ctx.globalAlpha = 0.50;
+			ctx.globalAlpha = 0.10;
 			ctx.fillStyle = colors.snap;
 			ctx.fill('evenodd');
 
