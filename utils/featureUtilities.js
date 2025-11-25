@@ -293,4 +293,17 @@ export const featureUtilities = {
 
 		li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 	},
+	featuresToMultiPolygon: (features) => {
+		const polygons = features
+			.map(f => f.getGeometry())
+			.filter(geom => geom.getType() === 'Polygon' || geom.getType() === 'MultiPolygon');
+
+		if (polygons.length === 0) return null;
+
+		const coords = polygons.flatMap(geom =>
+			geom.getType() === 'Polygon' ? geom.getCoordinates() : geom.getCoordinates().flat(1)
+		);
+
+		return new ol.Feature(new ol.geom.MultiPolygon(coords));
+	},
 };

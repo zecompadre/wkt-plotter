@@ -31,9 +31,9 @@ export function initializeMapControls() {
 		interaction: new ol.interaction.Select({
 			hitTolerance: 2,
 			multi: true,
-			toggleCondition: ol.events.condition.never,  // ← ESSENCIAL!
-			addCondition: ol.events.condition.always,    // ← Adiciona sempre
-			removeCondition: ol.events.condition.never, // ← Nunca remove automaticamente
+			toggleCondition: ol.events.condition.never,
+			addCondition: ol.events.condition.always,
+			removeCondition: ol.events.condition.never,
 			style: utilities.genericStyleFunction('#ec7063')
 		}),
 		bar: selectBar,
@@ -204,12 +204,26 @@ export function initializeMapControls() {
 		const textarea = document.querySelector("#wktdefault textarea");
 		const wktList = document.getElementById('wkt-list');
 
-		// USA getSettingById CORRETAMENTE!
 		const multiSelectEnabled = window.settingsManager?.getSettingById('multi-select') === true;
 
-		const selectedFeatures = evt.target.getFeatures().getArray();
+		// === TODAS AS FEATURES SELECIONADAS (não só evt.selected!) ===
+		const selectInteraction = evt.target;
+		const selectedFeatures = selectInteraction.getFeatures().getArray();
 
-		// === SELEÇÃO ===
+		// === DESELEÇÃO → ATUALIZA LISTA SE HOUVER MUDANÇA ===
+		if (evt.deselected.length > 0) {
+			evt.deselected.forEach(async (feature) => {
+				const changed = await featureUtilities.updateListItemIfChanged(feature);
+				if (changed) {
+					console.log("Feature modificada → lista e preview atualizados");
+				}
+			});
+
+			// Limpa seleção visual
+			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+		}
+
+		// === SELEÇÃO → ATUALIZA LISTA E TEXTAREA ===
 		if (evt.selected.length > 0) {
 			evt.selected.forEach(feature => {
 				const featureId = feature.getId();
@@ -220,12 +234,10 @@ export function initializeMapControls() {
 				}
 			});
 
-			// MULTISELECT ATIVO → GERA MULTIPOLYGON
+			// === MULTISELECT → MULTIPOLYGON ===
 			if (multiSelectEnabled && selectedFeatures.length > 1) {
 				const multiPoly = featureUtilities.featuresToMultiPolygon(selectedFeatures);
-				if (multiPoly) {
-					textarea.value = utilities.getFeatureWKT(multiPoly);
-				}
+				textarea.value = multiPoly ? utilities.getFeatureWKT(multiPoly) : "";
 			}
 			// Seleção única
 			else if (selectedFeatures.length === 1) {
@@ -233,38 +245,14 @@ export function initializeMapControls() {
 			}
 		}
 
-		// === DESELEÇÃO ===
-		if (evt.deselected.length > 0) {
-			evt.deselected.forEach(feature => {
-				const featureId = feature.getId();
-				const listItem = wktList?.querySelector(`li[data-id="${featureId}"]`);
-				if (listItem) {
-					listItem.classList.remove('selected');
-				}
-			});
-
-			// Atualiza MultiPolygon após deseleção
-			if (multiSelectEnabled && selectedFeatures.length > 1) {
-				const remaining = selectedFeatures.filter(f => !evt.deselected.includes(f));
-				if (remaining.length > 1) {
-					const multiPoly = featureUtilities.featuresToMultiPolygon(remaining);
-					textarea.value = multiPoly ? utilities.getFeatureWKT(multiPoly) : "";
-				} else if (remaining.length === 1) {
-					textarea.value = utilities.getFeatureWKT(remaining[0]);
-				} else {
-					textarea.value = "";
-				}
-			} else if (selectedFeatures.length === 1) {
-				textarea.value = utilities.getFeatureWKT(selectedFeatures[0]);
-			} else {
-				textarea.value = "";
-			}
-		}
-
-		// Limpa seleção visual se nada estiver selecionado
+		// === NENHUMA SELECIONADA → LIMPA TUDO ===
 		if (selectedFeatures.length === 0) {
+			textarea.value = "";
 			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
 		}
+
+		// Mostra/esconde barra de seleção
+		mapControls.selectBar.setVisible(selectedFeatures.length > 0);
 	}
 
 	function handleModifyEvents(evt) {
