@@ -183,63 +183,7 @@ export const featureUtilities = {
 		textarea.style.backgroundColor = "";
 
 		return newFeature;
-	},
-	featureToImage: async (feature) => {
-		await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-		const id = feature.getId();
-
-		const img = document.querySelector(`li[data-id="${id}"] img`);
-
-		console.log('Generating preview for feature ID:', id);
-		console.log(img);
-
-		const oldCenter = map.getView().getCenter();
-		const oldRes = map.getView().getResolution();
-
-		const allFeatures = vectorLayer.getSource().getFeatures();
-
-		allFeatures.forEach(f => {
-			if (f !== feature) f.setStyle(new ol.style.Style({})); // invisível
-		});
-
-		const extent = feature.getGeometry().getExtent();
-		const resolution = map.getView().getResolutionForExtent(extent, map.getSize());
-		const newCenter = ol.extent.getCenter(extent);
-
-		map.getView().setCenter(newCenter);
-		map.getView().setResolution(resolution * 0.7);
-
-		const controls = document.querySelectorAll('.ol-control');
-		controls.forEach(el => el.style.setProperty('display', 'none', 'important'));
-
-		map.once('rendercomplete', () => {
-			domtoimage.toPng(document.getElementById('map'), {
-				bgcolor: '#000000'
-			})
-				.then(dataUrl => {
-					img.src = dataUrl;
-					img.style.opacity = '1';
-
-					allFeatures.forEach(f => f.setStyle(undefined));
-
-					// VOLTA AO ZOOM GERAL
-					map.getView().setCenter(oldCenter);
-					map.getView().setResolution(oldRes);
-
-					// No final da lista → zoom geral
-					if (list.lastElementChild === li) {
-						setTimeout(() => featureUtilities.centerOnVector(), 400);
-					}
-				})
-				.catch(err => {
-					console.error("Erro no preview:", err);
-					img.src = "data:image/svg+xml;base64,...";
-					map.getView().setCenter(oldCenter);
-					map.getView().setResolution(oldRes);
-				});
-		});
-		map.renderSync(); // força render
-	},
+	},	
 	wktToPngBlobUrl: async function (wkt) {
 		if (!wkt || wkt.trim() === '') return null;
 
