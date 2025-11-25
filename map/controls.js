@@ -259,6 +259,29 @@ export function initializeMapControls() {
 
 	}
 
+	map.on('click', (evt) => {
+		const feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
 
+		// Se não clicou em nenhuma feature → deseleciona tudo
+		if (!feature) {
+			const selectInteraction = map.getInteractions().getArray()
+				.find(i => i instanceof ol.interaction.Select);
+
+			if (selectInteraction && selectInteraction.getFeatures().getLength() > 0) {
+				selectInteraction.getFeatures().clear();
+
+				// Limpa textarea
+				document.querySelector("#wktdefault textarea").value = "";
+
+				// Limpa seleção na lista
+				document.getElementById('wkt-list')
+					?.querySelectorAll('li')
+					.forEach(li => li.classList.remove('selected'));
+
+				// Zoom geral
+				featureUtilities.centerOnVector();
+			}
+		}
+	});
 
 }
