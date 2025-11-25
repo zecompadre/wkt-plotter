@@ -31,6 +31,9 @@ export function initializeMapControls() {
 		interaction: new ol.interaction.Select({
 			hitTolerance: 2,
 			multi: true,
+			toggleCondition: ol.events.condition.never,  // ← ESSENCIAL!
+			addCondition: ol.events.condition.always,    // ← Adiciona sempre
+			removeCondition: ol.events.condition.never, // ← Nunca remove automaticamente
 			style: utilities.genericStyleFunction('#ec7063')
 		}),
 		bar: selectBar,
