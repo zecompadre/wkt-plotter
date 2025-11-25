@@ -228,6 +228,8 @@ export const featureUtilities = {
 	updateListItem: async (feature) => {
 		if (!feature) return;
 
+		console.log("updateListItem: ", feature.getId());
+
 		const featureId = feature.getId();
 		const list = document.getElementById('wkt-list');
 		if (!list) return;

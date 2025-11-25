@@ -73,8 +73,6 @@ export const mapUtilities = {
 			let arrWKT = wkt.split("\n");
 			(async () => {
 				for (const wkt of arrWKT) {
-					console.dir(arrWKT);
-
 					// Generate checksum for the WKT string
 					const checksum = await utilities.generateChecksum(wkt);
 
