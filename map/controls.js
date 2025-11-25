@@ -204,10 +204,7 @@ export function initializeMapControls() {
 
 	}
 
-	RESOLVIDO 100 % — AGORA GRAVA EXATAMENTE COMO QUERIAS!
-Tu tinhas razão: a última versão estava a bloquear TODAS as atualizações por causa do skipNextDeselectUpdate.
-VERSÃO FINAL 100 % CORRETA E DEFINITIVA(GRAVA SÓ QUANDO DEVE!)
-JavaScriptlet skipNextDeselectUpdate = false; // ← só para clique fora
+	let skipNextDeselectUpdate = false; // ← só para clique fora
 
 	map.on('singleclick', (evt) => {
 		const feature = map.forEachFeatureAtPixel(evt.pixel, f => f, { hitTolerance: 5 });
@@ -217,9 +214,14 @@ JavaScriptlet skipNextDeselectUpdate = false; // ← só para clique fora
 				.find(i => i instanceof ol.interaction.Select);
 
 			if (select && select.getFeatures().getLength() > 0) {
-				skipNextDeselectUpdate = true;
+				// Deseleciona tudo
+				const deselected = select.getFeatures().getArray().slice(); // copia
 				select.getFeatures().clear();
-				skipNextDeselectUpdate = false;
+
+				// === GRAVA TODAS AS FEATURES MODIFICADAS ===
+				deselected.forEach(async (f) => {
+					await featureUtilities.updateListItemIfChanged(f);
+				});
 			}
 		}
 	});
