@@ -268,7 +268,8 @@ export function initializeMapControls() {
 		mapControls.selectBar.setVisible(selectedFeatures.length > 0);
 	}
 
-	// === 4. CLICAR FORA DO MAPA → DESELECIONA E ATUALIZA SE MUDOU ===
+	let skipNextDeselectUpdate = false; // ← Variável de controlo
+
 	map.on('singleclick', (evt) => {
 		const feature = map.forEachFeatureAtPixel(evt.pixel, f => f, { hitTolerance: 5 });
 
@@ -277,8 +278,9 @@ export function initializeMapControls() {
 				.find(i => i instanceof ol.interaction.Select);
 
 			if (select && select.getFeatures().getLength() > 0) {
-				// Dispara o evento de deseleção → chama handleSelectEvents → atualiza se mudou!
+				skipNextDeselectUpdate = true;  // ← Marca para IGNORAR atualização
 				select.getFeatures().clear();
+				skipNextDeselectUpdate = false; // ← Reseta
 			}
 		}
 	});
