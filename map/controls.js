@@ -202,14 +202,15 @@ export function initializeMapControls() {
 
 		// === DESELEÇÃO ===
 		if (evt.deselected.length > 0) {
-			evt.deselected.forEach(feature => {
-				textarea.value = utilities.getFeatureWKT(feature);
-				WKTUtilities.update(feature.getId(), textarea.value);
-				featureUtilities.createFromAllFeatures();
+			evt.deselected.forEach(async (feature) => {
+				const changed = await updateListItemIfChanged(feature);
+				if (changed) {
+					console.log("Feature modificada e atualizada na lista");
+				}
 			});
-			mapControls.selectBar.setVisible(false);
 
-			// Limpa seleção na lista
+			// Limpa textarea e seleção visual
+			textarea.value = "";
 			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
 		}
 
@@ -243,58 +244,32 @@ export function initializeMapControls() {
 	}
 
 	function handleModifyEvents(evt) {
-		const feature = evt.features.item(0);
+
+	}
+
+	async function updateListItemIfChanged(feature) {
 		if (!feature) return;
 
 		const featureId = feature.getId();
-		const textarea = document.querySelector("#wktdefault textarea");
-		const wktList = document.getElementById('wkt-list');
-		const listItem = wktList?.querySelector(`li[data-id="${featureId}"]`);
+		const currentWKT = utilities.getFeatureWKT(feature);
+		const savedItem = WKTUtilities.get()?.find(item => item.id === featureId);
 
-		if (!listItem) return;
-
-		const geom = feature.getGeometry();
-		const center = ol.extent.getCenter(geom.getExtent());
-		const [lon, lat] = ol.proj.toLonLat(center);
-
-		// 1. Atualiza coordenadas na lista
-		const infoDiv = listItem.querySelector('div');
-		if (infoDiv) {
-			infoDiv.innerHTML = `
-      <strong>${geom.getType()}</strong>
-      <div>lat: ${lat.toFixed(6)} | lon: ${lon.toFixed(6)}</div>
-      <small>#${featureId.slice(0, 8)}</small>
-    `;
+		// SE NÃO MUDOU → NÃO FAZ NADA!
+		if (savedItem && savedItem.wkt === currentWKT) {
+			console.log("Nenhuma mudança detectada → não atualiza");
+			return false;
 		}
 
-		// 2. Atualiza WKT na textarea
-		textarea.value = utilities.getFeatureWKT(feature);
+		// SE MUDOU → atualiza tudo!
+		console.log("Mudança detectada → atualizando preview e lista");
 
-		// 3. Atualiza preview (com a tua função wktToPngBlobUrl)
-		const img = listItem.querySelector('img');
-		if (img) {
-			img.style.opacity = '0.5';
+		// Atualiza no localStorage
+		WKTUtilities.update(featureId, currentWKT);
 
-			wktToPngBlobUrl(utilities.getFeatureWKT(feature), {
-				width: 120,
-				height: 90,
-				padding: 1.8
-			}).then(blobUrl => {
-				if (blobUrl) {
-					img.src = blobUrl;
-					img.style.opacity = '1';
-					img.onload = () => URL.revokeObjectURL(blobUrl);
-				}
-			}).catch(() => {
-				img.style.opacity = '1';
-			});
-		}
+		// Atualiza a lista
+		await featureUtilities.updateListItem(feature); // a tua função que já tens
 
-		// 4. Salva no localStorage
-		WKTUtilities.update(featureId, textarea.value);
-
-		// 5. Atualiza a lista geral (opcional, mas recomendado)
-		featureUtilities.createFromAllFeatures();
+		return true; // mudou
 	}
 
 }
