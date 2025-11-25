@@ -56,7 +56,6 @@ export const utilities = {
 		const g = (bigint >> 8) & 255;
 		const b = bigint & 255;
 		const rgba = `rgba(${r}, ${g}, ${b}, ${opacity})`;
-		console.log(`Converted ${hex} to ${rgba}`);
 		return rgba;
 	},
 

@@ -24,7 +24,6 @@ export default class WKTUtilities {
 			this.wkts = [];
 		}
 		map.set("wkts", this.wkts);
-		console.log("Loaded WKTs:", this.wkts);
 	}
 
 	static save() {
@@ -32,7 +31,6 @@ export default class WKTUtilities {
 			localStorage.setItem(lfkey, JSON.stringify(this.wkts));
 		}
 		map.set("wkts", this.wkts);
-		console.log("Saved WKTs:", this.wkts);
 	}
 
 	static remove(id) {
@@ -50,7 +48,7 @@ export default class WKTUtilities {
 				this.wkts.push({ id: checksum, wkt });
 				feature.setId(checksum);
 				this.save();
-				console.log("Added new WKT:", { id: checksum, wkt });
+				console.log("Added new WKT:", { id: checksum });
 			} else {
 				console.log("WKT already exists with ID:", checksum);
 			}

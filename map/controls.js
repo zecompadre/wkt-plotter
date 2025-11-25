@@ -221,6 +221,8 @@ export function initializeMapControls() {
 			const selectedFeature = evt.selected[0];
 			const featureId = selectedFeature.getId();
 
+			console.log("Selected feature ID:", featureId);
+
 			if (wktList && featureId) {
 				const listItem = wktList.querySelector(`li[data-id="${featureId}"]`);
 				if (listItem) {
