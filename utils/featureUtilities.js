@@ -285,11 +285,10 @@ export const featureUtilities = {
 		const canvasCenterY = 35;
 
 		// 8. Transformação correta: mundo → pixel, com centro alinhado
-		const toPixel = (lon, lat) => {
-			const x = (lon - centerLon) * scale + canvasCenterX;
-			const y = (centerLat - lat) * scale + canvasCenterY;  // Y invertido corretamente
-			return { x, y };
-		};
+		const toPixel = (lon, lat) => ({
+			x: 45 + (lon - centerLon) * scale,        // 45 = centro horizontal do canvas
+			y: 35 + (centerLat - lat) * scale         // 35 = centro vertical + Y invertido
+		});
 
 		// 9. Desenho da feature
 		const drawRing = ring => {
