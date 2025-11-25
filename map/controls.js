@@ -212,20 +212,17 @@ export function initializeMapControls() {
 		const selectInteraction = evt.target;
 		const selectedFeatures = selectInteraction.getFeatures().getArray();
 
-		// === 1. HOUVE MUDANÇA DE SELEÇÃO? ===
-		const hadSelection = evt.target.getFeatures().getLength() - evt.selected.length + evt.deselected.length > 0;
-
-		// === 2. ANTES DE ADICIONAR NOVA SELEÇÃO → VERIFICA SE ALGUMA ANTERIOR FOI MODIFICADA ===
-		if (hadSelection && evt.selected.length > 0) {
+		// === 1. ANTES DE ADICIONAR NOVA SELEÇÃO → VERIFICA SE ALGUMA ANTERIOR FOI MODIFICADA ===
+		if (evt.selected.length > 0) {
 			// Pega todas as features que estavam selecionadas ANTES desta ação
-			const previouslySelected = [...selectedFeatures];
-			evt.deselected.forEach(f => {
-				const index = previouslySelected.indexOf(f);
-				if (index > -1) previouslySelected.splice(index, 1);
+			const previousSelection = [...selectedFeatures];
+			evt.selected.forEach(f => {
+				const index = previousSelection.indexOf(f);
+				if (index > -1) previousSelection.splice(index, 1);
 			});
 
 			// Verifica cada uma anterior se foi modificada
-			previouslySelected.forEach(async (feature) => {
+			previousSelection.forEach(async (feature) => {
 				const changed = await featureUtilities.updateListItemIfChanged(feature);
 				if (changed) {
 					console.log("Feature anterior modificada → atualizada ao selecionar nova");
@@ -233,7 +230,7 @@ export function initializeMapControls() {
 			});
 		}
 
-		// === 3. DESELEÇÃO NORMAL (clicar fora, etc.) ===
+		// === 2. DESELEÇÃO NORMAL (clicar fora, etc.) ===
 		if (evt.deselected.length > 0) {
 			evt.deselected.forEach(async (feature) => {
 				const changed = await featureUtilities.updateListItemIfChanged(feature);
@@ -241,15 +238,9 @@ export function initializeMapControls() {
 					console.log("Feature deselecionada → atualizada");
 				}
 			});
-
-			evt.deselected.forEach(feature => {
-				const id = feature.getId();
-				const li = wktList?.querySelector(`li[data-id="${id}"]`);
-				if (li) li.classList.remove('selected');
-			});
 		}
 
-		// === 4. SELEÇÃO NOVA ===
+		// === 3. ATUALIZA LISTA E TEXTAREA ===
 		if (evt.selected.length > 0) {
 			evt.selected.forEach(feature => {
 				const id = feature.getId();
@@ -260,7 +251,6 @@ export function initializeMapControls() {
 				}
 			});
 
-			// MultiPolygon ou WKT único
 			if (multiSelectEnabled && selectedFeatures.length > 1) {
 				const multi = featureUtilities.featuresToMultiPolygon(selectedFeatures);
 				textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
@@ -269,7 +259,7 @@ export function initializeMapControls() {
 			}
 		}
 
-		// === 5. NENHUMA SELECIONADA ===
+		// === 4. NENHUMA SELECIONADA ===
 		if (selectedFeatures.length === 0) {
 			textarea.value = "";
 			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
