@@ -259,11 +259,15 @@ export function initializeMapControls() {
 
 	}
 
-	map.on('click', (evt) => {
-		const feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
+	map.on('singleclick', (evt) => {
+		// Verifica se clicou em alguma feature
+		const featureAtPixel = map.forEachFeatureAtPixel(
+			evt.pixel,
+			(feature) => feature
+		);
 
-		// Se não clicou em nenhuma feature → deseleciona tudo
-		if (!feature) {
+		// SE NÃO CLICOU EM NENHUMA FEATURE → DESELECIONA TUDO!
+		if (!featureAtPixel) {
 			const selectInteraction = map.getInteractions().getArray()
 				.find(i => i instanceof ol.interaction.Select);
 
