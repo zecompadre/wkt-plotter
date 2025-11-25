@@ -246,7 +246,7 @@ export const featureUtilities = {
 			ctx.strokeStyle = colors.normal;
 			ctx.stroke();
 
-			ctx.globalAlpha = 0.10;
+			ctx.globalAlpha = 0.25;
 			ctx.fillStyle = colors.snap;
 			ctx.fill('evenodd');
 
