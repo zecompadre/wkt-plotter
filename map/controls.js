@@ -212,20 +212,44 @@ export function initializeMapControls() {
 		const selectInteraction = evt.target;
 		const selectedFeatures = selectInteraction.getFeatures().getArray();
 
-		// === DESELEÇÃO → ATUALIZA LISTA SE HOUVER MUDANÇA ===
+		// === 1. HOUVE MUDANÇA DE SELEÇÃO? ===
+		const hadSelection = evt.target.getFeatures().getLength() - evt.selected.length + evt.deselected.length > 0;
+
+		// === 2. ANTES DE ADICIONAR NOVA SELEÇÃO → VERIFICA SE ALGUMA ANTERIOR FOI MODIFICADA ===
+		if (hadSelection && evt.selected.length > 0) {
+			// Pega todas as features que estavam selecionadas ANTES desta ação
+			const previouslySelected = [...selectedFeatures];
+			evt.deselected.forEach(f => {
+				const index = previouslySelected.indexOf(f);
+				if (index > -1) previouslySelected.splice(index, 1);
+			});
+
+			// Verifica cada uma anterior se foi modificada
+			previouslySelected.forEach(async (feature) => {
+				const changed = await featureUtilities.updateListItemIfChanged(feature);
+				if (changed) {
+					console.log("Feature anterior modificada → atualizada ao selecionar nova");
+				}
+			});
+		}
+
+		// === 3. DESELEÇÃO NORMAL (clicar fora, etc.) ===
 		if (evt.deselected.length > 0) {
 			evt.deselected.forEach(async (feature) => {
 				const changed = await featureUtilities.updateListItemIfChanged(feature);
 				if (changed) {
-					console.log("Feature modificada → lista e preview atualizados");
+					console.log("Feature deselecionada → atualizada");
 				}
 			});
 
-			// Limpa seleção visual
-			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+			evt.deselected.forEach(feature => {
+				const id = feature.getId();
+				const li = wktList?.querySelector(`li[data-id="${id}"]`);
+				if (li) li.classList.remove('selected');
+			});
 		}
 
-		// === SELEÇÃO ===
+		// === 4. SELEÇÃO NOVA ===
 		if (evt.selected.length > 0) {
 			evt.selected.forEach(feature => {
 				const id = feature.getId();
@@ -236,7 +260,7 @@ export function initializeMapControls() {
 				}
 			});
 
-			// Gera MultiPolygon ou WKT único
+			// MultiPolygon ou WKT único
 			if (multiSelectEnabled && selectedFeatures.length > 1) {
 				const multi = featureUtilities.featuresToMultiPolygon(selectedFeatures);
 				textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
@@ -245,41 +269,27 @@ export function initializeMapControls() {
 			}
 		}
 
-		// === NENHUMA SELECIONADA ===
+		// === 5. NENHUMA SELECIONADA ===
 		if (selectedFeatures.length === 0) {
 			textarea.value = "";
+			wktList?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
 		}
 
 		mapControls.selectBar.setVisible(selectedFeatures.length > 0);
 	}
 
+	// === 4. CLICAR FORA DO MAPA → DESELECIONA E ATUALIZA SE MUDOU ===
 	map.on('singleclick', (evt) => {
-		// Verifica se clicou em alguma feature
-		const featureAtPixel = map.forEachFeatureAtPixel(
-			evt.pixel,
-			(feature) => feature
-		);
+		const feature = map.forEachFeatureAtPixel(evt.pixel, f => f, { hitTolerance: 5 });
 
-		// SE NÃO CLICOU EM NENHUMA FEATURE → DESELECIONA TUDO!
-		if (!featureAtPixel) {
-			const selectInteraction = map.getInteractions().getArray()
+		if (!feature) {
+			const select = map.getInteractions().getArray()
 				.find(i => i instanceof ol.interaction.Select);
 
-			if (selectInteraction && selectInteraction.getFeatures().getLength() > 0) {
-				selectInteraction.getFeatures().clear();
-
-				// Limpa textarea
-				document.querySelector("#wktdefault textarea").value = "";
-
-				// Limpa seleção na lista
-				document.getElementById('wkt-list')
-					?.querySelectorAll('li')
-					.forEach(li => li.classList.remove('selected'));
-
-				// Zoom geral
-				featureUtilities.centerOnVector();
+			if (select && select.getFeatures().getLength() > 0) {
+				// Dispara o evento de deseleção → chama handleSelectEvents → atualiza se mudou!
+				select.getFeatures().clear();
 			}
 		}
 	});
-
 }
