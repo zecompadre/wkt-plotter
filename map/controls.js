@@ -109,6 +109,8 @@ export function initializeMapControls() {
 	});
 	map.addInteraction(modifyInteraction);
 
+	modifyInteraction.on('modifyend', handleModifyEvents);
+
 	drawCtrl.getInteraction().on('change:active', () => featureUtilities.deselectCurrentFeature(false));
 	selectCtrl.getInteraction().on('change:active', (evt) => modifyInteraction.setActive(evt.target.getActive()));
 
@@ -238,6 +240,61 @@ export function initializeMapControls() {
 			// Centra no mapa
 			featureUtilities.centerOnFeature(selectedFeature);
 		}
+	}
+
+	function handleModifyEvents(evt) {
+		const feature = evt.features.item(0);
+		if (!feature) return;
+
+		const featureId = feature.getId();
+		const textarea = document.querySelector("#wktdefault textarea");
+		const wktList = document.getElementById('wkt-list');
+		const listItem = wktList?.querySelector(`li[data-id="${featureId}"]`);
+
+		if (!listItem) return;
+
+		const geom = feature.getGeometry();
+		const center = ol.extent.getCenter(geom.getExtent());
+		const [lon, lat] = ol.proj.toLonLat(center);
+
+		// 1. Atualiza coordenadas na lista
+		const infoDiv = listItem.querySelector('div');
+		if (infoDiv) {
+			infoDiv.innerHTML = `
+      <strong>${geom.getType()}</strong>
+      <div>lat: ${lat.toFixed(6)} | lon: ${lon.toFixed(6)}</div>
+      <small>#${featureId.slice(0, 8)}</small>
+    `;
+		}
+
+		// 2. Atualiza WKT na textarea
+		textarea.value = utilities.getFeatureWKT(feature);
+
+		// 3. Atualiza preview (com a tua função wktToPngBlobUrl)
+		const img = listItem.querySelector('img');
+		if (img) {
+			img.style.opacity = '0.5';
+
+			wktToPngBlobUrl(utilities.getFeatureWKT(feature), {
+				width: 120,
+				height: 90,
+				padding: 1.8
+			}).then(blobUrl => {
+				if (blobUrl) {
+					img.src = blobUrl;
+					img.style.opacity = '1';
+					img.onload = () => URL.revokeObjectURL(blobUrl);
+				}
+			}).catch(() => {
+				img.style.opacity = '1';
+			});
+		}
+
+		// 4. Salva no localStorage
+		WKTUtilities.update(featureId, textarea.value);
+
+		// 5. Atualiza a lista geral (opcional, mas recomendado)
+		featureUtilities.createFromAllFeatures();
 	}
 
 }
