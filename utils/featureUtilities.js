@@ -307,27 +307,34 @@ export const featureUtilities = {
 		return new ol.Feature(new ol.geom.MultiPolygon(coords));
 	},
 	updateListItemIfChanged: async function (feature) {
-		if (!feature) return;
+		if (!feature || !feature.getId()) return false;
 
 		const featureId = feature.getId();
 		const currentWKT = utilities.getFeatureWKT(feature);
-		const savedItem = WKTUtilities.get()?.find(item => item.id === featureId);
 
-		// SE NÃO MUDOU → NÃO FAZ NADA!
-		if (savedItem && savedItem.wkt === currentWKT) {
+		// Busca o WKT salvo no localStorage
+		const savedWKT = WKTUtilities.get()?.find(item => item.id === featureId)?.wkt;
+
+		// SE NÃO HOUVER MUDANÇA → NÃO FAZ NADA!
+		if (currentWKT === savedWKT) {
 			console.log("Nenhuma mudança detectada → não atualiza");
 			return false;
 		}
 
-		// SE MUDOU → atualiza tudo!
-		console.log("Mudança detectada → atualizando preview e lista");
+		console.log("Mudança detectada → atualizando preview, lista e localStorage");
 
-		// Atualiza no localStorage
+		// 1. Atualiza no localStorage
 		WKTUtilities.update(featureId, currentWKT);
 
-		// Atualiza a lista
-		await featureUtilities.updateListItem(feature); // a tua função que já tens
+		// 2. Atualiza o <li> na lista (com preview, coordenadas, etc.)
+		await featureUtilities.updateListItem(feature);
+
+		// 3. Atualiza a textarea geral (opcional, mas recomendado)
+		document.querySelector("#wktdefault textarea").value = currentWKT;
+
+		// 4. Atualiza a lista completa de WKTs (createFromAllFeatures)
+		featureUtilities.createFromAllFeatures();
 
 		return true; // mudou
-	}
+	},
 }
