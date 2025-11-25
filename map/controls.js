@@ -215,7 +215,6 @@ export function initializeMapControls() {
 		// === DESELEÇÃO → ATUALIZA LISTA SE HOUVER MUDANÇA ===
 		if (evt.deselected.length > 0) {
 			evt.deselected.forEach(async (feature) => {
-				// AQUI ESTÁ A LINHA QUE TU PERGUNTASTE!
 				const changed = await featureUtilities.updateListItemIfChanged(feature);
 				if (changed) {
 					console.log("Feature modificada → lista e preview atualizados");

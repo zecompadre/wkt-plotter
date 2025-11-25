@@ -309,6 +309,8 @@ export const featureUtilities = {
 	updateListItemIfChanged: async function (feature) {
 		if (!feature || !feature.getId()) return false;
 
+		console.log("Verificar mudanças para fetature ID:", feature.getId());
+
 		const featureId = feature.getId();
 		const currentWKT = utilities.getFeatureWKT(feature);
 
