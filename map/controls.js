@@ -5,6 +5,7 @@ import { utilities } from '../utils/utilities.js';
 import { featureUtilities } from '../utils/featureUtilities.js';
 import { mapUtilities } from '../utils/mapUtilities.js';
 import WKTUtilities from '../classes/WKTUtilities.js';
+import { colors } from '../utils/constants.js';
 
 export let mapControls = {};
 
@@ -29,17 +30,16 @@ export function initializeMapControls() {
 		html: '<i class="fa-solid fa-arrow-pointer fa-lg"></i>',
 		title: window.translator?.get("select") || "Select",
 		interaction: new ol.interaction.Select({
-			hitTolerance: 2,
+			hitTolerance: 5,
 			multi: true,
-			toggleCondition: ol.events.condition.never,
-			addCondition: ol.events.condition.always,
-			removeCondition: ol.events.condition.never,
-			style: utilities.genericStyleFunction('#ec7063')
+			toggleCondition: ol.events.condition.always,
+			style: utilities.genericStyleFunction(colors.edit)
 		}),
 		bar: selectBar,
 		autoActivate: true,
 		active: true
 	});
+
 	editBar.addControl(selectCtrl);
 	selectCtrl.getInteraction().on('select', handleSelectEvents);
 	mapControls.selectCtrl = selectCtrl;
@@ -90,7 +90,7 @@ export function initializeMapControls() {
 		interaction: new ol.interaction.Draw({
 			type: 'Polygon',
 			source: vectorLayer.getSource(),
-			style: utilities.drawStyleFunction('#00AAFF')
+			style: utilities.drawStyleFunction(colors.create)
 		})
 	});
 	editBar.addControl(drawCtrl);
@@ -107,9 +107,25 @@ export function initializeMapControls() {
 	// Modify Interaction
 	const modifyInteraction = new ol.interaction.ModifyFeature({
 		features: selectCtrl.getInteraction().getFeatures(),
-		style: utilities.modifyStyleFunction('#ec7063'),
+		style: utilities.modifyStyleFunction(colors.edit),
 		insertVertexCondition: () => true,
-		virtualVertices: true
+		virtualVertices: true,
+		pixelTolerance: 10,
+		hitTolerance: 5,
+
+		// Esta linha é a chave!
+		condition: (evt) => {
+			const features = selectCtrl.getInteraction().getFeatures();
+			if (features.getLength() <= 1) return true;
+
+			// Multi-select → só permite modificar se clicou exatamente na feature
+			const hitFeatures = map.getFeaturesAtPixel(evt.pixel, {
+				hitTolerance: 10,
+				layerFilter: (layer) => layer === vectorLayer
+			});
+
+			return hitFeatures.length === 1;
+		}
 	});
 	map.addInteraction(modifyInteraction);
 
