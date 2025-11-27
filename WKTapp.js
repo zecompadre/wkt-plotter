@@ -5,7 +5,7 @@ import LightUI from './classes/LightUI.js';
 import SettingsManager from './classes/SettingsManager.js';
 import TabSystem from './classes/TabSystem.js';
 import Translation from './classes/Translation.js';
-import WKTUtilities from './classes/WKTUtilities.js';
+import wktUtilities from './classes/WKTUtilities.js';
 import { loading, utilities } from './utils/utilities.js';
 import { mapUtilities } from './utils/mapUtilities.js';
 
@@ -24,8 +24,8 @@ import { mapUtilities } from './utils/mapUtilities.js';
 	window.settingsManager = settingsManager;
 
 	settingsManager.addEvent('wkt-presistent', 'change', (e) => {
-		if (e.target.checked) WKTUtilities.save();
-		else WKTUtilities.clear(false, true);
+		if (e.target.checked) wktUtilities.save();
+		else wktUtilities.clear(false, true);
 	});
 
 	// 3. INICIA O MAPA (agora com await!)

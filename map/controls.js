@@ -4,8 +4,9 @@ import { map, vectorLayer } from './setupMap.js';
 import { utilities } from '../utils/utilities.js';
 import { featureUtilities } from '../utils/featureUtilities.js';
 import { mapUtilities } from '../utils/mapUtilities.js';
-import WKTUtilities from '../classes/WKTUtilities.js';
+import wktUtilities from '../classes/WKTUtilities.js';
 import { colors } from '../utils/constants.js';
+import wktListManager from '../classes/WKTListManager.js';
 
 export let mapControls = {};
 
@@ -21,11 +22,11 @@ export function initializeMapControls() {
 	mainBar.addControl(editBar);
 	mapControls.editBar = editBar;
 
-	// Select Control
 	const selectBar = new ol.control.Bar();
 	map.addControl(selectBar);
 	mapControls.selectBar = selectBar;
 
+	// Select Control ---------------------------------------------
 	const selectCtrl = new ol.control.Toggle({
 		html: '<i class="fa-solid fa-arrow-pointer fa-lg"></i>',
 		title: window.translator?.get("select") || "Select",
@@ -44,6 +45,8 @@ export function initializeMapControls() {
 	selectCtrl.getInteraction().on('select', handleSelectEvents);
 	mapControls.selectCtrl = selectCtrl;
 
+	// Select Control ---------------------------------------------
+
 	// Delete Button
 	const deleteBtn = new ol.control.Button({
 		html: '<i class="fa fa-times fa-lg"></i>',
@@ -55,8 +58,14 @@ export function initializeMapControls() {
 				return;
 			}
 			const feature = features.item(0);
-			WKTUtilities.remove(feature.getId());
+
+			const featureId = feature.getId();
+
+			wktUtilities.remove(featureId);
+			wktListManager.remove(featureId);
+
 			vectorLayer.getSource().removeFeature(feature);
+
 			features.clear();
 			mapUtilities.reviewLayout(false);
 			selectBar.setVisible(false);
@@ -97,7 +106,7 @@ export function initializeMapControls() {
 	mapControls.drawCtrl = drawCtrl;
 
 	drawCtrl.getInteraction().on('drawend', async (evt) => {
-		await WKTUtilities.add(evt.feature);
+		await wktUtilities.add(evt.feature);
 		mapUtilities.reviewLayout(false);
 		featureUtilities.centerOnFeature(evt.feature);
 		selectCtrl.setActive(true);
@@ -225,6 +234,8 @@ export function initializeMapControls() {
 	map.on('singleclick', (evt) => {
 		const feature = map.forEachFeatureAtPixel(evt.pixel, f => f, { hitTolerance: 5 });
 
+		console.log('Map singleclick feature:', feature);
+
 		if (!feature) {
 			const select = map.getInteractions().getArray()
 				.find(i => i instanceof ol.interaction.Select);
@@ -236,7 +247,7 @@ export function initializeMapControls() {
 
 				// === GRAVA TODAS AS FEATURES MODIFICADAS ===
 				deselected.forEach(async (f) => {
-					await featureUtilities.updateListItemIfChanged(f);
+					await wktListManager.updateIfChanged(f);
 				});
 			}
 		}
@@ -249,36 +260,41 @@ export function initializeMapControls() {
 
 		const selectedFeatures = evt.target.getFeatures().getArray();
 
-		// === 1. DESELEÇÃO → ATUALIZA SE HOUVER MUDANÇA (EXCETO CLIQUE FORA) ===
-		if (evt.deselected.length > 0) {
-			evt.deselected.forEach(async (feature) => {
-				// SÓ IGNORA SE FOR CLIQUE FORA
-				if (!skipNextDeselectUpdate) {
-					await featureUtilities.updateListItemIfChanged(feature);
+		// === 1. SELEÇÃO → DESTACA NA LISTA + PINTA PREVIEW ===
+		if (evt.selected.length > 0) {
+			evt.selected.forEach(feature => {
+				const featureId = feature.getId();
+				const li = wktList?.querySelector(`li[data-id="${featureId}"]`);
+				if (li) {
+					li.classList.add('selected');
+					li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+					// === PINTA O PREVIEW AO SELECIONAR! ===
+					const img = li.querySelector('img');
+					if (img) {
+						img.style.opacity = '0.5';
+						wktListManager.wktToPngBlobUrl(utilities.getFeatureWKT(feature))
+							.then(url => {
+								if (url) {
+									img.src = url;
+									img.style.opacity = '1';
+									img.onload = () => URL.revokeObjectURL(url);
+								}
+							});
+					}
 				}
 			});
 		}
 
-		// === 2. SELEÇÃO → ATUALIZA ANTERIORES (Ctrl+Click ou troca) ===
-		if (evt.selected.length > 0) {
-			// Features que estavam selecionadas ANTES desta ação
-			const previouslySelected = [...selectedFeatures];
-			evt.selected.forEach(f => {
-				const index = previouslySelected.indexOf(f);
-				if (index > -1) previouslySelected.splice(index, 1);
-			});
+		// === 2. DESELEÇÃO → REMOVE DESTAQUE + ATUALIZA SE HOUVER MUDANÇA ===
+		if (evt.deselected.length > 0) {
+			evt.deselected.forEach(feature => {
+				const li = wktList?.querySelector(`li[data-id="${feature.getId()}"]`);
+				if (li) li.classList.remove('selected');
 
-			// Atualiza as anteriores (mesmo com Ctrl+Click!)
-			previouslySelected.forEach(async (f) => {
-				await featureUtilities.updateListItemIfChanged(f);
-			});
-
-			// Destaca novas
-			evt.selected.forEach(f => {
-				const li = wktList?.querySelector(`li[data-id="${f.getId()}"]`);
-				if (li) {
-					li.classList.add('selected');
-					li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				// Só atualiza se houve mudança real (não ao clicar fora)
+				if (!skipNextDeselectUpdate) {
+					wktListManager.updateIfChanged(feature);
 				}
 			});
 		}

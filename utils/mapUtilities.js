@@ -3,7 +3,7 @@
 import { map, vectorLayer, featureCollection, defaultCenter } from '../map/setupMap.js';
 import { featureUtilities } from './featureUtilities.js';
 import { utilities } from './utilities.js';
-import WKTUtilities from '../classes/WKTUtilities.js';
+import wktUtilities from '../classes/WKTUtilities.js';
 import { osmLayer, arcgisLayer } from '../map/layers.js';
 
 export const mapUtilities = {
@@ -56,8 +56,8 @@ export const mapUtilities = {
 		let newfeature = null;
 		try {
 			// Load existing WKT entries from localStorage
-			WKTUtilities.load();
-			let wkts = WKTUtilities.get();
+			wktUtilities.load();
+			let wkts = wktUtilities.get();
 
 			if (!Array.isArray(wkts)) {
 				wkts = [];
@@ -98,7 +98,7 @@ export const mapUtilities = {
 				// Save the updated WKT list
 				map.set("wkts", wkts);
 
-				WKTUtilities.save();
+				wktUtilities.save();
 
 				// Add features to the map and review layout
 				await featureUtilities.addFeatures();

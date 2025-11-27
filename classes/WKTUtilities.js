@@ -1,74 +1,89 @@
+// js/classes/WKTUtilities.js
 import { lfkey } from '../utils/constants.js';
 import { map } from '../map/setupMap.js';
 import { utilities } from '../utils/utilities.js';
 
 export default class WKTUtilities {
-	static wkts = [];
+	constructor() {
+		this.wkts = [];
+	}
 
-	static clear(fromMap, fromStorage) {
+	clear(fromMap = true, fromStorage = true) {
 		if (fromStorage) {
 			localStorage.removeItem(lfkey);
-			console.log("Removed WKTs from localStorage.");
+			console.log("WKTs removidos do localStorage");
 		}
 		if (fromMap) {
 			map.set("wkts", []);
-			console.log("Removed WKTs from map.");
 		}
+		this.wkts = [];
 	}
 
-	static load() {
-		if (window.settingsManager?.getSettingById('wkt-presistent')) {
-			const storedData = localStorage.getItem(lfkey) || "[]";
-			this.wkts = JSON.parse(storedData);
+	load() {
+		const persistent = window.settingsManager?.getSettingById('wkt-presistent') === true;
+
+		if (persistent) {
+			try {
+				const stored = localStorage.getItem(lfkey);
+				this.wkts = stored ? JSON.parse(stored) : [];
+			} catch (e) {
+				console.error("Erro ao carregar localStorage:", e);
+				this.wkts = [];
+			}
 		} else {
 			this.wkts = [];
 		}
+
 		map.set("wkts", this.wkts);
+		console.log(`Carregados ${this.wkts.length} WKT(s)`);
 	}
 
-	static save() {
-		if (window.settingsManager?.getSettingById('wkt-presistent')) {
+	save() {
+		const persistent = window.settingsManager?.getSettingById('wkt-presistent') === true;
+		if (persistent) {
 			localStorage.setItem(lfkey, JSON.stringify(this.wkts));
 		}
 		map.set("wkts", this.wkts);
 	}
 
-	static remove(id) {
-		this.wkts = this.wkts.filter((item) => item.id !== id);
+	remove(id) {
+		this.wkts = this.wkts.filter(item => item.id !== id);
 		this.save();
-		console.log(`Removed WKT with ID: ${id}`);
+		console.log(`Removido WKT: ${id}`);
 	}
 
-	static async add(feature) {
+	async add(feature) {
+		if (!feature) return;
+
 		try {
 			const wkt = utilities.getFeatureWKT(feature);
-			if (!wkt) throw new Error("Feature WKT is undefined or invalid.");
+			if (!wkt) throw new Error("WKT inválido");
+
 			const checksum = await utilities.generateChecksum(wkt);
-			if (!this.wkts.some((item) => item.id === checksum)) {
+
+			if (!this.wkts.some(item => item.id === checksum)) {
 				this.wkts.push({ id: checksum, wkt });
 				feature.setId(checksum);
 				this.save();
-				console.log("Added new WKT:", { id: checksum });
-			} else {
-				console.log("WKT already exists with ID:", checksum);
+				console.log("WKT adicionado:", checksum);
 			}
-		} catch (error) {
-			console.error("Error adding WKT:", error.message);
+		} catch (err) {
+			console.error("Erro ao adicionar WKT:", err);
 		}
 	}
 
-	static get() {
+	get() {
 		return this.wkts;
 	}
 
-	static update(id, wkt) {
-		const updated = this.wkts.find((item) => item.id === id);
-		if (updated) {
-			updated.wkt = wkt;
+	update(id, wkt) {
+		const item = this.wkts.find(i => i.id === id);
+		if (item) {
+			item.wkt = wkt;
 			this.save();
-			console.log(`Updated WKT with ID: ${id}`, updated);
+			console.log("WKT atualizado:", id);
 		} else {
-			console.warn(`WKT with ID: ${id} not found.`);
+			console.warn("WKT não encontrado:", id);
 		}
 	}
 }
