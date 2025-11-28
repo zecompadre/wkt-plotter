@@ -3,7 +3,7 @@ import { lfkey } from '../utils/constants.js';
 import { map } from '../map/setupMap.js';
 import { utilities } from '../utils/utilities.js';
 
-export default class WKTUtilities {
+class WKTUtilities {
 	constructor() {
 		this.wkts = [];
 	}
@@ -87,3 +87,6 @@ export default class WKTUtilities {
 		}
 	}
 }
+
+const wktUtilities = new WKTUtilities();
+export default wktUtilities;

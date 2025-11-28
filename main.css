@@ -449,6 +449,7 @@ textarea {
 
 /* Item da lista – flex responsivo */
 #wkt-list li {
+	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -497,4 +498,30 @@ textarea {
 	background: var(--header-color-text);
 	border: 1px solid var(--primary-text-color);
 	;
+}
+
+/* BOTÃO DELETE — SEMPRE VISÍVEL E BEM POSICIONADO */
+#wkt-list .delete-btn {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 26px;
+	height: 26px;
+	font-size: 12px;
+	pointer-events: auto;
+	background-color: #752727;
+	color: white;
+	border: 0;
+	box-sizing: border-box;
+	cursor: pointer;
+	display: block;
+	outline: none;
+	padding: 0;
+	margin: 0;
+	border-radius: 5px;
+}
+
+#wkt-list li:hover .delete-btn,
+#wkt-list .delete-btn:hover {
+	background: #b91c1c;
 }

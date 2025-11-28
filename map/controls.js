@@ -47,29 +47,29 @@ export function initializeMapControls() {
 
 	// Select Control ---------------------------------------------
 
+	function deleteFeatureHandler() {
+		const features = selectCtrl.getInteraction().getFeatures();
+		if (features.getLength() === 0) {
+			textarea.value = "Select an object first...";
+			return;
+		}
+		const feature = features.item(0);
+		const featureId = feature.getId();
+
+		wktUtilities.remove(featureId);
+		wktListManager.remove(featureId);
+		vectorLayer.getSource().removeFeature(feature);
+		features.clear();
+		mapUtilities.reviewLayout(false);
+		selectBar.setVisible(false);
+	};
+	window.triggerDelete = deleteFeatureHandler;
+
 	// Delete Button
 	const deleteBtn = new ol.control.Button({
 		html: '<i class="fa fa-times fa-lg"></i>',
 		title: window.translator?.get("delete") || "Delete",
-		handleClick: () => {
-			const features = selectCtrl.getInteraction().getFeatures();
-			if (features.getLength() === 0) {
-				textarea.value = "Select an object first...";
-				return;
-			}
-			const feature = features.item(0);
-
-			const featureId = feature.getId();
-
-			wktUtilities.remove(featureId);
-			wktListManager.remove(featureId);
-
-			vectorLayer.getSource().removeFeature(feature);
-
-			features.clear();
-			mapUtilities.reviewLayout(false);
-			selectBar.setVisible(false);
-		}
+		handleClick: deleteFeatureHandler
 	});
 	selectBar.addControl(deleteBtn);
 	mapControls.deleteBtn = deleteBtn;

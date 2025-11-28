@@ -4,6 +4,7 @@ import { utilities } from '../utils/utilities.js';
 import { colors } from '../utils/constants.js';
 import { featureUtilities } from '../utils/featureUtilities.js';
 import wktUtilities from './WKTUtilities.js';
+import { mapControls } from '../map/controls.js';
 
 class WKTListManager {
 	constructor() {
@@ -34,6 +35,7 @@ class WKTListManager {
 
 		li.innerHTML = `
       <img>
+	  <button class="delete-btn" type="button" title="Delete"><i class="fa fa-times fa-lg"></i></button>
       <div>
         <strong>${geom.getType()}</strong>
         <div>lat: ${lat.toFixed(6)} | lon: ${lon.toFixed(6)}</div>
@@ -41,6 +43,24 @@ class WKTListManager {
       </div>
     `;
 		li.querySelector('img').replaceWith(img);
+
+		li.querySelector('.delete-btn').addEventListener('click', (e) => {
+			e.stopPropagation(); // evita selecionar ao clicar no delete
+
+			const feature = vectorLayer.getSource().getFeatureById(id);
+			if (!feature) return;
+
+			console.log("globalDeleteBtn:", mapControls.deleteBtn);
+
+			if (mapControls.deleteBtn) {
+				// Força a feature certa
+				const select = mapControls.selectCtrl.getInteraction();
+				select.getFeatures().clear();
+				select.getFeatures().push(feature);
+				window.triggerDelete();
+			}
+		});
+
 		this.list.appendChild(li);
 
 		this.wktToPngBlobUrl(utilities.getFeatureWKT(feature))
@@ -233,6 +253,5 @@ class WKTListManager {
 	}
 }
 
-// === EXPORTA COMO OBJETO GLOBAL (sem new!) ===
 const wktListManager = new WKTListManager();
 export default wktListManager;
