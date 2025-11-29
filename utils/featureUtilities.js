@@ -3,7 +3,7 @@
 import { map, vectorLayer, format, featureCollection } from '../map/setupMap.js';
 import { utilities } from './utilities.js';
 import { projections, colors } from './constants.js';
-import WKTListManager from '../classes/WKTListManager.js';
+import wktListManager from '../classes/WKTListManager.js';
 
 export const featureUtilities = {
 	deselectCurrentFeature: (active) => {
@@ -122,84 +122,11 @@ export const featureUtilities = {
 		textarea.style.borderColor = "";
 		textarea.style.backgroundColor = "";
 
-		// CHAMA A FUNÇÃO COMUM!
-		await WKTListManager.add(newFeature);
+		await wktListManager.add(newFeature);
 
 		return newFeature;
 	},
 
-	// featureUtilities.js → FUNÇÃO COMUM PARA ATUALIZAR O <li>
-	updateListItem: async (feature) => {
-		if (!feature) return;
-
-		console.log("updateListItem: ", feature.getId());
-
-		const featureId = feature.getId();
-		const list = document.getElementById('wkt-list');
-		if (!list) return;
-
-		let li = list.querySelector(`li[data-id="${featureId}"]`);
-
-		// Se não existir (novo), cria
-		if (!li) {
-			li = document.createElement('li');
-			li.dataset.id = featureId;
-			li.className = 'wkt-item';
-			list.appendChild(li);
-		}
-
-		const geom = feature.getGeometry();
-		const center = ol.extent.getCenter(geom.getExtent());
-		const [lon, lat] = ol.proj.toLonLat(center);
-		const wktText = utilities.getFeatureWKT(feature);
-
-		// Gera preview com a tua função
-		const blobUrl = await featureUtilities.wktToPngBlobUrl(wktText);
-
-		// Atualiza HTML
-		li.innerHTML = `
-    <img width="120" height="90">
-    <div>
-      <strong>${geom.getType()}</strong>
-      <div>lat: ${lat.toFixed(6)} | lon: ${lon.toFixed(6)}</div>
-      <small>#${featureId.slice(0, 8)}</small>
-    </div>
-  `;
-
-		const img = li.querySelector('img');
-		img.style.borderRadius = '12px';
-		img.style.background = '#000';
-		img.style.boxShadow = '0 4px 16px rgba(0,0,0,0.6)';
-
-		if (blobUrl) {
-			img.src = blobUrl;
-			img.onload = () => URL.revokeObjectURL(blobUrl);
-		}
-
-		// Clique → seleciona no mapa
-		li.onclick = () => {
-			const select = map.getInteractions().getArray().find(i => i instanceof ol.interaction.Select);
-			if (!select) return;
-
-			const isSelected = select.getFeatures().getArray().includes(feature);
-
-			if (isSelected) {
-				select.getFeatures().clear();
-				document.querySelector("#wktdefault textarea").value = "";
-				list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
-				featureUtilities.centerOnVector();
-			} else {
-				select.getFeatures().clear();
-				select.getFeatures().push(feature);
-				document.querySelector("#wktdefault textarea").value = wktText;
-				list.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
-				li.classList.add('selected');
-				featureUtilities.centerOnFeature(feature);
-			}
-		};
-
-		li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-	},
 	featuresToMultiPolygon: (features) => {
 		const polygons = features
 			.map(f => f.getGeometry())

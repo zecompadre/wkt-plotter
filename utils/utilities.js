@@ -307,6 +307,37 @@ export const utilities = {
 			console.error("Error pasting WKT:", error);
 		}
 	},
+
+	showToast: (message, type = 'info', duration = 3000) => {
+		// Remove toasts antigos
+		document.querySelectorAll('.wkt-copy-toast').forEach(t => t.remove());
+
+		const toast = document.createElement('div');
+		toast.className = `wkt-copy-toast wkt-toast-${type}`;
+
+		// Ícone + mensagem
+		const icons = {
+			success: '<i class="fas fa-check-circle"></i>',
+			error: '<i class="fas fa-exclamation-circle"></i>',
+			info: '<i class="fas fa-info-circle"></i>'
+		};
+
+		toast.innerHTML = `
+        <div class="wkt-toast-icon">${icons[type] || icons.info}</div>
+        <div class="wkt-toast-message">${message}</div>
+        <div class="wkt-toast-progress"></div>`;
+
+		document.body.appendChild(toast);
+
+		// Força reflow para animação funcionar
+		toast.offsetHeight;
+
+		// Remove após duração
+		setTimeout(() => {
+			toast.classList.add('wkt-toast-hide');
+			toast.addEventListener('transitionend', () => toast.remove());
+		}, duration);
+	},
 };
 
 // Exporta também a função de área (usada no tooltip)

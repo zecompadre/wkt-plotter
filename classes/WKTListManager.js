@@ -37,23 +37,6 @@ class WKTListManager {
 		mapControls.on('selectionChanged', selectionHandler);
 	}
 
-	// BOTÃO DE COPIAR INDIVIDUAL (mantido)
-	addCopyButton(li, feature) {
-		li.querySelector('.copy-wkt-btn')?.remove();
-
-		const btn = document.createElement('button');
-		btn.className = 'copy-wkt-btn';
-		btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-		btn.title = 'Copiar WKT deste objeto';
-		btn.onclick = async e => {
-			e.stopPropagation();
-			const wkt = utilities.getFeatureWKT(feature);
-			await this.copyToClipboard(wkt);
-			this.showToast('WKT copiado!');
-		};
-		li.appendChild(btn);
-	}
-
 	// ADD ITEM (igual, só com delete + copy individual)
 	add(feature) {
 		if (!feature || !this.list) return;
@@ -76,7 +59,10 @@ class WKTListManager {
 
 		li.innerHTML = `
             <img>
+			<div class="wkt-item-buttons">
+			<button class="copy-btn" type="button" title="Copiar"><i class="fa-regular fa-copy"></i></button>
             <button class="delete-btn" type="button" title="Apagar"><i class="fa fa-times fa-lg"></i></button>
+			</div>
             <div>
                 <strong>${geom.getType()}</strong>
                 <div>lat: ${lat.toFixed(6)} | lon: ${lon.toFixed(6)}</div>
@@ -97,8 +83,13 @@ class WKTListManager {
 			}
 		});
 
-		// Botão de copiar individual
-		this.addCopyButton(li, feature);
+		li.querySelector('.copy-btn').addEventListener('click', e => {
+			e.stopPropagation();
+			const wkt = utilities.getFeatureWKT(feature);
+			this.copyToClipboard(wkt).then(() => {
+				utilities.showToast('WKT copiado!');
+			});
+		});
 
 		this.list.appendChild(li);
 
@@ -202,15 +193,6 @@ class WKTListManager {
 			document.execCommand('copy');
 			document.body.removeChild(ta);
 		}
-	}
-
-	showToast(msg) {
-		document.querySelectorAll('.wkt-copy-toast').forEach(t => t.remove());
-		const toast = document.createElement('div');
-		toast.className = 'wkt-copy-toast';
-		toast.textContent = msg;
-		document.body.appendChild(toast);
-		setTimeout(() => toast.remove(), 3000);
 	}
 
 	// PREVIEW (inalterado)

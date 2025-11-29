@@ -50,6 +50,56 @@ export const mapUtilities = {
 		return vl ? vl.getSource().getFeatures().length : 0;
 	},
 
+	loadWKT: async function (wkt) {
+
+		try {
+			const wkts = wktUtilities.get() || [];
+
+			let arrWKT = wkt.split("\n");
+			(async () => {
+				for (const wkt of arrWKT) {
+
+					console.log('Processing WKT:', wkt);
+					const checksum = await utilities.generateChecksum(wkt);
+					console.log('Generated checksum:', checksum);
+
+					let exists = false;
+					for (const item of wkts) {
+						if (checksum && item.id === checksum) {
+							exists = true;
+							break;
+						}
+					}
+
+					console.log('WKT exists:', exists);
+
+					if (!exists) {
+						wkts.push({ id: checksum, wkt });
+
+						map.set("wkts", wkts);
+
+						wktUtilities.save();
+						const feature = await featureUtilities.addToFeatures(checksum, wkt);
+						await featureUtilities.addFeatures();
+						await this.reviewLayout();
+						featureUtilities.centerOnFeature(feature);
+					}
+				}
+			})();
+
+			map.set("wkts", wkts);
+
+			wktUtilities.save();
+
+			await featureUtilities.addFeatures();
+
+			featureUtilities.centerOnVector();
+
+		} catch (error) {
+			console.error('Error loading WKT:', error);
+		}
+	},
+
 	loadWKTs: async function (readcb = false, frompaste = false) {
 		const self = this; // Capture the correct context
 		const textarea = document.querySelector("#wktdefault textarea");

@@ -44,6 +44,7 @@ class MapControls {
 		this._setupKeyboardShortcuts();
 		//this._setupPasteHandler();
 		this._setupClickOutsideDeselect();
+		this._setupImportHandler();
 	}
 
 	// === Métodos privados ===
@@ -234,6 +235,50 @@ class MapControls {
 
 	_setupPasteHandler() {
 		document.addEventListener('paste', utilities.paste);
+	}
+
+	_setupImportHandler() {
+		const importBtn = document.getElementById('import-wkt-btn');
+		const textarea = document.querySelector("#wktdefault textarea");
+
+		if (!importBtn || !textarea) return;
+
+		importBtn.addEventListener('click', async (e) => {
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			const text = textarea.value.trim();
+
+			if (!text) {
+				utilities.showToast('Por favor, cola ou escreve um WKT válido.', 'error');
+				textarea.focus();
+				return;
+			}
+
+			try {
+				importBtn.disabled = true;
+				importBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A importar...';
+
+				await mapUtilities.loadWKT(text);
+
+				textarea.value = "";
+
+				utilities.showToast('WKT importado com sucesso!');
+				setTimeout(() => {
+					importBtn.disabled = false;
+					importBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Importar';
+				}, 1500);
+
+			} catch (error) {
+				console.error("Erro ao importar WKT:", error);
+				utilities.showToast('Erro ao importar WKT. Verifica o formato.', 'error');
+				importBtn.disabled = false;
+				importBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Importar';
+			}
+
+			return;
+		});
 	}
 
 	_setupClickOutsideDeselect() {
