@@ -3,6 +3,7 @@
 
 <head>
 	<title>WKT Plotter</title>
+	<meta charset="UTF-8">
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -74,7 +75,8 @@
 		<div id="controls">
 			<div id="header" class="flex-none grow-0">
 				<img src="logo.svg?v=202412062200" title="WKT Playground" width="160" height="50">
-				<div class="tabs">
+				<button id="settings-btn" class="" type="button" title="Settings"><i class="fa-solid fa-gear fa-lg"></i></button>
+				<div class="tabs" style="display: none">
 					<div class="tab-buttons">
 						<button data-tab="importContainer" class="active">Import</button>
 						<button data-tab="settingsContainer">Settings</button>
@@ -84,7 +86,21 @@
 			<div class="tab-content">
 				<div id="importContainer" class="tab-pane active">
 					<form>
-						<div id='wktdefault' class='wkt-container'><textarea rows='5'></textarea></div>
+						<div id="wktdefault" class='wkt-container'>
+							<div class="wkt-input-wrapper">
+								<textarea placeholder="Cole ou importe um WKT aqui..." rows="6"></textarea>
+
+							</div>
+							<div class="wkt-actions">
+								<button id="import-wkt-btn" title="Importar WKT da área de transferência">
+									<i class="fa-solid fa-paste"></i> Importar
+								</button>
+								<button id="copy-selected-multipolygon" disabled>
+									<i class="fa-regular fa-copy"></i>
+									Copiar Selecionados (<span id="selected-count">0</span>)
+								</button>
+							</div>
+						</div>
 					</form>
 					<ul id="wkt-list"></ul>
 				</div>
@@ -113,6 +129,7 @@
 
 						<input type="text" id="text-input" class="ui-input" placeholder="Type here"> -->
 					</form>
+					<button id="settings-close-btn" class="danger"><i class="fa-solid fa-close"></i>Fechar</button>
 				</div>
 			</div>
 		</div>

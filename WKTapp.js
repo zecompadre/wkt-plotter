@@ -12,9 +12,7 @@ import { mapUtilities } from './utils/mapUtilities.js';
 (async () => {
 	// 1. UI básica
 	new LightUI();
-
-	const tabContainer = document.querySelector('#controls');
-	if (tabContainer) new TabSystem(tabContainer);
+	const tabSystem = new TabSystem(document.querySelector('#controls'));
 
 	// 2. Tradução e configurações
 	const translator = new Translation();
@@ -31,7 +29,7 @@ import { mapUtilities } from './utils/mapUtilities.js';
 	// 3. INICIA O MAPA (agora com await!)
 	loading.show();
 	try {
-		await setupMap();                    // ← AQUI ESTAVA O PROBLEMA!
+		await setupMap();
 		console.log("Mapa iniciado com sucesso!");
 	} catch (err) {
 		console.error("Erro ao iniciar o mapa:", err);
@@ -45,4 +43,14 @@ import { mapUtilities } from './utils/mapUtilities.js';
 		.then(ip => console.log('IP:', ip))
 		.catch(console.error)
 		.finally(() => loading.hide());
+
+	$("#settings-btn").on("click", function () {
+		tabSystem.showTabById('settingsContainer');
+		$("#settings-btn").hide();
+	});
+
+	$("#settings-close-btn").on("click", function () {
+		tabSystem.showTabById('importContainer');
+		$("#settings-btn").show();
+	});
 })();

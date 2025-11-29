@@ -1,0 +1,357 @@
+// classes/MapControls.js
+
+import { map, vectorLayer } from '../map/setupMap.js';
+import { utilities } from '../utils/utilities.js';
+import { featureUtilities } from '../utils/featureUtilities.js';
+import { mapUtilities } from '../utils/mapUtilities.js';
+import wktUtilities from './WKTUtilities.js';
+import wktListManager from './WKTListManager.js';
+import { colors } from '../utils/constants.js';
+
+class MapControls {
+	constructor() {
+		this.controls = {};      // Botões e barras
+		this.interactions = {};  // Interações OpenLayers
+		this._events = new EventTarget();
+	}
+
+	// === Sistema de eventos ===
+	on(eventName, callback) {
+		this._events.addEventListener(eventName, (e) => callback(e.detail));
+	}
+
+	off(eventName, callback) {
+		this._events.removeEventListener(eventName, callback);
+	}
+
+	dispatch(eventName, detail = {}) {
+		this._events.dispatchEvent(new CustomEvent(eventName, { detail }));
+	}
+
+	// === Inicialização completa ===
+	initialize() {
+		this._setupBaseInteractions();
+		this._createBars();
+		this._createSelectControl();
+		this._createDeleteButton();
+		this._createInfoButton();        // opcional – deixei aqui mas não adicionado à barra
+		this._createDrawControl();
+		this._createModifyInteraction();
+		this._createUndoRedo();
+		this._createLocationBar();
+		this._createLayerButton();
+		this._createSnap();
+		this._setupKeyboardShortcuts();
+		//this._setupPasteHandler();
+		this._setupClickOutsideDeselect();
+	}
+
+	// === Métodos privados ===
+	_setupBaseInteractions() {
+		map.addInteraction(new ol.interaction.DragPan({ condition: () => true }));
+		map.addInteraction(new ol.interaction.MouseWheelZoom({ condition: () => true }));
+	}
+
+	_createBars() {
+		const mainBar = new ol.control.Bar({ className: 'mainbar' });
+		map.addControl(mainBar);
+		this.controls.mainBar = mainBar;
+
+		const editBar = new ol.control.Bar({ className: 'editbar', toggleOne: true });
+		mainBar.addControl(editBar);
+		this.controls.editBar = editBar;
+
+		const selectBar = new ol.control.Bar();
+		map.addControl(selectBar);
+		this.controls.selectBar = selectBar;
+		selectBar.setVisible(false);
+	}
+
+	_createSelectControl() {
+		const selectInteraction = new ol.interaction.Select({
+			hitTolerance: 5,
+			multi: true,
+			toggleCondition: ol.events.condition.always,
+			style: utilities.genericStyleFunction(colors.edit)
+		});
+
+		const selectToggle = new ol.control.Toggle({
+			html: '<i class="fa-solid fa-arrow-pointer fa-lg"></i>',
+			title: window.translator?.get("select") || "Select",
+			interaction: selectInteraction,
+			bar: this.controls.selectBar,
+			autoActivate: true,
+			active: true
+		});
+
+		this.controls.editBar.addControl(selectToggle);
+		this.controls.selectCtrl = selectToggle;
+		this.interactions.select = selectInteraction;
+
+		selectInteraction.on('select', (e) => this._handleSelect(e));
+	}
+
+	_createDeleteButton() {
+		const btn = new ol.control.Button({
+			html: '<i class="fa fa-times fa-lg"></i>',
+			title: window.translator?.get("delete") || "Delete",
+			handleClick: () => this.deleteSelected()
+		});
+		this.controls.selectBar.addControl(btn);
+		this.controls.deleteBtn = btn;
+	}
+
+	_createInfoButton() {
+		// Botão criado, mas não adicionado à barra (podes adicionar se quiseres)
+		this.controls.infoBtn = new ol.control.Button({
+			html: '<i class="fa fa-info fa-lg"></i>',
+			title: window.translator?.get("showinfo") || "Show information",
+			handleClick: () => {
+				const features = this.interactions.select.getFeatures();
+				const textarea = document.querySelector("#wktdefault textarea");
+				textarea.value = features.getLength() === 1
+					? utilities.getFeatureWKT(features.item(0))
+					: "Select only one feature";
+			}
+		});
+	}
+
+	_createDrawControl() {
+		const drawInteraction = new ol.interaction.Draw({
+			type: 'Polygon',
+			source: vectorLayer.getSource(),
+			style: utilities.drawStyleFunction(colors.create)
+		});
+
+		const drawToggle = new ol.control.Toggle({
+			html: '<i class="fa-solid fa-draw-polygon fa-lg"></i>',
+			title: window.translator?.get("polygon") || "Polygon",
+			interaction: drawInteraction
+		});
+
+		this.controls.editBar.addControl(drawToggle);
+		this.controls.drawCtrl = drawToggle;
+		this.interactions.draw = drawInteraction;
+
+		drawInteraction.on('drawend', (e) => this._handleDrawEnd(e));
+		drawInteraction.on('change:active', () => featureUtilities.deselectCurrentFeature(false));
+		this.interactions.select.on('change:active', (e) => this.interactions.modify?.setActive(e.target.getActive()));
+	}
+
+	_createModifyInteraction() {
+		const modify = new ol.interaction.ModifyFeature({
+			features: this.interactions.select.getFeatures(),
+			style: utilities.modifyStyleFunction(colors.edit),
+			insertVertexCondition: () => true,
+			virtualVertices: true,
+			pixelTolerance: 10,
+			hitTolerance: 5,
+			condition: (evt) => {
+				const features = this.interactions.select.getFeatures();
+				if (features.getLength() <= 1) return true;
+				const hit = map.getFeaturesAtPixel(evt.pixel, {
+					hitTolerance: 10,
+					layerFilter: (l) => l === vectorLayer
+				});
+				return hit.length === 1;
+			}
+		});
+
+		map.addInteraction(modify);
+		this.interactions.modify = modify;
+		modify.on('modifyend', () => this.dispatch('featureModified'));
+	}
+
+	_createUndoRedo() {
+		const undoRedo = new ol.interaction.UndoRedo();
+		map.addInteraction(undoRedo);
+		this.interactions.undoRedo = undoRedo;
+
+		this.controls.undoBtn = new ol.control.Button({
+			html: '<i class="fa-solid fa-rotate-left fa-lg"></i>',
+			title: "Undo",
+			handleClick: () => undoRedo.undo()
+		});
+		this.controls.redoBtn = new ol.control.Button({
+			html: '<i class="fa-solid fa-rotate-right fa-lg"></i>',
+			title: "Redo",
+			handleClick: () => undoRedo.redo()
+		});
+
+		this.controls.editBar.addControl(this.controls.undoBtn);
+		this.controls.editBar.addControl(this.controls.redoBtn);
+	}
+
+	_createLocationBar() {
+		const locationBar = new ol.control.Bar({ className: 'locationbar' });
+		this.controls.mainBar.addControl(locationBar);
+
+		this.controls.locationBtn = new ol.control.Button({
+			html: '<i class="fa-solid fa-location-crosshairs fa-lg"></i>',
+			title: window.translator?.get("centeronmylocation") || "Center on my location",
+			handleClick: () => this.centerOnMyLocation()
+		});
+		locationBar.addControl(this.controls.locationBtn);
+
+		this.controls.centerObjectsBtn = new ol.control.Button({
+			html: '<i class="fa-solid fa-arrows-to-dot fa-lg"></i>',
+			title: window.translator?.get("centerobjects") || "Center on objects",
+			handleClick: () => featureUtilities.centerOnVector()
+		});
+		locationBar.addControl(this.controls.centerObjectsBtn);
+	}
+
+	_createLayerButton() {
+		const layerBar = new ol.control.Bar({ className: 'layerbar' });
+		map.addControl(layerBar);
+
+		this.controls.layerChangeBtn = new ol.control.Button({
+			html: utilities.layerChangeBtnHtml(),
+			title: window.translator?.get("changebutton") || "Change layer",
+			handleClick: mapUtilities.toggleLayers
+		});
+		layerBar.addControl(this.controls.layerChangeBtn);
+	}
+
+	_createSnap() {
+		map.addInteraction(new ol.interaction.Snap({ source: vectorLayer.getSource() }));
+	}
+
+	_setupKeyboardShortcuts() {
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') {
+				this.controls.selectCtrl.getActive()
+					? featureUtilities.deselectCurrentFeature(true)
+					: this.controls.selectCtrl.setActive(true);
+			}
+			if (e.key === 'Delete' && this.interactions.select.getFeatures().getLength() > 0) {
+				this.controls.deleteBtn.getButtonElement().click();
+			}
+			if (e.ctrlKey && e.key === 'z') this.interactions.undoRedo.undo();
+			if (e.ctrlKey && e.key === 'y') this.interactions.undoRedo.redo();
+		});
+	}
+
+	_setupPasteHandler() {
+		document.addEventListener('paste', utilities.paste);
+	}
+
+	_setupClickOutsideDeselect() {
+		map.on('singleclick', (evt) => {
+			if (!map.forEachFeatureAtPixel(evt.pixel, () => true, { hitTolerance: 5 })) {
+				const sel = this.interactions.select.getFeatures();
+				if (sel.getLength() > 0) {
+					const deselected = sel.getArray().slice();
+					sel.clear();
+					deselected.forEach(f => wktListManager.updateIfChanged(f));
+					this.dispatch('deselectedOutside', { features: deselected });
+				}
+			}
+		});
+	}
+
+	// === Handlers ===
+	async _handleDrawEnd(evt) {
+		await wktUtilities.add(evt.feature);
+		mapUtilities.reviewLayout(false);
+		featureUtilities.centerOnFeature(evt.feature);
+		this.controls.selectCtrl.setActive(true);
+		featureUtilities.deselectCurrentFeature(false);
+		this.dispatch('featureCreated', { feature: evt.feature });
+	}
+
+	_handleSelect(evt) {
+		const selected = evt.target.getFeatures().getArray();
+		const textarea = document.querySelector("#wktdefault textarea");
+		const list = document.getElementById('wkt-list');
+		const multiSelect = window.settingsManager?.getSettingById('multi-select') === true;
+
+		this._updateListHighlight(evt.selected, evt.deselected, list);
+
+		if (multiSelect && selected.length > 1) {
+			const multi = featureUtilities.featuresToMultiPolygon(selected);
+			textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
+		} else if (selected.length === 1) {
+			textarea.value = utilities.getFeatureWKT(selected[0]);
+		} else {
+			textarea.value = "";
+		}
+
+		this.controls.selectBar.setVisible(selected.length > 0);
+		this.dispatch('selectionChanged', { selected, deselected: evt.deselected });
+	}
+
+	_updateListHighlight(selected, deselected, list) {
+		selected.forEach(f => {
+			const li = list?.querySelector(`li[data-id="${f.getId()}"]`);
+			if (li) {
+				li.classList.add('selected');
+				li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				const img = li.querySelector('img');
+				if (img) {
+					img.style.opacity = '0.5';
+					wktListManager.wktToPngBlobUrl(utilities.getFeatureWKT(f))
+						.then(url => { if (url) { img.src = url; img.style.opacity = '1'; } });
+				}
+			}
+		});
+
+		deselected.forEach(f => {
+			const li = list?.querySelector(`li[data-id="${f.getId()}"]`);
+			if (li) li.classList.remove('selected');
+			wktListManager.updateIfChanged(f);
+		});
+
+		if (this.interactions.select.getFeatures().getLength() === 0) {
+			list?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+		}
+	}
+
+	async deleteSelected() {
+		const features = this.interactions.select.getFeatures();
+		if (features.getLength() === 0) return;
+
+		const feature = features.item(0);
+		const id = feature.getId();
+
+		await wktUtilities.remove(id);
+		wktListManager.remove(id);
+		vectorLayer.getSource().removeFeature(feature);
+		features.clear();
+		mapUtilities.reviewLayout(false);
+		this.controls.selectBar.setVisible(false);
+
+		this.dispatch('featureDeleted', { feature, id });
+	}
+
+	centerOnMyLocation() {
+		utilities.getLocation()
+			.then(loc => {
+				const coord = ol.proj.fromLonLat([+loc.longitude, +loc.latitude]);
+				map.getView().setCenter(coord);
+				map.getView().setZoom(18);
+				this.dispatch('userLocationCentered', { coord });
+			})
+			.catch(console.error);
+	}
+
+	// === API pública ===
+	getSelectedFeatures() {
+		return this.interactions.select?.getFeatures().getArray() || [];
+	}
+
+	clearSelection() {
+		this.interactions.select?.getFeatures().clear();
+	}
+
+	activateSelect() { this.controls.selectCtrl?.setActive(true); }
+	activateDraw() { this.controls.drawCtrl?.setActive(true); }
+	deactivateAllTools() {
+		this.controls.selectCtrl?.setActive(false);
+		this.controls.drawCtrl?.setActive(false);
+	}
+}
+
+// Instância única e exportação limpa
+const mapControls = new MapControls();
+export default mapControls;

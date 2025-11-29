@@ -3,6 +3,8 @@
 import { utilities, formatArea } from '../utils/utilities.js';
 import { mapDefaults, projections } from '../utils/constants.js';
 import { osmLayer, arcgisLayer } from './layers.js';
+import mapControls from '../classes/MapControls.js';
+import { initWKTListManager } from '../classes/WKTListManager.js';
 
 export let map;
 export let vectorLayer;
@@ -80,6 +82,7 @@ export function setupMap() {
 		tooltipEl.className = 'ol-tooltip hidden';
 	});
 
-	// Inicializa controles (definido no próximo ficheiro)
-	import('./controls.js').then(module => module.initializeMapControls());
+	mapControls.initialize();
+	initWKTListManager();
+
 }

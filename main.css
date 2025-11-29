@@ -134,7 +134,7 @@ textarea {
 	justify-content: space-between;
 	margin: 0 10px;
 	background-color: var(--color-base-white);
-	box-shadow: var(--navbar-shadow);
+	/* box-shadow: var(--navbar-shadow); */
 }
 
 .tab-buttons button {
@@ -175,7 +175,8 @@ textarea {
 .tab-buttons button.active:hover {
 	background-color: var(--color-theme-primary);
 	color: var(--color-base-white);
-	margin-bottom: calc(var(--button-size) - 33px) !important;
+	/* margin-bottom: calc(var(--button-size) - 33px) !important; */
+	border-radius: 3px;
 }
 
 .tab-content {
@@ -228,8 +229,9 @@ textarea {
 }
 
 .ol-toggle.ol-active>button {
-	height: calc(var(--button-size) - 3px) !important;
-	margin-bottom: calc(var(--button-size) - 33px) !important;
+	/* height: calc(var(--button-size) - 3px) !important;
+	margin-bottom: calc(var(--button-size) - 33px) !important; */
+	border-radius: 3px;
 }
 
 .ol-control button {
@@ -243,12 +245,12 @@ textarea {
 .ol-control.ol-bar .ol-bar.editbar {
 	margin-right: 5px;
 	background-color: var(--color-base-white);
-	box-shadow: var(--navbar-shadow);
+	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-control.ol-bar .ol-bar.editbar .ol-control.ol-bar.ol-control.ol-option-bar {
 	background-color: var(--color-base-white);
-	box-shadow: var(--navbar-shadow);
+	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-control.ol-bar .ol-bar.editbar .ol-control.ol-bar.ol-control.ol-option-bar button:hover {
@@ -259,14 +261,14 @@ textarea {
 .ol-control.ol-bar .ol-bar.locationbar {
 	margin-left: 5px;
 	background-color: var(--color-base-white);
-	box-shadow: var(--navbar-shadow);
+	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-control.ol-bar.layerbar {
 	right: -.5em;
 	left: unset;
 	background-color: var(--color-base-white);
-	box-shadow: var(--navbar-shadow);
+	/* box-shadow: var(--navbar-shadow);		 */
 }
 
 .ol-control.ol-bar.attrbar {
@@ -274,7 +276,7 @@ textarea {
 	left: unset;
 	top: unset;
 	bottom: .5em;
-	box-shadow: var(--navbar-shadow);
+	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-control.ol-bar .ol-control button i {
@@ -291,7 +293,7 @@ textarea {
 .ol-zoom.ol-unselectable.ol-control {
 	background-color: var(--color-base-white);
 	border-radius: 4px;
-	box-shadow: var(--navbar-shadow);
+	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-zoom .ol-zoom-in,
@@ -323,7 +325,7 @@ textarea {
 .ol-attribution.ol-unselectable.ol-control {
 	background-color: var(--color-base-white);
 	border-radius: 0;
-	box-shadow: var(--navbar-shadow);
+	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-attribution button {
@@ -413,16 +415,14 @@ textarea {
 /* ========================================= */
 /* LISTA DE WKTs – OTIMIZADA PARA #controls 25% */
 /* ========================================= */
-
 #wkt-list {
 	list-style: none;
 	padding: 0;
 	margin: 15px 8px 0 8px;
-	max-height: calc(100vh - 340px);
-	/* Ajustado para teu header + textarea */
+	max-height: calc(100vh - 420px);
+	/* era -480px, agora sobem 60px */
 	overflow-y: auto;
 	border-radius: 12px;
-	/* background: #1a202c; */
 	scrollbar-width: thin;
 	scrollbar-color: #4299e1 #2d3748;
 	font-family: system-ui, -apple-system, sans-serif;
@@ -524,4 +524,326 @@ textarea {
 #wkt-list li:hover .delete-btn,
 #wkt-list .delete-btn:hover {
 	background: #b91c1c;
+}
+
+/* Botão de copiar em cada item da lista */
+.wkt-list li {
+	position: relative;
+}
+
+.copy-wkt-btn {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 32px;
+	height: 32px;
+	background: rgba(0, 0, 0, 0.7);
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	z-index: 10;
+	backdrop-filter: blur(2px);
+}
+
+.wkt-list li:hover .copy-wkt-btn {
+	opacity: 1;
+}
+
+.copy-wkt-btn:hover {
+	background: rgba(0, 0, 0, 0.9);
+}
+
+/* Toast bonito */
+.wkt-copy-toast {
+	position: fixed;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(0, 0, 0, 0.85);
+	color: white;
+	padding: 12px 24px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	z-index: 10000;
+	opacity: 0;
+	animation: wktToast 3s ease-out forwards;
+}
+
+@keyframes wktToast {
+	0% {
+		opacity: 0;
+		transform: translateX(-50%) translateY(20px);
+	}
+
+	15% {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+
+	85% {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+
+	100% {
+		opacity: 0;
+		transform: translateX(-50%) translateY(20px);
+	}
+}
+
+.wkt-input-wrapper {
+	display: flex;
+	gap: 12px;
+	align-items: stretch;
+	margin-bottom: 16px;
+}
+
+#wktdefault textarea {
+	flex: 1;
+	padding: 14px 16px;
+	border: 2px solid #cbd5e0;
+	border-radius: 10px;
+	font-family: var(--font-family-monospace);
+	font-size: 0.85em;
+	line-height: 1.5;
+	background: #fdfdfe;
+	color: #2d3748;
+	resize: vertical;
+	min-height: 130px;
+	transition: all 0.2s ease;
+}
+
+#wktdefault textarea:focus {
+	outline: none;
+	border-color: #4299e1;
+	background: white;
+	box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.15);
+}
+
+#import-wkt-btn {
+	padding: 0 20px;
+	background: #4299e1;
+	color: white;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 0.9em;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	transition: all 0.2s ease;
+	box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+}
+
+#import-wkt-btn:hover {
+	background: #3182ce;
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(66, 153, 225, 0.4);
+}
+
+#import-wkt-btn i {
+	font-size: 1.1em;
+}
+
+.wkt-actions {
+	display: flex;
+	gap: 12px;
+	/* espaço entre os botões */
+	justify-content: center;
+	/* ou "stretch" se quiseres que ocupem toda a largura */
+	align-items: stretch;
+	margin-top: 16px;
+}
+
+/* Os dois botões ficam com a mesma altura e largura automática */
+.wkt-actions button {
+	flex: 1;
+	/* cada um ocupa metade do espaço disponível */
+	min-width: 0;
+	/* permite que o texto quebre se for muito grande */
+	padding: 10px 5px;
+	font-size: 0.95em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* O botão "Copiar Selecionados..." pode ter duas linhas se for preciso */
+#copy-selected-multipolygon {
+	white-space: normal;
+	/* line-height: 1.3 !important; */
+}
+
+/* Responsivo: em telas pequenas, empilha um em cima do outro */
+@media (max-width: 480px) {
+	.wkt-actions {
+		flex-direction: column !important;
+	}
+
+	.wkt-actions button {
+		flex: none !important;
+	}
+}
+
+#copy-selected-multipolygon {
+	padding: 14px 28px;
+	background: #48bb78;
+	color: white;
+	border: none;
+	border-radius: 10px;
+	font-size: 1em;
+	font-weight: 600;
+	cursor: not-allowed;
+	opacity: 0.6;
+	transition: all 0.3s ease;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+	min-width: 300px;
+	justify-content: center;
+}
+
+#copy-selected-multipolygon:not(:disabled) {
+	opacity: 1;
+	cursor: pointer;
+}
+
+#copy-selected-multipolygon:not(:disabled):hover {
+	background: #38a169;
+	transform: translateY(-2px);
+	box-shadow: 0 10px 25px rgba(72, 187, 120, 0.4);
+}
+
+#selected-count {
+	font-weight: bold;
+	text-align: center;
+}
+
+/* Ajuste da altura da lista (porque agora há mais espaço usado em cima) */
+#wkt-list {
+	max-height: calc(100vh - 480px) !important;
+}
+
+/* Toast melhorado (substitui o antigo) */
+.wkt-copy-toast {
+	position: fixed;
+	bottom: 30px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: linear-gradient(135deg, #48bb78, #38a169);
+	color: white;
+	padding: 16px 32px;
+	border-radius: 50px;
+	font-weight: 600;
+	font-size: 1em;
+	box-shadow: 0 10px 30px rgba(72, 187, 120, 0.4);
+	z-index: 10000;
+	animation: wktToast 3s ease-out forwards;
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes wktToast {
+
+	0%,
+	100% {
+		opacity: 0;
+		transform: translateX(-50%) translateY(20px);
+	}
+
+	15%,
+	85% {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+/* ========================================= */
+/* BOTÃO DE SETTINGS NO CANTO SUPERIOR DIREITO */
+/* ========================================= */
+
+#settings-btn {
+	/* Posição fixa no canto superior direito do mapa */
+	position: absolute !important;
+	top: 12px !important;
+	right: 12px !important;
+	z-index: 1100 !important;
+	/* acima da toolbar e de tudo */
+	background: var(--color-base-white) !important;
+	pointer-events: auto;
+	background-color: transparent;
+	border: 0;
+	box-sizing: border-box;
+	cursor: pointer;
+	display: block;
+	height: var(--button-size);
+	outline: none;
+	padding: 0;
+	width: var(--button-size);
+	margin: 0;
+	border-radius: 0;
+}
+
+/* Hover bonito */
+#settings-btn:hover {
+	background: var(--button-hover-background) !important;
+}
+
+/* Botão Fechar – centrado na parte inferior */
+#settings-close-btn {
+	position: relative;
+	left: 50%;
+	bottom: 20px;
+	transform: translateX(-50%);
+	background: #4299e1;
+	color: white !important;
+	border-radius: 3px;
+	padding: 10px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #4a5568;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--button-size);
+	z-index: 10;
+	min-width: 140px;
+	margin-top: 25px;
+	pointer-events: auto;
+	border: 0;
+	box-sizing: border-box;
+	display: block;
+	outline: none;
+	border-radius: 0;
+}
+
+#settings-close-btn i {
+	font-size: 16px !important;
+	padding-right: 5px;
+	color: white;
+}
+
+#settings-close-btn:hover {
+	background: #f1f5f9 !important;
+	color: black !important;
+}
+
+#settings-close-btn:hover i {
+	color: black;
 }

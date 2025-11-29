@@ -29,4 +29,11 @@ export default class TabSystem {
 			targetPane.classList.add('active');
 		}
 	}
+
+	showTabById(tabId) {
+		const button = this.container.querySelector(`.tab-buttons button[data-tab="${tabId}"]`);
+		if (button) {
+			this.showTab(button);
+		}
+	}
 }
