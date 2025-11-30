@@ -3,8 +3,6 @@
 	--controls-width: 450px;
 	--map-width: calc(100% - var(--controls-width));
 	--button-size: 36px;
-	/* --navbar-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px; */
-	/* --navbar-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset; */
 	--navbar-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5), 0px 7px 13px -3px rgba(0, 0, 0, 0.3), 0px -3px 0px 0px rgba(0, 0, 0, 0.2) inset;
 	--color-base-white: #fff;
 	--color-theme-primary: #007bff;
@@ -18,10 +16,8 @@
 	--button-divider-color: #0000001c;
 	--header-color-text: #9ca3af;
 	--controls-background: #fff;
-
 	--font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	--font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
 	--font-size: .85em;
 }
 
@@ -74,7 +70,6 @@ textarea {
 
 #controls #header {
 	text-align: center;
-	/* border-bottom: 2px solid var(--button-divider-color); */
 }
 
 #controls #header img {
@@ -104,7 +99,6 @@ textarea {
 #controls textarea:focus {
 	color: var(--text-area-color);
 	background-color: var(--color-base-white);
-	/* border-color: var(--border-color-focused-textarea); */
 	outline: 0;
 	box-shadow: 0 0 0 .2rem var(--box-shadow-text-area);
 }
@@ -134,16 +128,12 @@ textarea {
 	justify-content: space-between;
 	margin: 0 10px;
 	background-color: var(--color-base-white);
-	/* box-shadow: var(--navbar-shadow); */
 }
 
 .tab-buttons button {
 	flex: 1;
-	/* Cada botão ocupa um espaço igual */
 	text-align: center;
-	/* Centraliza o texto dentro do botão */
 	padding: 10px 0;
-	/* Espaçamento vertical */
 	border: none;
 	background-color: #f0f0f0;
 	cursor: pointer;
@@ -175,7 +165,6 @@ textarea {
 .tab-buttons button.active:hover {
 	background-color: var(--color-theme-primary);
 	color: var(--color-base-white);
-	/* margin-bottom: calc(var(--button-size) - 33px) !important; */
 	border-radius: 3px;
 }
 
@@ -221,7 +210,6 @@ textarea {
 	margin: 0;
 	border-radius: 0;
 	border-right: 1px solid var(--button-divider-color);
-	/* Adjust color and style as needed */
 }
 
 .ol-control.ol-bar .ol-control button:hover {
@@ -229,8 +217,6 @@ textarea {
 }
 
 .ol-toggle.ol-active>button {
-	/* height: calc(var(--button-size) - 3px) !important;
-	margin-bottom: calc(var(--button-size) - 33px) !important; */
 	border-radius: 3px;
 }
 
@@ -245,12 +231,10 @@ textarea {
 .ol-control.ol-bar .ol-bar.editbar {
 	margin-right: 5px;
 	background-color: var(--color-base-white);
-	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-control.ol-bar .ol-bar.editbar .ol-control.ol-bar.ol-control.ol-option-bar {
 	background-color: var(--color-base-white);
-	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-control.ol-bar .ol-bar.editbar .ol-control.ol-bar.ol-control.ol-option-bar button:hover {
@@ -261,14 +245,12 @@ textarea {
 .ol-control.ol-bar .ol-bar.locationbar {
 	margin-left: 5px;
 	background-color: var(--color-base-white);
-	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-control.ol-bar.layerbar {
 	right: -.5em;
 	left: unset;
 	background-color: var(--color-base-white);
-	/* box-shadow: var(--navbar-shadow);		 */
 }
 
 .ol-control.ol-bar.attrbar {
@@ -276,7 +258,6 @@ textarea {
 	left: unset;
 	top: unset;
 	bottom: .5em;
-	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-control.ol-bar .ol-control button i {
@@ -325,7 +306,6 @@ textarea {
 .ol-attribution.ol-unselectable.ol-control {
 	background-color: var(--color-base-white);
 	border-radius: 0;
-	/* box-shadow: var(--navbar-shadow); */
 }
 
 .ol-attribution button {
@@ -360,8 +340,7 @@ textarea {
 
 .ol-control.ol-bar.layerbar button img {
 	width: 33px;
-	height: 31px;
-	/* border-radius: 6px; */
+	height: 33px;
 	vertical-align: super;
 	margin-top: 1px;
 	border-radius: 4px;
@@ -393,7 +372,6 @@ textarea {
 .ol-tooltip-static {
 	background-color: #ffcc33;
 	color: black;
-	/* border: 1px solid white; */
 }
 
 .ol-tooltip-measure:before,
