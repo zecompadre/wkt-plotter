@@ -34,7 +34,7 @@ class MapControls {
 		this._createBars();
 		this._createSelectControl();
 		this._createDeleteButton();
-		this._createInfoButton();        // opcional – deixei aqui mas não adicionado à barra
+		this._createInfoButton();
 		this._createDrawControl();
 		this._createModifyInteraction();
 		this._createUndoRedo();
@@ -42,7 +42,6 @@ class MapControls {
 		this._createLayerButton();
 		this._createSnap();
 		this._setupKeyboardShortcuts();
-		//this._setupPasteHandler();
 		this._setupClickOutsideDeselect();
 		this._setupImportHandler();
 	}
@@ -103,7 +102,6 @@ class MapControls {
 	}
 
 	_createInfoButton() {
-		// Botão criado, mas não adicionado à barra (podes adicionar se quiseres)
 		this.controls.infoBtn = new ol.control.Button({
 			html: '<i class="fa fa-info fa-lg"></i>',
 			title: window.translator?.get("showinfo") || "Show information",
@@ -233,10 +231,6 @@ class MapControls {
 		});
 	}
 
-	_setupPasteHandler() {
-		document.addEventListener('paste', utilities.paste);
-	}
-
 	_setupImportHandler() {
 		const importBtn = document.getElementById('import-wkt-btn');
 		const textarea = document.querySelector("#wktdefault textarea");
@@ -244,14 +238,13 @@ class MapControls {
 		if (!importBtn || !textarea) return;
 
 		importBtn.addEventListener('click', async (e) => {
-
 			e.preventDefault();
 			e.stopPropagation();
 
 			const text = textarea.value.trim();
 
 			if (!text) {
-				utilities.showToast('Por favor, cola ou escreve um WKT válido.', 'error');
+				utilities.showToast?.('Por favor, cola ou escreve um WKT válido.', 'error');
 				textarea.focus();
 				return;
 			}
@@ -263,7 +256,6 @@ class MapControls {
 				await mapUtilities.loadWKT(text);
 
 				textarea.value = "";
-
 				utilities.showToast('WKT importado com sucesso!');
 				setTimeout(() => {
 					importBtn.disabled = false;
@@ -272,12 +264,10 @@ class MapControls {
 
 			} catch (error) {
 				console.error("Erro ao importar WKT:", error);
-				utilities.showToast('Erro ao importar WKT. Verifica o formato.', 'error');
+				utilities.showToast?.('Erro ao importar WKT. Verifica o formato.', 'error');
 				importBtn.disabled = false;
 				importBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Importar';
 			}
-
-			return;
 		});
 	}
 
@@ -290,6 +280,7 @@ class MapControls {
 					sel.clear();
 					deselected.forEach(f => wktListManager.updateIfChanged(f));
 					this.dispatch('deselectedOutside', { features: deselected });
+					this.dispatch('selectionChanged'); // ADICIONADO
 				}
 			}
 		});
@@ -303,6 +294,7 @@ class MapControls {
 		this.controls.selectCtrl.setActive(true);
 		featureUtilities.deselectCurrentFeature(false);
 		this.dispatch('featureCreated', { feature: evt.feature });
+		this.dispatch('selectionChanged'); // ADICIONADO
 	}
 
 	_handleSelect(evt) {
@@ -323,7 +315,7 @@ class MapControls {
 		}
 
 		this.controls.selectBar.setVisible(selected.length > 0);
-		this.dispatch('selectionChanged', { selected, deselected: evt.deselected });
+		this.dispatch('selectionChanged', { selected, deselected: evt.deselected }); // Já tinhas
 	}
 
 	_updateListHighlight(selected, deselected, list) {
@@ -367,6 +359,7 @@ class MapControls {
 		this.controls.selectBar.setVisible(false);
 
 		this.dispatch('featureDeleted', { feature, id });
+		this.dispatch('selectionChanged'); // ADICIONADO
 	}
 
 	centerOnMyLocation() {
@@ -387,6 +380,7 @@ class MapControls {
 
 	clearSelection() {
 		this.interactions.select?.getFeatures().clear();
+		this.dispatch('selectionChanged'); // ADICIONADO
 	}
 
 	activateSelect() { this.controls.selectCtrl?.setActive(true); }

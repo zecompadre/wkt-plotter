@@ -59,9 +59,9 @@ export const mapUtilities = {
 			(async () => {
 				for (const wkt of arrWKT) {
 
-					console.log('Processing WKT:', wkt);
+					//console.log('Processing WKT:', wkt);
 					const checksum = await utilities.generateChecksum(wkt);
-					console.log('Generated checksum:', checksum);
+					//console.log('Generated checksum:', checksum);
 
 					let exists = false;
 					for (const item of wkts) {
@@ -71,7 +71,7 @@ export const mapUtilities = {
 						}
 					}
 
-					console.log('WKT exists:', exists);
+					//console.log('WKT exists:', exists);
 
 					if (!exists) {
 						wkts.push({ id: checksum, wkt });

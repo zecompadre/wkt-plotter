@@ -7,37 +7,69 @@ import { featureUtilities } from '../utils/featureUtilities.js';
 import wktUtilities from './WKTUtilities.js';
 import mapControls from './MapControls.js';
 
-// Handler para evitar duplicação
-let selectionHandler = null;
+// Referências diretas ao botão e contador (para atualização em tempo real)
+const copyMultiButton = document.getElementById('copy-selected-multipolygon');
+const selectedCountSpan = document.getElementById('selected-count');
+const clearSelectionBtn = document.getElementById('clear-selection-btn');
 
 class WKTListManager {
 	constructor() {
 		this.list = document.getElementById('wkt-list');
 		if (!this.list) throw new Error("Elemento #wkt-list não encontrado");
-
-		// REMOVIDO: createHeader() e this.list.prepend(this.header)
-		// O botão de copiar agora está em baixo da textarea (no HTML)
 	}
 
-	// CHAMAR DEPOIS do mapa + controles estarem prontos
 	initAfterMapReady() {
 		if (this._initialized) return;
 		this._initialized = true;
-
 		this.observeSelection();
-		// Não há mais updateHeader() → removido
+		this.updateCopyButton();
+		if (clearSelectionBtn) {
+			clearSelectionBtn.addEventListener('click', () => {
+				mapControls.clearSelection();
+				utilities.showToast?.('Todas as features desselecionadas');
+			});
+		}
 	}
 
+	// Ouve o evento de seleção do MapControls
 	observeSelection() {
-		if (selectionHandler) mapControls.off('selectionChanged', selectionHandler);
-		selectionHandler = () => {
-			// Não fazemos mais nada aqui visualmente
-			// O contador e botão estão no HTML (wkt-actions) e são atualizados lá fora
-		};
-		mapControls.on('selectionChanged', selectionHandler);
+		mapControls.on('selectionChanged', () => {
+			console.log('seleção de feature...');
+			this.updateCopyButton();
+		});
 	}
 
-	// ADD ITEM (igual, só com delete + copy individual)
+	// Atualiza o botão e contador em tempo real
+	updateCopyButton() {
+		const count = mapControls.getSelectedFeatures().length;
+
+		if (selectedCountSpan) {
+			selectedCountSpan.textContent = count;
+		}
+
+		if (copyMultiButton) {
+			if (count >= 2) {
+				copyMultiButton.disabled = false;
+				copyMultiButton.style.opacity = '1';
+				copyMultiButton.style.cursor = 'pointer';
+			} else {
+				copyMultiButton.disabled = true;
+				copyMultiButton.style.opacity = '0.6';
+				copyMultiButton.style.cursor = 'not-allowed';
+			}
+		}
+
+		// NOVO: Mostra/esconde o botão "Desselecionar Tudo"
+		if (clearSelectionBtn) {
+			if (count > 0) {
+				clearSelectionBtn.classList.remove('hidden');
+			} else {
+				clearSelectionBtn.classList.add('hidden');
+			}
+		}
+	}
+
+	// ADD ITEM (mantido com teus botões copy + delete)
 	add(feature) {
 		if (!feature || !this.list) return;
 
@@ -60,8 +92,8 @@ class WKTListManager {
 		li.innerHTML = `
             <img>
 			<div class="wkt-item-buttons">
-			<button class="copy-btn" type="button" title="Copiar"><i class="fa-regular fa-copy"></i></button>
-            <button class="delete-btn" type="button" title="Apagar"><i class="fa fa-times fa-lg"></i></button>
+				<button class="copy-btn" type="button" title="Copiar"><i class="fa-regular fa-copy"></i></button>
+				<button class="delete-btn" type="button" title="Apagar"><i class="fa fa-times fa-lg"></i></button>
 			</div>
             <div>
                 <strong>${geom.getType()}</strong>
@@ -70,6 +102,15 @@ class WKTListManager {
             </div>
         `;
 		li.querySelector('img').replaceWith(img);
+
+		// Botão de copiar individual
+		li.querySelector('.copy-btn').addEventListener('click', e => {
+			e.stopPropagation();
+			const wkt = utilities.getFeatureWKT(feature);
+			this.copyToClipboard(wkt).then(() => {
+				utilities.showToast?.('WKT copiado!') || this.showToast('WKT copiado!');
+			});
+		});
 
 		// Botão de apagar
 		li.querySelector('.delete-btn').addEventListener('click', e => {
@@ -81,14 +122,6 @@ class WKTListManager {
 				select.getFeatures().push(f);
 				mapControls.deleteSelected();
 			}
-		});
-
-		li.querySelector('.copy-btn').addEventListener('click', e => {
-			e.stopPropagation();
-			const wkt = utilities.getFeatureWKT(feature);
-			this.copyToClipboard(wkt).then(() => {
-				utilities.showToast('WKT copiado!');
-			});
 		});
 
 		this.list.appendChild(li);
@@ -124,6 +157,9 @@ class WKTListManager {
 			this.clearSelection();
 			featureUtilities.centerOnVector();
 		}
+
+		// Atualiza o botão após seleção/desseleção
+		this.updateCopyButton();
 	}
 
 	remove(featureId) {
@@ -147,7 +183,7 @@ class WKTListManager {
 		const center = ol.extent.getCenter(geom.getExtent());
 		const [lon, lat] = ol.proj.toLonLat(center);
 
-		const infoDiv = li.querySelector('div');
+		const infoDiv = li.querySelector('div:not(.wkt-item-buttons)');
 		if (infoDiv) {
 			infoDiv.innerHTML = `
                 <strong>${geom.getType()}</strong>
@@ -166,8 +202,6 @@ class WKTListManager {
 				img.onload = () => URL.revokeObjectURL(url);
 			}
 		}
-
-		this.addCopyButton(li, feature);
 	}
 
 	async updateIfChanged(feature) {
@@ -193,6 +227,14 @@ class WKTListManager {
 			document.execCommand('copy');
 			document.body.removeChild(ta);
 		}
+	}
+
+	showToast(msg) {
+		const toast = document.createElement('div');
+		toast.className = 'wkt-copy-toast';
+		toast.textContent = msg;
+		document.body.appendChild(toast);
+		setTimeout(() => toast.remove(), 3000);
 	}
 
 	// PREVIEW (inalterado)
