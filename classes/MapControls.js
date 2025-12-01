@@ -170,22 +170,45 @@ class MapControls {
 			style: utilities.modifyStyleFunction(colors.edit),
 			insertVertexCondition: () => true,
 			virtualVertices: true,
-			pixelTolerance: 10,
-			hitTolerance: 5,
-			condition: (evt) => {
-				const features = this.interactions.select.getFeatures();
-				if (features.getLength() <= 1) return true;
-				const hit = map.getFeaturesAtPixel(evt.pixel, {
-					hitTolerance: 10,
-					layerFilter: (l) => l === vectorLayer
-				});
-				return hit.length === 1;
-			}
+			pixelTolerance: 12,
+			hitTolerance: 8,
+			condition: () => true  // permite editar sempre que estiver selecionado
 		});
 
 		map.addInteraction(modify);
 		this.interactions.modify = modify;
-		modify.on('modifyend', () => this.dispatch('featureModified'));
+
+		// CORRIGIDO: funciona com array ou Collection
+		modify.on('modifyend', (e) => {
+			const features = Array.isArray(e.features)
+				? e.features
+				: e.features.getArray();
+
+			features.forEach(f => {
+				wktListManager.updateIfChanged(f);
+			});
+			this.dispatch('featureModified');
+		});
+
+		// Termina edição ao clicar fora (corrigido e seguro)
+		map.on('singleclick', (evt) => {
+			const hit = map.hasFeatureAtPixel(evt.pixel, {
+				layerFilter: (l) => l === vectorLayer,
+				hitTolerance: 10
+			});
+
+			if (!hit && modify.getActive()) {
+				const selected = this.interactions.select.getFeatures();
+				const features = selected.getArray ? selected.getArray() : Array.from(selected);
+				features.forEach(f => wktListManager.updateIfChanged(f));
+				this.dispatch('modifyend');
+			}
+		});
+
+		// Ativa/desativa modify conforme seleção
+		this.interactions.select.on('change:active', (e) => {
+			modify.setActive(e.target.getActive());
+		});
 	}
 
 	_createUndoRedo() {

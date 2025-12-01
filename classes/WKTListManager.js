@@ -8,7 +8,7 @@ import wktUtilities from './WKTUtilities.js';
 import mapControls from './MapControls.js';
 
 // Referências ao DOM
-const copyMultiButton = document.getElementById('copy-selected-multipolygon');
+const copyMultiButton = document.getElementById('copy-selected-btn');
 const selectedCountSpan = document.getElementById('selected-count');
 const clearSelectionBtn = document.getElementById('clear-selection-btn');
 
@@ -60,19 +60,33 @@ class WKTListManager {
 		}
 	}
 
-	// Atualiza botão e contador
 	updateCopyButton() {
-		const count = mapControls.getSelectedFeatures().length;
+		// Conta quantas features estão realmente selecionadas
+		const count = mapControls.getSelectedFeatures()?.length || 0;
 
-		if (selectedCountSpan) selectedCountSpan.textContent = count;
+		console.log(`Atualizando botão de cópia: ${count} features selecionadas`);
 
-		if (copyMultiButton) {
-			const enabled = count >= 1;
-			copyMultiButton.disabled = !enabled;
-			copyMultiButton.style.opacity = enabled ? '1' : '0.6';
-			copyMultiButton.style.cursor = enabled ? 'pointer' : 'not-allowed';
+		// Atualiza o número no botão
+		if (selectedCountSpan) {
+			selectedCountSpan.textContent = count;
 		}
 
+		// Atualiza estado do botão "Copiar Selecionados"
+		if (copyMultiButton) {
+			const canCopy = count >= 1;
+
+			copyMultiButton.disabled = !canCopy;
+			copyMultiButton.style.opacity = canCopy ? '1' : '0.6';
+			copyMultiButton.style.cursor = canCopy ? 'pointer' : 'not-allowed';
+
+			// Opcional: muda o texto do botão para ficar mais claro
+			const buttonCount = copyMultiButton.querySelector('#button-count');
+			if (buttonCount && buttonCount.textContent) {
+				buttonCount.textContent = `${count}`;
+			}
+		}
+
+		// Atualiza botão "Desselecionar Tudo"
 		if (clearSelectionBtn) {
 			clearSelectionBtn.classList.toggle('hidden', count === 0);
 		}
@@ -195,6 +209,9 @@ class WKTListManager {
 		// Atualiza visual da lista
 		this.updateListSelectionStyle();
 		featureUtilities.centerOnFeature(feature);
+
+		// AQUI ESTAVA O PROBLEMA → FALTAVA DISPARAR O EVENTO!
+		mapControls.dispatch('selectionChanged');
 	}
 
 	remove(featureId) {
