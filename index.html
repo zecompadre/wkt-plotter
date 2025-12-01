@@ -39,7 +39,7 @@
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 
 	<link href="/main.css" version rel="stylesheet">
-	<link href="/theme1.css" version rel="stylesheet">
+	<!-- <link href="/theme1.css" version rel="stylesheet"> -->
 	<script type="module">
 		console.log("Iniciando carregamento do WKTapp.js...");
 		const version = new Date().getTime();
@@ -78,7 +78,7 @@
 		<div id="tooltip" class="ol-tooltip hidden"></div>
 		<div id="controls">
 			<div id="header" class="flex-none grow-0">
-				<img src="logo.svg?v=202412062200" title="WKT Playground" width="160" height="50">
+				<img src="logo.svg?v=202412062200" title="WKT Plotter" width="160" height="50">
 				<button id="settings-btn" class="" type="button" title="Settings"><i class="fa-solid fa-gear fa-lg"></i></button>
 				<div class="tabs" style="display: none">
 					<div class="tab-buttons">
@@ -92,24 +92,27 @@
 					<form>
 						<div id="wktdefault" class='wkt-container'>
 							<div class="wkt-input-wrapper">
-								<textarea placeholder="Cole ou importe um WKT aqui..." rows="6"></textarea>
-
+								<textarea
+									placeholder="Cole ou importe um WKT aqui..."
+									rows="6"
+									data-i18n-placeholder="textarea-placeholder">
+								</textarea>
 							</div>
-							<div class="wkt-actions">
-								<button id="import-wkt-btn">
+							<div class="actions-container">
+								<button id="import-wkt-btn" type="button">
 									<i class="fa-solid fa-paste"></i>
-									<span>Importar</span>
+									<span data-i18n="import">Importar</span>
 								</button>
 
-								<button id="clear-selection-btn" class="hidden">
+								<button id="clear-selection-btn" type="button" class="hidden">
 									<i class="fa-solid fa-ban"></i>
-									<span>Desselecionar</span>
+									<span data-i18n="clear-selection">Desselecionar</span>
 								</button>
 
-								<button id="copy-selected-btn" class="hidden">
+								<button id="copy-selected-btn" type="button" class="hidden">
 									<i class="fa-regular fa-copy"></i>
-									<span>Copiar</span>
-									<span class="button-count"><span id="selected-count">3</span></span>
+									<span data-i18n="copy-selected">Copiar</span>
+									<span class="button-count">(<span id="selected-count">0</span>)</span>
 								</button>
 							</div>
 						</div>
@@ -118,34 +121,38 @@
 				</div>
 				<div id="settingsContainer" class="settings tab-pane">
 					<form id="light-form">
-						<div class="ui-checkbox">
-							<input type="checkbox" id="show-area">
-							<label for="show-area">Mostrar Area</label>
-						</div>
-						<div class="ui-checkbox">
-							<input type="checkbox" id="wkt-presistent">
-							<label for="wkt-presistent">Reter Objectos</label>
-						</div>
-						<div class="ui-checkbox">
-							<input type="checkbox" id="multi-select">
-							<label for="multi-select">Multi-Seleção (Ctrl+Click)</label>
-						</div>
-						<div class="ui-checkbox">
-							<input type="checkbox" id="multi-select-union">
-							<label for="multi-select-union">Unir Multi-Seleção</label>
-						</div>
-						<!-- <div class="ui-select-container">
-							<select class="ui-select" id="styled-select">
-								<option value="" disabled selected>Choose an option</option>
-								<option value="option1">Option 1</option>
-								<option value="option2">Option 2</option>
-								<option value="option3">Option 3</option>
+						<div class="settings-item">
+							<label for="language" data-i18n="language">Idioma</label>
+							<select id="language">
+								<option value="pt">Português</option>
+								<option value="en">English</option>
+								<option value="es">Español</option>
+								<option value="fr">Français</option>
 							</select>
 						</div>
-
-						<input type="text" id="text-input" class="ui-input" placeholder="Type here"> -->
+						<div class="settings-item">
+							<input type="checkbox" id="show-area">
+							<label for="show-area" data-i18n="show-area">Mostrar Área</label>
+						</div>
+						<div class="settings-item">
+							<input type="checkbox" id="wkt-presistent">
+							<label for="wkt-presistent" data-i18n="persistent-objects">Reter Objectos</label>
+						</div>
+						<div class="settings-item">
+							<input type="checkbox" id="multi-select">
+							<label for="multi-select" data-i18n="multi-select">Multi-Seleção (Ctrl+Click)</label>
+						</div>
+						<div class="settings-item">
+							<input type="checkbox" id="multi-select-union">
+							<label for="multi-select-union" data-i18n="union-multi-select">Unir Multi-Seleção</label>
+						</div>
 					</form>
-					<button id="settings-close-btn" class="danger"><i class="fa-solid fa-close"></i>Fechar</button>
+					<div class="actions-container">
+						<button id="settings-close-btn" type="button">
+							<i class="fa-solid fa-xmark"></i>
+							<span data-i18n="close">Fechar</span>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>

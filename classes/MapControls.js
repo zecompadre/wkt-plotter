@@ -68,24 +68,18 @@ class MapControls {
 	}
 
 	_createSelectControl() {
-		// Função que cria ou atualiza a interação com base na configuração atual
 		const updateSelectInteraction = () => {
 			const multiSelect = window.settingsManager?.getSetting('multi-select') === true || false;
 
-			// Se já existe a interação, atualiza apenas a propriedade
 			if (this.interactions.select) {
 				this.interactions.select.set('multi', multiSelect);
-				// Força refresh da interação
 				this.interactions.select.changed();
 				return;
 			}
 
-			console.log('Criando interação de seleção com multi-select =', multiSelect);
-
-			// Cria nova interação (primeira vez)
 			const selectInteraction = new ol.interaction.Select({
 				hitTolerance: 8,
-				multi: multiSelect,  // usa a configuração atual
+				multi: multiSelect,
 				toggleCondition: ol.events.condition.always,
 				style: utilities.genericStyleFunction(colors.edit)
 			});
@@ -106,15 +100,12 @@ class MapControls {
 			selectInteraction.on('select', (e) => this._handleSelect(e));
 		};
 
-		// Cria/atualiza com a configuração inicial
 		updateSelectInteraction();
 
-		// Ouve mudanças na configuração (se settingsManager suportar)
 		if (window.settingsManager && typeof window.settingsManager.on === 'function') {
 			window.settingsManager.on('settingChanged', (id) => {
 				if (id === 'multi-select') {
 					updateSelectInteraction();
-					console.log('Configuração multi-select alterada → interação atualizada');
 				}
 			});
 		}
@@ -220,12 +211,16 @@ class MapControls {
 
 		this.controls.undoBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-rotate-left fa-lg"></i>',
-			title: "Undo",
+			title: window.translator?.get("undo") || "Undo",
 			handleClick: () => undoRedo.undo()
 		});
+		console.log(this.controls.undoBtn);
+		this.controls.undoBtn.button_.setAttribute('data-i18n', 'undo');
+		this.controls.undoBtn.button_.setAttribute('data-i18n-title', 'undo');
+
 		this.controls.redoBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-rotate-right fa-lg"></i>',
-			title: "Redo",
+			title: window.translator?.get("redo") || "Redo",
 			handleClick: () => undoRedo.redo()
 		});
 
@@ -239,14 +234,14 @@ class MapControls {
 
 		this.controls.locationBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-location-crosshairs fa-lg"></i>',
-			title: window.translator?.get("centeronmylocation") || "Center on my location",
+			title: window.translator?.get("center-location") || "Center on my location",
 			handleClick: () => this.centerOnMyLocation()
 		});
 		locationBar.addControl(this.controls.locationBtn);
 
 		this.controls.centerObjectsBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-arrows-to-dot fa-lg"></i>',
-			title: window.translator?.get("centerobjects") || "Center on objects",
+			title: window.translator?.get("center-objects") || "Center on objects",
 			handleClick: () => featureUtilities.centerOnVector()
 		});
 		locationBar.addControl(this.controls.centerObjectsBtn);
@@ -258,7 +253,7 @@ class MapControls {
 
 		this.controls.layerChangeBtn = new ol.control.Button({
 			html: utilities.layerChangeBtnHtml(),
-			title: window.translator?.get("changebutton") || "Change layer",
+			title: window.translator?.get("change-layer") || "Change layer...",
 			handleClick: mapUtilities.toggleLayers
 		});
 		layerBar.addControl(this.controls.layerChangeBtn);

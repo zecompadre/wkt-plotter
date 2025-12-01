@@ -34,6 +34,9 @@ export default class SettingsManager {
 	}
 
 	dispatch(event, data) {
+
+		console.log(`Dispatching event: ${event}`, data);
+
 		const callbacks = this.#listeners.get(event);
 		if (callbacks) {
 			callbacks.forEach(cb => {

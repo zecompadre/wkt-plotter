@@ -10,19 +10,32 @@ import { loading, utilities } from './utils/utilities.js';
 import { mapUtilities } from './utils/mapUtilities.js';
 
 (async () => {
+	loading.show();
+
 	// 1. UI básica
 	new LightUI();
 	const tabSystem = new TabSystem(document.querySelector('#controls'));
+
+	const settingsManager = new SettingsManager('settingsContainer', 'wkt-settings');
+	window.settingsManager = settingsManager;
 
 	// 2. Tradução e configurações
 	const translator = new Translation();
 	window.translator = translator;
 
-	const settingsManager = new SettingsManager('settingsContainer', 'wkt-settings');
-	window.settingsManager = settingsManager;
+	const langSelect = document.getElementById('language');
+	if (langSelect) {
+		// Define idioma atual
+		langSelect.value = translator.getCurrentLanguage();
+
+		langSelect.addEventListener('change', () => {
+			const newLang = langSelect.value;
+			translator.setLanguage(newLang);
+			console.log('Idioma alterado para:', newLang);
+		});
+	}
 
 	// 3. INICIA O MAPA (agora com await!)
-	loading.show();
 	try {
 		await setupMap();
 		console.log("Mapa iniciado com sucesso!");

@@ -89,7 +89,7 @@ textarea {
 /* WKT ACTIONS – ESCONDE TEXTO SE NÃO COUBER (SÓ ÍCONE) */
 /* Mantém exatamente o teu estilo original */
 /* ========================================= */
-.wkt-actions {
+.actions-container {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -97,7 +97,7 @@ textarea {
 	gap: 5px;
 }
 
-.wkt-actions button {
+.actions-container button {
 	flex: 1;
 	padding: 8px 6px;
 	border: none;
@@ -117,13 +117,13 @@ textarea {
 }
 
 /* Ícone – sempre visível */
-.wkt-actions button i {
+.actions-container button i {
 	font-size: 1.15em !important;
 	flex-shrink: 0;
 }
 
 /* Todo o texto dentro do botão (span, contador, etc.) */
-.wkt-actions button span,
+.actions-container button span,
 #selected-count {
 	flex-shrink: 1;
 	min-width: 0;
@@ -135,13 +135,13 @@ textarea {
 
 /* Quando o espaço for apertado → esconde todo o texto */
 @media (max-width: 480px) {
-	.wkt-actions button {
+	.actions-container button {
 		min-width: 70px;
 		padding: 10px 8px;
 		gap: 4px;
 	}
 
-	.wkt-actions button span,
+	.actions-container button span,
 	#selected-count {
 		width: 0 !important;
 		opacity: 0 !important;
@@ -269,19 +269,104 @@ textarea {
 	z-index: 10;
 }
 
-#settings-close-btn i {
+.settings-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 5px;
+	border-radius: 12px;
+	transition: all 0.25s ease;
+	cursor: pointer;
+	user-select: none;
+}
+
+.settings-item:hover {
+	background: rgba(255, 255, 255, 1);
+	border-color: #4299e1;
+	transform: translateY(-1px);
+	box-shadow: 0 6px 18px rgba(66, 153, 225, 0.15);
+}
+
+.settings-item input[type="checkbox"] {
+	appearance: none;
+	-webkit-appearance: none;
+	width: 22px;
+	height: 22px;
+	border: 2px solid #a0aec0;
+	border-radius: 5px;
+	background: white;
+	position: relative;
+	cursor: pointer;
+	transition: all 0.25s ease;
+	flex-shrink: 0;
+}
+
+.settings-item input[type="checkbox"]:checked {
+	background: #4299e1;
+	border-color: #3182ce;
+	box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.2);
+}
+
+.settings-item input[type="checkbox"]:checked::after {
+	content: '✓';
 	color: white;
-	font-size: 16px !important;
-	padding-right: 5px;
+	font-size: 16px;
+	font-weight: 900;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.settings-item input[type="checkbox"]:focus {
+	outline: none;
+	box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.3);
+}
+
+.settings-item label {
+	font-size: 0.95em;
+	font-weight: 600;
+	color: #2d3748;
+	cursor: pointer;
+	flex: 1;
+}
+
+.settings-item small {
+	font-size: 0.78em;
+	color: #718096;
+	margin-top: 2px;
+}
+
+#settings-close-btn {
+	background: #4299e1;
+	color: white;
 }
 
 #settings-close-btn:hover {
-	background: #f1f5f9 !important;
-	color: black !important;
+	background: #3182ce;
 }
 
-#settings-close-btn:hover i {
-	color: black;
+#language {
+	width: 100%;
+	padding: 5px 6px;
+	margin-top: 6px;
+	border: 1px solid #cbd5e0;
+	border-radius: 8px;
+	background: white;
+	font-size: 0.95em;
+	font-weight: 500;
+	color: #2d3748;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+#language:hover {
+	border-color: #4299e1;
+}
+
+#language:focus {
+	outline: none;
+	border-color: #4299e1;
 }
 
 #wkt-list {
@@ -680,54 +765,6 @@ textarea {
 	border-radius: 4px;
 }
 
-.tab-buttons {
-	background-color: var(--color-base-white);
-	display: flex;
-	justify-content: space-between;
-	margin: 0 10px;
-}
-
-.tab-buttons button {
-	background-color: #f0f0f0;
-	background-color: transparent;
-	border-radius: 0;
-	border-radius: 5px 5px 0 0;
-	border-right: 1px solid var(--button-divider-color);
-	border: 0;
-	border: none;
-	box-sizing: border-box;
-	cursor: pointer;
-	display: block;
-	flex: 1;
-	height: var(--button-size);
-	margin: 0;
-	outline: none;
-	padding: 0;
-	padding: 10px 0;
-	pointer-events: auto;
-	text-align: center;
-	width: var(--button-size);
-}
-
-.tab-buttons button.active,
-.tab-buttons button.active:hover {
-	background-color: var(--color-theme-primary);
-	border-radius: 3px;
-	color: var(--color-base-white);
-}
-
-.tab-buttons button:hover {
-	background-color: var(--button-hover-background);
-}
-
-.tab-buttons button:not(:last-child) {
-	border-right: 1px solid var(--button-divider-color);
-}
-
-.tab-content {
-	padding-top: 20px;
-}
-
 .tab-pane {
 	-ms-flex: 1;
 	-webkit-box-flex: 1;
@@ -886,11 +923,11 @@ textarea {
 }
 
 @media (max-width: 480px) {
-	.wkt-actions {
+	.actions-container {
 		flex-direction: column !important;
 	}
 
-	.wkt-actions button {
+	.actions-container button {
 		flex: none !important;
 	}
 }
