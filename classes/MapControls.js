@@ -70,7 +70,7 @@ class MapControls {
 	_createSelectControl() {
 		// Função que cria ou atualiza a interação com base na configuração atual
 		const updateSelectInteraction = () => {
-			const multiSelect = window.settingsManager?.getSettings?.()['multi-select'] === true || false;
+			const multiSelect = window.settingsManager?.getSetting('multi-select') === true || false;
 
 			// Se já existe a interação, atualiza apenas a propriedade
 			if (this.interactions.select) {
@@ -354,8 +354,8 @@ class MapControls {
 		const selected = evt.target.getFeatures().getArray();
 		const textarea = document.querySelector("#wktdefault textarea");
 		const list = document.getElementById('wkt-list');
-		const multiSelect = window.settingsManager?.getSettings?.()['multi-select'] === true || false;
-		const multiSelectUnion = window.settingsManager?.getSettings?.()['multi-select-union'] === true;
+		const multiSelect = window.settingsManager?.getSetting('multi-select') === true || false;
+		const multiSelectUnion = window.settingsManager?.getSetting('multi-select-union') === true;
 
 		this._updateListHighlight(evt.selected, evt.deselected, list);
 

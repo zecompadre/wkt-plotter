@@ -49,7 +49,7 @@ class WKTListManager {
 				const features = mapControls.getSelectedFeatures();
 				if (features.length < 1) return;
 
-				const multiSelectUnion = window.settingsManager?.getSettings?.()['multi-select-union'] === true;
+				const multiSelectUnion = window.settingsManager?.getSetting('multi-select-union') === true;
 
 				let multi = null;
 				if (multiSelectUnion)
@@ -217,8 +217,8 @@ class WKTListManager {
 		const select = mapControls.interactions.select;
 		if (!select) return;
 
-		const multiSelect = window.settingsManager?.getSettings?.()['multi-select'] === true || false;
-		const multiSelectUnion = window.settingsManager?.getSettings?.()['multi-select-union'] === true;
+		const multiSelect = window.settingsManager?.getSetting('multi-select') === true || false;
+		const multiSelectUnion = window.settingsManager?.getSetting('multi-select-union') === true;
 		const already = select.getFeatures().getArray().includes(feature);
 
 		if (!multiSelect && !already) {
