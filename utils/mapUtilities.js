@@ -4,6 +4,7 @@ import { map, vectorLayer, featureCollection, defaultCenter } from '../map/setup
 import { featureUtilities } from './featureUtilities.js';
 import { utilities } from './utilities.js';
 import wktUtilities from '../classes/WKTUtilities.js';
+import wktListManager from '../classes/WKTListManager.js';
 import { osmLayer, arcgisLayer } from '../map/layers.js';
 
 export const mapUtilities = {
@@ -23,7 +24,7 @@ export const mapUtilities = {
 		const centerBtn = map.getControls().getArray().find(c => c.get('name') === 'centerObjects');
 
 		if (count > 0) {
-			featureUtilities.createFromAllFeatures();
+			//featureUtilities.createFromAllFeatures();
 			if (centerBtn) centerBtn.setVisible(true);
 		} else {
 			if (selectBar) selectBar.setVisible(false);
@@ -95,6 +96,8 @@ export const mapUtilities = {
 
 			featureUtilities.centerOnVector();
 
+			wktListManager.updateCopyButton();
+
 		} catch (error) {
 			console.error('Error loading WKT:', error);
 		}
@@ -161,6 +164,7 @@ export const mapUtilities = {
 				else if (wkts.length > 0) {
 					featureUtilities.centerOnVector();
 				}
+				wktListManager.updateCopyButton();
 			})();
 
 		} catch (error) {

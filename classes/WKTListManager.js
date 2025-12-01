@@ -11,6 +11,7 @@ import mapControls from './MapControls.js';
 const copyMultiButton = document.getElementById('copy-selected-btn');
 const selectedCountSpan = document.getElementById('selected-count');
 const clearSelectionBtn = document.getElementById('clear-selection-btn');
+const textarea = document.querySelector("#wktdefault textarea");
 
 class WKTListManager {
 	constructor() {
@@ -38,6 +39,28 @@ class WKTListManager {
 				utilities.showToast?.('Todas as features desselecionadas');
 			});
 		}
+		if (copyMultiButton) {
+			copyMultiButton.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (copyMultiButton.disabled) return;
+
+				const features = mapControls.getSelectedFeatures();
+				if (features.length < 1) return;
+
+				const multi = featureUtilities.featuresToMultiPolygon(features);
+				if (!multi) {
+					utilities.showToast?.('Erro ao combinar polígonos', 'error');
+					return;
+				}
+
+				const wkt = utilities.getFeatureWKT(multi);
+				navigator.clipboard.writeText(wkt).then(() => {
+					utilities.showToast?.('MultiPolygon copiado com sucesso!');
+				});
+			});
+		}
 	}
 
 	// Ouve seleção
@@ -61,34 +84,41 @@ class WKTListManager {
 	}
 
 	updateCopyButton() {
-		// Conta quantas features estão realmente selecionadas
-		const count = mapControls.getSelectedFeatures()?.length || 0;
+		const totalFeatures = vectorLayer.getSource().getFeatures().length;     // total no mapa
+		const selectedCount = mapControls.getSelectedFeatures().length;         // selecionadas
 
-		console.log(`Atualizando botão de cópia: ${count} features selecionadas`);
+		console.log(`Atualizando botão copiar: ${selectedCount} selecionadas de ${totalFeatures} totais`);
 
-		// Atualiza o número no botão
+		// Atualiza o contador
 		if (selectedCountSpan) {
-			selectedCountSpan.textContent = count;
+			selectedCountSpan.textContent = selectedCount;
 		}
 
-		// Atualiza estado do botão "Copiar Selecionados"
 		if (copyMultiButton) {
-			const canCopy = count >= 1;
+			if (totalFeatures === 0) {
+				// 1. Mapa vazio → esconde o botão
+				copyMultiButton.classList.add('hidden');
+			} else {
+				// Mostra o botão
+				copyMultiButton.classList.remove('hidden');
 
-			copyMultiButton.disabled = !canCopy;
-			copyMultiButton.style.opacity = canCopy ? '1' : '0.6';
-			copyMultiButton.style.cursor = canCopy ? 'pointer' : 'not-allowed';
-
-			// Opcional: muda o texto do botão para ficar mais claro
-			const buttonCount = copyMultiButton.querySelector('#button-count');
-			if (buttonCount && buttonCount.textContent) {
-				buttonCount.textContent = `${count}`;
+				if (selectedCount >= 1) {
+					// 2. Basta 1 selecionada → habilita o botão
+					copyMultiButton.disabled = false;
+					copyMultiButton.style.opacity = '1';
+					copyMultiButton.style.cursor = 'pointer';
+				} else {
+					// 3. Tem features, mas nenhuma selecionada → desabilita
+					copyMultiButton.disabled = true;
+					copyMultiButton.style.opacity = '0.6';
+					copyMultiButton.style.cursor = 'not-allowed';
+				}
 			}
 		}
 
-		// Atualiza botão "Desselecionar Tudo"
+		// === BOTÃO "DESSELECIONAR TUDO" ===
 		if (clearSelectionBtn) {
-			clearSelectionBtn.classList.toggle('hidden', count === 0);
+			clearSelectionBtn.classList.toggle('hidden', selectedCount === 0);
 		}
 	}
 
@@ -143,7 +173,7 @@ class WKTListManager {
 			e.stopPropagation();
 			const wkt = utilities.getFeatureWKT(feature);
 			this.copyToClipboard(wkt).then(() => {
-				utilities.showToast?.('WKT copiado!') || this.showToast('WKT copiado!');
+				utilities.showToast?.('WKT copiado!', 'success');
 			});
 		});
 
@@ -156,6 +186,7 @@ class WKTListManager {
 				select.getFeatures().clear();
 				select.getFeatures().push(f);
 				mapControls.deleteSelected();
+				utilities.showToast?.('WKT apagado!', 'error')
 			}
 		});
 
@@ -196,7 +227,6 @@ class WKTListManager {
 
 		// Atualiza textarea
 		const selected = select.getFeatures().getArray();
-		const textarea = document.querySelector("#wktdefault textarea");
 		if (selected.length === 1) {
 			textarea.value = utilities.getFeatureWKT(selected[0]);
 		} else if (selected.length > 1 && multiSelect) {
@@ -217,14 +247,18 @@ class WKTListManager {
 	remove(featureId) {
 		const li = this.list?.querySelector(`li[data-id="${featureId}"]`);
 		if (li) li.remove();
+		textarea.value = "";
+		this.updateCopyButton();
 	}
 
 	clearSelection() {
 		this.list?.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+		textarea.value = "";
 	}
 
 	clear() {
 		if (this.list) this.list.innerHTML = '';
+		textarea.value = "";
 	}
 
 	async update(feature) {

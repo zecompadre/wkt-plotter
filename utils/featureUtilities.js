@@ -91,7 +91,7 @@ export const featureUtilities = {
 		if (vectorLayer) map.removeLayer(vectorLayer);
 		utilities.createVectorLayer();
 		map.addLayer(vectorLayer);
-		featureUtilities.createFromAllFeatures();
+		//featureUtilities.createFromAllFeatures();
 	},
 
 	addToFeatures: async (id, wkt) => {

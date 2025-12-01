@@ -176,21 +176,25 @@ textarea {
 }
 
 /* COPIAR SELECIONADOS */
-#copy-selected-multipolygon {
+#copy-selected-btn {
 	background: #48bb78;
 	color: white;
 	opacity: 0.65;
 	cursor: not-allowed;
 }
 
-#copy-selected-multipolygon:not(:disabled) {
+#copy-selected-btn:not(:disabled) {
 	opacity: 1;
 	cursor: pointer;
 	background: #38a169;
 }
 
-#copy-selected-multipolygon:not(:disabled):hover {
+#copy-selected-btn:not(:disabled):hover {
 	background: #2d8b57;
+}
+
+#copy-selected-btn.hidden {
+	display: none !important;
 }
 
 /* Contador – estilo mantido */
@@ -211,11 +215,6 @@ textarea {
 	max-height: 100%;
 	max-width: 100%;
 	width: var(--map-width);
-}
-
-#selected-count {
-	font-weight: bold;
-	text-align: center;
 }
 
 #settings-btn {

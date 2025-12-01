@@ -305,12 +305,13 @@ class MapControls {
 
 				await mapUtilities.loadWKT(text);
 
-				textarea.value = "";
 				utilities.showToast('WKT importado com sucesso!');
 				setTimeout(() => {
 					importBtn.disabled = false;
 					importBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Importar';
 				}, 1500);
+
+				textarea.value = "";
 
 			} catch (error) {
 				console.error("Erro ao importar WKT:", error);
