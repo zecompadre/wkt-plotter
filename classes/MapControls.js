@@ -70,7 +70,7 @@ class MapControls {
 	_createSelectControl() {
 		// Função que cria ou atualiza a interação com base na configuração atual
 		const updateSelectInteraction = () => {
-			const multiSelect = window.settingsManager?.getSettingById('multi-select') === true;
+			const multiSelect = window.settingsManager?.getSettings?.()['multi-select'] === true || false;
 
 			// Se já existe a interação, atualiza apenas a propriedade
 			if (this.interactions.select) {
@@ -79,6 +79,8 @@ class MapControls {
 				this.interactions.select.changed();
 				return;
 			}
+
+			console.log('Criando interação de seleção com multi-select =', multiSelect);
 
 			// Cria nova interação (primeira vez)
 			const selectInteraction = new ol.interaction.Select({
@@ -352,12 +354,17 @@ class MapControls {
 		const selected = evt.target.getFeatures().getArray();
 		const textarea = document.querySelector("#wktdefault textarea");
 		const list = document.getElementById('wkt-list');
-		const multiSelect = window.settingsManager?.getSettingById('multi-select') === true;
+		const multiSelect = window.settingsManager?.getSettings?.()['multi-select'] === true || false;
+		const multiSelectUnion = window.settingsManager?.getSettings?.()['multi-select-union'] === true;
 
 		this._updateListHighlight(evt.selected, evt.deselected, list);
 
 		if (multiSelect && selected.length > 1) {
-			const multi = featureUtilities.featuresToMultiPolygon(selected);
+			let multi = null;
+			if (multiSelectUnion)
+				multi = featureUtilities.featuresToMultiPolygonUnion(selected);
+			else
+				multi = featureUtilities.featuresToMultiPolygonJoin(selected);
 			textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
 		} else if (selected.length === 1) {
 			textarea.value = utilities.getFeatureWKT(selected[0]);

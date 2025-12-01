@@ -21,11 +21,6 @@ import { mapUtilities } from './utils/mapUtilities.js';
 	const settingsManager = new SettingsManager('settingsContainer', 'wkt-settings');
 	window.settingsManager = settingsManager;
 
-	settingsManager.addEvent('wkt-presistent', 'change', (e) => {
-		if (e.target.checked) wktUtilities.save();
-		else wktUtilities.clear(false, true);
-	});
-
 	// 3. INICIA O MAPA (agora com await!)
 	loading.show();
 	try {

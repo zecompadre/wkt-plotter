@@ -65,7 +65,7 @@ export function setupMap() {
 	map.addOverlay(tooltip);
 
 	map.on('pointermove', function (event) {
-		if (!window.settingsManager?.getSettingById('show-area')) return;
+		if (!window.settingsManager?.getSettings?.()['show-area']) return;
 
 		const feature = map.forEachFeatureAtPixel(event.pixel, f => f);
 		const tooltipEl = tooltip.getElement();

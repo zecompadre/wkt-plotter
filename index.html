@@ -27,6 +27,8 @@
 	<script src="https://unpkg.com/terraformer@1.0.12/terraformer.js"></script>
 	<script src="https://unpkg.com/terraformer-wkt-parser@1.2.0/terraformer-wkt-parser.js"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsts/2.7.1/jsts.min.js"></script>
+
 	<!-- Openlayers -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css" />
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
@@ -127,6 +129,10 @@
 						<div class="ui-checkbox">
 							<input type="checkbox" id="multi-select">
 							<label for="multi-select">Multi-Seleção (Ctrl+Click)</label>
+						</div>
+						<div class="ui-checkbox">
+							<input type="checkbox" id="multi-select-union">
+							<label for="multi-select-union">Unir Multi-Seleção</label>
 						</div>
 						<!-- <div class="ui-select-container">
 							<select class="ui-select" id="styled-select">

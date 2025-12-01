@@ -49,7 +49,14 @@ class WKTListManager {
 				const features = mapControls.getSelectedFeatures();
 				if (features.length < 1) return;
 
-				const multi = featureUtilities.featuresToMultiPolygon(features);
+				const multiSelectUnion = window.settingsManager?.getSettings?.()['multi-select-union'] === true;
+
+				let multi = null;
+				if (multiSelectUnion)
+					multi = featureUtilities.featuresToMultiPolygonUnion(selected);
+				else
+					multi = featureUtilities.featuresToMultiPolygonJoin(selected);
+
 				if (!multi) {
 					utilities.showToast?.('Erro ao combinar polígonos', 'error');
 					return;
@@ -210,7 +217,8 @@ class WKTListManager {
 		const select = mapControls.interactions.select;
 		if (!select) return;
 
-		const multiSelect = window.settingsManager?.getSettingById('multi-select') === true;
+		const multiSelect = window.settingsManager?.getSettings?.()['multi-select'] === true || false;
+		const multiSelectUnion = window.settingsManager?.getSettings?.()['multi-select-union'] === true;
 		const already = select.getFeatures().getArray().includes(feature);
 
 		if (!multiSelect && !already) {
@@ -230,7 +238,11 @@ class WKTListManager {
 		if (selected.length === 1) {
 			textarea.value = utilities.getFeatureWKT(selected[0]);
 		} else if (selected.length > 1 && multiSelect) {
-			const multi = featureUtilities.featuresToMultiPolygon(selected);
+			let multi = null;
+			if (multiSelectUnion)
+				multi = featureUtilities.featuresToMultiPolygonUnion(selected);
+			else
+				multi = featureUtilities.featuresToMultiPolygonJoin(selected);
 			textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
 		} else {
 			textarea.value = "";

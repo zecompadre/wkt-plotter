@@ -72,20 +72,20 @@ export const featureUtilities = {
 		map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50] });
 	},
 
-	featuresToMultiPolygon: () => {
-		const features = vectorLayer.getSource().getFeatures();
-		const polygons = features.filter(f =>
-			['Polygon', 'MultiPolygon'].includes(f.getGeometry().getType())
-		);
+	// featuresToMultiPolygon: () => {
+	// 	const features = vectorLayer.getSource().getFeatures();
+	// 	const polygons = features.filter(f =>
+	// 		['Polygon', 'MultiPolygon'].includes(f.getGeometry().getType())
+	// 	);
 
-		if (polygons.length === 0) return null;
-		if (polygons.length === 1) {
-			return new ol.Feature(new ol.geom.Polygon(polygons[0].getGeometry().getCoordinates()));
-		}
+	// 	if (polygons.length === 0) return null;
+	// 	if (polygons.length === 1) {
+	// 		return new ol.Feature(new ol.geom.Polygon(polygons[0].getGeometry().getCoordinates()));
+	// 	}
 
-		const coords = polygons.map(f => f.getGeometry().getCoordinates());
-		return new ol.Feature(new ol.geom.MultiPolygon(coords));
-	},
+	// 	const coords = polygons.map(f => f.getGeometry().getCoordinates());
+	// 	return new ol.Feature(new ol.geom.MultiPolygon(coords));
+	// },
 
 	addFeatures: async () => {
 		if (vectorLayer) map.removeLayer(vectorLayer);
@@ -127,17 +127,67 @@ export const featureUtilities = {
 		return newFeature;
 	},
 
-	featuresToMultiPolygon: (features) => {
+	featuresToMultiPolygonJoin: (features) => {
+		if (!features || features.length === 0) return null;
+
 		const polygons = features
 			.map(f => f.getGeometry())
-			.filter(geom => geom.getType() === 'Polygon' || geom.getType() === 'MultiPolygon');
+			.filter(geom => geom && ['Polygon', 'MultiPolygon'].includes(geom.getType()));
 
 		if (polygons.length === 0) return null;
 
-		const coords = polygons.flatMap(geom =>
-			geom.getType() === 'Polygon' ? geom.getCoordinates() : geom.getCoordinates().flat(1)
+		// Extrai todas as coordenadas de polígonos
+		const allCoords = polygons.flatMap(geom =>
+			geom.getType() === 'Polygon'
+				? [geom.getCoordinates()]
+				: geom.getCoordinates()
 		);
 
-		return new ol.Feature(new ol.geom.MultiPolygon(coords));
+		// Sempre devolve MultiPolygon (mesmo que tenha só 1)
+		return new ol.Feature({
+			geometry: new ol.geom.MultiPolygon(allCoords)
+		});
+	},
+
+	featuresToMultiPolygonUnion: (features) => {
+		if (!features || features.length === 0) return null;
+
+		const reader = new jsts.io.OL3Parser();
+		reader.inject(
+			ol.geom.Point, ol.geom.LineString, ol.geom.LinearRing,
+			ol.geom.Polygon, ol.geom.MultiPoint,
+			ol.geom.MultiLineString, ol.geom.MultiPolygon
+		);
+
+		let unionGeom = null;
+
+		features.forEach(feature => {
+			const geom = feature.getGeometry();
+			if (!geom) return;
+
+			const jstsGeom = reader.read(geom);
+
+			if (!unionGeom) {
+				unionGeom = jstsGeom;
+			} else {
+				unionGeom = unionGeom.union(jstsGeom);  // dissolve real
+			}
+		});
+
+		if (!unionGeom) return null;
+
+		// Converter JSTS → OL
+		const writer = new jsts.io.OL3Parser();
+		writer.inject(
+			ol.geom.Point, ol.geom.LineString, ol.geom.LinearRing,
+			ol.geom.Polygon, ol.geom.MultiPoint,
+			ol.geom.MultiLineString, ol.geom.MultiPolygon
+		);
+
+		const finalGeom = writer.write(unionGeom);
+
+		return new ol.Feature({
+			geometry: finalGeom
+		});
 	}
 }

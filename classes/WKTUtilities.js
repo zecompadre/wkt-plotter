@@ -20,7 +20,7 @@ class WKTUtilities {
 	}
 
 	load() {
-		const persistent = window.settingsManager?.getSettingById('wkt-presistent') === true;
+		const persistent = window.settingsManager?.getSettings?.()['wkt-presistent'] === true;
 
 		if (persistent) {
 			try {
@@ -39,7 +39,8 @@ class WKTUtilities {
 	}
 
 	save() {
-		const persistent = window.settingsManager?.getSettingById('wkt-presistent') === true;
+		const persistent = window.settingsManager?.getSettings?.()['wkt-presistent'] === true;
+
 		if (persistent) {
 			localStorage.setItem(lfkey, JSON.stringify(this.wkts));
 		}
