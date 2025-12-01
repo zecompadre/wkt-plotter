@@ -85,66 +85,94 @@ textarea {
 	outline: 0;
 }
 
+/* ========================================= */
+/* WKT ACTIONS – ESCONDE TEXTO SE NÃO COUBER (SÓ ÍCONE) */
+/* Mantém exatamente o teu estilo original */
+/* ========================================= */
 .wkt-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 5px;
 	justify-content: center;
 	align-items: center;
-	margin: 0;
-	padding: 0;
+	gap: 5px;
 }
 
 .wkt-actions button {
 	flex: 1;
-	min-width: 115px;
-	max-width: 165px;
-	padding: 5px;
+	padding: 8px 6px;
 	border: none;
 	border-radius: 5px;
-	font-size: 0.88em !important;
-	font-weight: 400 !important;
+	font-size: 0.86em !important;
+	font-weight: 500 !important;
 	cursor: pointer;
 	transition: all 0.28s ease;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	gap: 5px;
 	letter-spacing: 0.6px;
-	white-space: nowrap;
+	line-height: 1.3;
+	position: relative;
 	overflow: hidden;
-	text-overflow: ellipsis;
-	line-height: 1.2;
 }
 
-/* Ícones e contador */
+/* Ícone – sempre visível */
 .wkt-actions button i {
 	font-size: 1.15em !important;
+	flex-shrink: 0;
+}
+
+/* Todo o texto dentro do botão (span, contador, etc.) */
+.wkt-actions button span,
+#selected-count {
+	flex-shrink: 1;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	transition: opacity 0.25s ease, width 0.25s ease, margin 0.25s ease;
+	opacity: 1;
+}
+
+/* Quando o espaço for apertado → esconde todo o texto */
+@media (max-width: 480px) {
+	.wkt-actions button {
+		min-width: 70px;
+		padding: 10px 8px;
+		gap: 4px;
+	}
+
+	.wkt-actions button span,
+	#selected-count {
+		width: 0 !important;
+		opacity: 0 !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		overflow: hidden !important;
+	}
 }
 
 /* IMPORTAR */
 #import-wkt-btn {
 	background: #4299e1;
 	color: white;
-	box-shadow: 0 4px 14px rgba(66, 153, 225, 0.35);
 }
 
 #import-wkt-btn:hover {
 	background: #3182ce;
-	transform: translateY(-2px);
-	box-shadow: 0 10px 22px rgba(66, 153, 225, 0.45);
 }
 
 /* DESSELECIONAR TUDO */
 #clear-selection-btn {
 	background: #6c757d;
 	color: white;
-	box-shadow: 0 4px 14px rgba(108, 117, 125, 0.35);
 }
 
 #clear-selection-btn:hover {
 	background: #5a6268;
-	transform: translateY(-2px);
-	box-shadow: 0 10px 22px rgba(108, 117, 125, 0.45);
+}
+
+#clear-selection-btn.hidden {
+	display: none !important;
 }
 
 /* COPIAR SELECIONADOS */
@@ -153,7 +181,6 @@ textarea {
 	color: white;
 	opacity: 0.65;
 	cursor: not-allowed;
-	box-shadow: 0 4px 14px rgba(72, 187, 120, 0.35);
 }
 
 #copy-selected-multipolygon:not(:disabled) {
@@ -164,25 +191,19 @@ textarea {
 
 #copy-selected-multipolygon:not(:disabled):hover {
 	background: #2d8b57;
-	transform: translateY(-2px);
-	box-shadow: 0 10px 22px rgba(72, 187, 120, 0.5);
 }
 
+/* Contador – estilo mantido */
 #selected-count {
 	background: rgba(255, 255, 255, 0.3);
 	color: white;
-	padding: 4px 9px;
+	padding: 3px 8px;
 	border-radius: 20px;
-	font-size: 0.85em;
+	font-size: 0.82em;
 	font-weight: 900;
-	min-width: 30px;
+	min-width: 28px;
 	text-align: center;
 	backdrop-filter: blur(4px);
-}
-
-/* Esconde botão de limpar quando não há seleção */
-#clear-selection-btn.hidden {
-	display: none !important;
 }
 
 #map {
@@ -730,28 +751,6 @@ textarea {
 
 .tabs {
 	font-family: Arial, sans-serif;
-}
-
-.wkt-actions {
-	align-items: stretch;
-	display: flex;
-	gap: 12px;
-	justify-content: center;
-	margin-top: 16px;
-}
-
-.wkt-actions button {
-	align-items: center;
-	display: flex;
-	flex: 1;
-	font-size: 0.95em;
-	gap: 8px;
-	justify-content: center;
-	min-width: 0;
-	overflow: hidden;
-	padding: 10px 5px;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
 .wkt-copy-toast {

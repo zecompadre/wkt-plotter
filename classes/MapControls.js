@@ -68,27 +68,54 @@ class MapControls {
 	}
 
 	_createSelectControl() {
-		const selectInteraction = new ol.interaction.Select({
-			hitTolerance: 5,
-			multi: true,
-			toggleCondition: ol.events.condition.always,
-			style: utilities.genericStyleFunction(colors.edit)
-		});
+		// Função que cria ou atualiza a interação com base na configuração atual
+		const updateSelectInteraction = () => {
+			const multiSelect = window.settingsManager?.getSettingById('multi-select') === true;
 
-		const selectToggle = new ol.control.Toggle({
-			html: '<i class="fa-solid fa-arrow-pointer fa-lg"></i>',
-			title: window.translator?.get("select") || "Select",
-			interaction: selectInteraction,
-			bar: this.controls.selectBar,
-			autoActivate: true,
-			active: true
-		});
+			// Se já existe a interação, atualiza apenas a propriedade
+			if (this.interactions.select) {
+				this.interactions.select.set('multi', multiSelect);
+				// Força refresh da interação
+				this.interactions.select.changed();
+				return;
+			}
 
-		this.controls.editBar.addControl(selectToggle);
-		this.controls.selectCtrl = selectToggle;
-		this.interactions.select = selectInteraction;
+			// Cria nova interação (primeira vez)
+			const selectInteraction = new ol.interaction.Select({
+				hitTolerance: 8,
+				multi: multiSelect,  // usa a configuração atual
+				toggleCondition: ol.events.condition.always,
+				style: utilities.genericStyleFunction(colors.edit)
+			});
 
-		selectInteraction.on('select', (e) => this._handleSelect(e));
+			const selectToggle = new ol.control.Toggle({
+				html: '<i class="fa-solid fa-arrow-pointer fa-lg"></i>',
+				title: window.translator?.get("select") || "Select",
+				interaction: selectInteraction,
+				bar: this.controls.selectBar,
+				autoActivate: true,
+				active: true
+			});
+
+			this.controls.editBar.addControl(selectToggle);
+			this.controls.selectCtrl = selectToggle;
+			this.interactions.select = selectInteraction;
+
+			selectInteraction.on('select', (e) => this._handleSelect(e));
+		};
+
+		// Cria/atualiza com a configuração inicial
+		updateSelectInteraction();
+
+		// Ouve mudanças na configuração (se settingsManager suportar)
+		if (window.settingsManager && typeof window.settingsManager.on === 'function') {
+			window.settingsManager.on('settingChanged', (id) => {
+				if (id === 'multi-select') {
+					updateSelectInteraction();
+					console.log('Configuração multi-select alterada → interação atualizada');
+				}
+			});
+		}
 	}
 
 	_createDeleteButton() {
@@ -359,7 +386,7 @@ class MapControls {
 		this.controls.selectBar.setVisible(false);
 
 		this.dispatch('featureDeleted', { feature, id });
-		this.dispatch('selectionChanged'); // ADICIONADO
+		this.dispatch('selectionChanged');
 	}
 
 	centerOnMyLocation() {
@@ -380,7 +407,7 @@ class MapControls {
 
 	clearSelection() {
 		this.interactions.select?.getFeatures().clear();
-		this.dispatch('selectionChanged'); // ADICIONADO
+		this.dispatch('selectionChanged');
 	}
 
 	activateSelect() { this.controls.selectCtrl?.setActive(true); }
