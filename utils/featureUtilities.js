@@ -72,21 +72,6 @@ export const featureUtilities = {
 		map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50] });
 	},
 
-	// featuresToMultiPolygon: () => {
-	// 	const features = vectorLayer.getSource().getFeatures();
-	// 	const polygons = features.filter(f =>
-	// 		['Polygon', 'MultiPolygon'].includes(f.getGeometry().getType())
-	// 	);
-
-	// 	if (polygons.length === 0) return null;
-	// 	if (polygons.length === 1) {
-	// 		return new ol.Feature(new ol.geom.Polygon(polygons[0].getGeometry().getCoordinates()));
-	// 	}
-
-	// 	const coords = polygons.map(f => f.getGeometry().getCoordinates());
-	// 	return new ol.Feature(new ol.geom.MultiPolygon(coords));
-	// },
-
 	addFeatures: async () => {
 		if (vectorLayer) map.removeLayer(vectorLayer);
 		utilities.createVectorLayer();
