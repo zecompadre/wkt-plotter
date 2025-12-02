@@ -72,14 +72,14 @@ export const featureUtilities = {
 		map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50] });
 	},
 
-	addFeatures: async () => {
+	addVectorLayer: async () => {
 		if (vectorLayer) map.removeLayer(vectorLayer);
 		utilities.createVectorLayer();
 		map.addLayer(vectorLayer);
 		//featureUtilities.createFromAllFeatures();
 	},
 
-	addToFeatures: async (id, wkt) => {
+	addFeature: async (id, wkt) => {
 		const textarea = document.querySelector("#wktdefault textarea");
 		const wktString = wkt || textarea.value;
 

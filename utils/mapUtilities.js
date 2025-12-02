@@ -80,8 +80,8 @@ export const mapUtilities = {
 						map.set("wkts", wkts);
 
 						wktUtilities.save();
-						const feature = await featureUtilities.addToFeatures(checksum, wkt);
-						await featureUtilities.addFeatures();
+						const feature = await featureUtilities.addFeature(checksum, wkt);
+						await featureUtilities.addVectorLayer();
 						await this.reviewLayout();
 						featureUtilities.centerOnFeature(feature);
 					}
@@ -92,7 +92,7 @@ export const mapUtilities = {
 
 			wktUtilities.save();
 
-			await featureUtilities.addFeatures();
+			await featureUtilities.addVectorLayer();
 
 			featureUtilities.centerOnVector();
 
@@ -135,7 +135,7 @@ export const mapUtilities = {
 						if (checksum && item.id === checksum) {
 							exists = true;
 						}
-						await featureUtilities.addToFeatures(item.id, item.wkt);
+						await featureUtilities.addFeature(item.id, item.wkt);
 					});
 
 					// Add the new WKT if it doesn't exist
@@ -144,7 +144,7 @@ export const mapUtilities = {
 							id: checksum,
 							wkt
 						});
-						newfeature = await featureUtilities.addToFeatures(checksum, wkt);
+						newfeature = await featureUtilities.addFeature(checksum, wkt);
 					}
 				}
 
@@ -154,7 +154,7 @@ export const mapUtilities = {
 				wktUtilities.save();
 
 				// Add features to the map and review layout
-				await featureUtilities.addFeatures();
+				await featureUtilities.addVectorLayer();
 
 				await self.reviewLayout(!frompaste);
 
