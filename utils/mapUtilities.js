@@ -103,7 +103,7 @@ export const mapUtilities = {
 		}
 	},
 
-	loadWKTs: async function (readcb = false, frompaste = false) {
+	loadWKTs: async function (readcb = false) {
 		const self = this; // Capture the correct context
 		const textarea = document.querySelector("#wktdefault textarea");
 		let newfeature = null;
@@ -156,9 +156,9 @@ export const mapUtilities = {
 				// Add features to the map and review layout
 				await featureUtilities.addVectorLayer();
 
-				await self.reviewLayout(!frompaste);
+				//await self.reviewLayout(true);
 
-				if (frompaste || newfeature) {
+				if (newfeature) {
 					featureUtilities.centerOnFeature(newfeature);
 				}
 				else if (wkts.length > 0) {

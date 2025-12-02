@@ -299,14 +299,14 @@ export const utilities = {
 	},
 
 	// Cola WKT do clipboard
-	paste: async () => {
-		try {
-			const { mapUtilities } = await import('./mapUtilities.js');
-			await mapUtilities.loadWKTs(true, true);
-		} catch (error) {
-			console.error("Error pasting WKT:", error);
-		}
-	},
+	// paste: async () => {
+	// 	try {
+	// 		const { mapUtilities } = await import('./mapUtilities.js');
+	// 		await mapUtilities.loadWKTs(true, true);
+	// 	} catch (error) {
+	// 		console.error("Error pasting WKT:", error);
+	// 	}
+	// },
 
 	showToast: (message, type = 'info', duration = 3000) => {
 		// Remove toasts antigos

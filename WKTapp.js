@@ -44,7 +44,7 @@ import { mapUtilities } from './utils/mapUtilities.js';
 	}
 
 	// 4. Carrega WKTs do clipboard + localStorage
-	await mapUtilities.loadWKTs(true, false);
+	await mapUtilities.loadWKTs(true);
 
 	// 5. IP (opcional)
 	utilities.getIP()
