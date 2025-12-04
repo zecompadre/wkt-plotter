@@ -1,7 +1,7 @@
 import Loading from '../classes/Loading.js';
 import { colors, projections, mapDefaults } from './constants.js';
 import { osmLayer, arcgisLayer } from '../map/layers.js';
-import { format, featureCollection } from '../map/setupMap.js';
+import { MapManager, setupMap } from '../map/setupMap.js';
 
 // Instância única do Loading (usada em toda a app)
 export const loading = new Loading({ dotCount: 4, dotSize: 25 });
@@ -79,15 +79,6 @@ export const utilities = {
 	},
 
 	// Cria a camada vetorial
-	createVectorLayer: () => {
-		// Cria uma camada nova e retorna
-		const layer = new ol.layer.Vector({
-			source: new ol.source.Vector({ features: featureCollection }),
-			style: utilities.genericStyleFunction(colors.normal)
-		});
-		layer.set('displayInLayerSwitcher', false);
-		return layer; // Retorna a camada!
-	},
 
 	// Cria controle de atribuição personalizado
 	createAttributeControl: function () {
@@ -162,13 +153,13 @@ export const utilities = {
 	},
 
 	// Restaura cores padrão do textarea
-	restoreDefaultColors: function () {
-		const textarea = document.querySelector("#wktdefault textarea");
-		if (textarea) {
-			textarea.style.borderColor = "";
-			textarea.style.backgroundColor = "";
-		}
-	},
+	// restoreDefaultColors: function () {
+	// 	const textarea = document.querySelector("#wktdefault textarea");
+	// 	if (textarea) {
+	// 		textarea.style.borderColor = "";
+	// 		textarea.style.backgroundColor = "";
+	// 	}
+	// },
 
 	// Obtém IP público
 	getIP: async function () {
@@ -280,23 +271,23 @@ export const utilities = {
 		});
 	},
 	// Captura screenshot do mapa
-	imageCanvas: function (feature) {
-		const mapEl = document.getElementById("map");
-		const width = mapEl.offsetWidth;
-		const height = mapEl.offsetHeight;
-		loading.show();
-		domtoimage.toPng(mapEl, { width, height })
-			.then(dataUrl => {
-				const img = new Image();
-				img.src = dataUrl;
-				document.body.appendChild(img);
-				loading.hide();
-			})
-			.catch(error => {
-				console.error('oops, something went wrong!', error);
-				loading.hide();
-			});
-	},
+	// imageCanvas: function (feature) {
+	// 	const mapEl = document.getElementById("map");
+	// 	const width = mapEl.offsetWidth;
+	// 	const height = mapEl.offsetHeight;
+	// 	loading.show();
+	// 	domtoimage.toPng(mapEl, { width, height })
+	// 		.then(dataUrl => {
+	// 			const img = new Image();
+	// 			img.src = dataUrl;
+	// 			document.body.appendChild(img);
+	// 			loading.hide();
+	// 		})
+	// 		.catch(error => {
+	// 			console.error('oops, something went wrong!', error);
+	// 			loading.hide();
+	// 		});
+	// },
 
 	// Cola WKT do clipboard
 	// paste: async () => {

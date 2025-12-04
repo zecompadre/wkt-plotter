@@ -1,6 +1,6 @@
 // classes/MapControls.js
 
-import { map, vectorLayer } from '../map/setupMap.js';
+import { MapManager, setupMap } from '../map/setupMap.js';
 import { utilities } from '../utils/utilities.js';
 import { featureUtilities } from '../utils/featureUtilities.js';
 import { mapUtilities } from '../utils/mapUtilities.js';
@@ -48,13 +48,13 @@ class MapControls {
 
 	// === Métodos privados ===
 	_setupBaseInteractions() {
-		map.addInteraction(new ol.interaction.DragPan({ condition: () => true }));
-		map.addInteraction(new ol.interaction.MouseWheelZoom({ condition: () => true }));
+		MapManager.map.addInteraction(new ol.interaction.DragPan({ condition: () => true }));
+		MapManager.map.addInteraction(new ol.interaction.MouseWheelZoom({ condition: () => true }));
 	}
 
 	_createBars() {
 		const mainBar = new ol.control.Bar({ className: 'mainbar' });
-		map.addControl(mainBar);
+		MapManager.map.addControl(mainBar);
 		this.controls.mainBar = mainBar;
 
 		const editBar = new ol.control.Bar({ className: 'editbar', toggleOne: true });
@@ -62,7 +62,7 @@ class MapControls {
 		this.controls.editBar = editBar;
 
 		const selectBar = new ol.control.Bar();
-		map.addControl(selectBar);
+		MapManager.map.addControl(selectBar);
 		this.controls.selectBar = selectBar;
 		selectBar.setVisible(false);
 	}
@@ -138,7 +138,7 @@ class MapControls {
 	_createDrawControl() {
 		const drawInteraction = new ol.interaction.Draw({
 			type: 'Polygon',
-			source: vectorLayer.getSource(),
+			source: MapManager.vectorLayer.getSource(),
 			style: utilities.drawStyleFunction(colors.create)
 		});
 
@@ -168,7 +168,7 @@ class MapControls {
 			condition: () => true  // permite editar sempre que estiver selecionado
 		});
 
-		map.addInteraction(modify);
+		MapManager.map.addInteraction(modify);
 		this.interactions.modify = modify;
 
 		// CORRIGIDO: funciona com array ou Collection
@@ -184,9 +184,9 @@ class MapControls {
 		});
 
 		// Termina edição ao clicar fora (corrigido e seguro)
-		map.on('singleclick', (evt) => {
-			const hit = map.hasFeatureAtPixel(evt.pixel, {
-				layerFilter: (l) => l === vectorLayer,
+		MapManager.map.on('singleclick', (evt) => {
+			const hit = MapManager.map.hasFeatureAtPixel(evt.pixel, {
+				layerFilter: (l) => l === MapManager.vectorLayer,
 				hitTolerance: 10
 			});
 
@@ -206,7 +206,7 @@ class MapControls {
 
 	_createUndoRedo() {
 		const undoRedo = new ol.interaction.UndoRedo();
-		map.addInteraction(undoRedo);
+		MapManager.map.addInteraction(undoRedo);
 		this.interactions.undoRedo = undoRedo;
 
 		this.controls.undoBtn = new ol.control.Button({
@@ -249,7 +249,7 @@ class MapControls {
 
 	_createLayerButton() {
 		const layerBar = new ol.control.Bar({ className: 'layerbar' });
-		map.addControl(layerBar);
+		MapManager.map.addControl(layerBar);
 
 		this.controls.layerChangeBtn = new ol.control.Button({
 			html: utilities.layerChangeBtnHtml(),
@@ -260,7 +260,7 @@ class MapControls {
 	}
 
 	_createSnap() {
-		map.addInteraction(new ol.interaction.Snap({ source: vectorLayer.getSource() }));
+		MapManager.map.addInteraction(new ol.interaction.Snap({ source: MapManager.vectorLayer.getSource() }));
 	}
 
 	_setupKeyboardShortcuts() {
@@ -320,8 +320,8 @@ class MapControls {
 	}
 
 	_setupClickOutsideDeselect() {
-		map.on('singleclick', (evt) => {
-			if (!map.forEachFeatureAtPixel(evt.pixel, () => true, { hitTolerance: 5 })) {
+		MapManager.map.on('singleclick', (evt) => {
+			if (!MapManager.map.forEachFeatureAtPixel(evt.pixel, () => true, { hitTolerance: 5 })) {
 				const sel = this.interactions.select.getFeatures();
 				if (sel.getLength() > 0) {
 					const deselected = sel.getArray().slice();

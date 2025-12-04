@@ -1,6 +1,6 @@
 // js/classes/WKTUtilities.js
 import { lfkey } from '../utils/constants.js';
-import { map } from '../map/setupMap.js';
+import { MapManager, setupMap } from '../map/setupMap.js';
 import { utilities } from '../utils/utilities.js';
 
 class WKTUtilities {
@@ -34,7 +34,7 @@ class WKTUtilities {
 			this.wkts = [];
 		}
 
-		map.set("wkts", this.wkts);
+		MapManager.map.set("wkts", this.wkts);
 		console.log(`Carregados ${this.wkts.length} WKT(s)`);
 	}
 
@@ -44,7 +44,7 @@ class WKTUtilities {
 		if (persistent) {
 			localStorage.setItem(lfkey, JSON.stringify(this.wkts));
 		}
-		map.set("wkts", this.wkts);
+		MapManager.map.set("wkts", this.wkts);
 	}
 
 	remove(id) {

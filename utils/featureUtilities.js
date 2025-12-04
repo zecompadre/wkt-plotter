@@ -1,6 +1,4 @@
-// js/utils/featureUtilities.js
-
-import { map, vectorLayer, format, featureCollection } from '../map/setupMap.js';
+import { MapManager, setupMap } from '../map/setupMap.js';
 import { utilities } from './utilities.js';
 import { projections, colors } from './constants.js';
 import wktListManager from '../classes/WKTListManager.js';
@@ -67,16 +65,26 @@ export const featureUtilities = {
 	},
 
 	centerOnVector: () => {
-		if (vectorLayer.getSource().getFeatures().length === 0) return;
-		const extent = vectorLayer.getSource().getExtent();
-		map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50] });
+		if (MapManager.vectorLayer.getSource().getFeatures().length === 0) return;
+		const extent = MapManager.vectorLayer.getSource().getExtent();
+		MapManager.map.getView().fit(extent, { size: MapManager.map.getSize(), padding: [50, 50, 50, 50] });
 	},
 
 	addVectorLayer: async () => {
-		if (vectorLayer) map.removeLayer(vectorLayer);
-		utilities.createVectorLayer();
-		map.addLayer(vectorLayer);
+		if (MapManager.vectorLayer) MapManager.map.removeLayer(MapManager.vectorLayer);
+		MapManager.vectorLayer = featureUtilities.createVectorLayer();
+		MapManager.map.addLayer(MapManager.vectorLayer);
 		//featureUtilities.createFromAllFeatures();
+	},
+
+	createVectorLayer: () => {
+		// Cria uma camada nova e retorna
+		const layer = new ol.layer.Vector({
+			source: new ol.source.Vector({ features: MapManager.featureCollection }),
+			style: utilities.genericStyleFunction(colors.normal)
+		});
+		layer.set('displayInLayerSwitcher', false);
+		return layer; // Retorna a camada!
 	},
 
 	addFeature: async (id, wkt) => {

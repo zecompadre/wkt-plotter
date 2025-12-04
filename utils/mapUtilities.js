@@ -1,6 +1,6 @@
 // js/utils/mapUtilities.js
 
-import { map, vectorLayer, featureCollection, defaultCenter } from '../map/setupMap.js';
+import { MapManager, setupMap } from '../map/setupMap.js';
 import { featureUtilities } from './featureUtilities.js';
 import { utilities } from './utilities.js';
 import wktUtilities from '../classes/WKTUtilities.js';
@@ -36,18 +36,18 @@ export const mapUtilities = {
 	},
 
 	center: async function () {
-		if (featureCollection.getLength() > 0) {
+		if (MapManager.featureCollection.getLength() > 0) {
 			const extent = ol.extent.createEmpty();
-			featureCollection.forEach(f => ol.extent.extend(extent, f.getGeometry().getExtent()));
-			map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50] });
+			MapManager.featureCollection.forEach(f => ol.extent.extend(extent, f.getGeometry().getExtent()));
+			MapManager.map.getView().fit(extent, { size: MapManager.map.getSize(), padding: [50, 50, 50, 50] });
 		} else {
-			map.getView().setCenter(defaultCenter);
-			map.getView().setZoom(16);
+			MapManager.map.getView().setCenter(defaultCenter);
+			MapManager.map.getView().setZoom(16);
 		}
 	},
 
 	getFeatureCount: function () {
-		const vl = map.getLayers().getArray().find(l => l instanceof ol.layer.Vector && l !== vectorLayer);
+		const vl = MapManager.map.getLayers().getArray().find(l => l instanceof ol.layer.Vector && l !== MapManager.vectorLayer);
 		return vl ? vl.getSource().getFeatures().length : 0;
 	},
 
@@ -149,7 +149,7 @@ export const mapUtilities = {
 				}
 
 				// Save the updated WKT list
-				map.set("wkts", wkts);
+				MapManager.map.set("wkts", wkts);
 
 				wktUtilities.save();
 

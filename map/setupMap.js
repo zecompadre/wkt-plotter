@@ -5,75 +5,95 @@ import { mapDefaults, projections } from '../utils/constants.js';
 import { osmLayer, arcgisLayer } from './layers.js';
 import mapControls from '../classes/MapControls.js';
 import { initWKTListManager } from '../classes/WKTListManager.js';
+import { featureUtilities } from '../utils/featureUtilities.js';
 
-export let map;
-export let vectorLayer;
-export let format;
-export let defaultCenter;
-export let featureCollection;
-export let textarea;
-export let wktcontainer;
-export let attributionControl;
+// =============================================
+// Central mutable state object (this is the fix!)
+// =============================================
+export const MapManager = {
+	map: null,
+	vectorLayer: null,
+	format: null,
+	defaultCenter: null,
+	featureCollection: null,
+	textarea: null,
+	wktcontainer: null,
+	attributionControl: null,
+	tooltip: null,
 
-// Cache de elementos DOM
-textarea = document.querySelector("#wktdefault textarea");
-wktcontainer = document.querySelector("#wkyContainer");
+	// Helper to replace vector layer (common need)
+	setVectorLayer(layer) {
+		this.vectorLayer?.getSource()?.clear();
+		this.vectorLayer = layer;
+		if (this.map) {
+			const layers = this.map.getLayers().getArray();
+			const oldIndex = layers.indexOf(this.vectorLayer);
+			if (oldIndex !== -1) {
+				layers[oldIndex] = layer;
+			}
+		}
+	},
 
-// Formato WKT e coleção de features
-format = new ol.format.WKT();
-featureCollection = new ol.Collection();
+	// Optional: add more helpers
+	addOverlay(overlay) {
+		this.map?.addOverlay(overlay);
+	}
+};
 
-// Centro padrão (de geodésico → mercator)
-defaultCenter = utilities.transformCoordinates(
+// Cache DOM elements
+MapManager.textarea = document.querySelector("#wktdefault textarea");
+MapManager.wktcontainer = document.querySelector("#wkyContainer");
+
+// WKT format & collection
+MapManager.format = new ol.format.WKT();
+MapManager.featureCollection = new ol.Collection();
+
+// Default center
+MapManager.defaultCenter = utilities.transformCoordinates(
 	[mapDefaults.longitude, mapDefaults.latitude],
 	projections.geodetic,
 	projections.mercator
 );
 
-// Cria camada vetorial
-vectorLayer = utilities.createVectorLayer();
+// Create vector layer
+MapManager.vectorLayer = featureUtilities.createVectorLayer();
 
-// Cria controle de atribuição customizado
-attributionControl = utilities.createAttributeControl();
+// Custom attribution
+MapManager.attributionControl = utilities.createAttributeControl();
 
 export function setupMap() {
-	map = new ol.Map({
+	MapManager.map = new ol.Map({
 		target: 'map',
-		layers: [osmLayer, arcgisLayer, vectorLayer],
-		controls: ol.control.defaults.defaults({ attribution: false }).extend([attributionControl]),
+		layers: [osmLayer, arcgisLayer, MapManager.vectorLayer],
+		controls: ol.control.defaults.defaults({ attribution: false }).extend([MapManager.attributionControl]),
 		view: new ol.View({
-			center: defaultCenter,
+			center: MapManager.defaultCenter,
 			zoom: mapDefaults.zoom,
 			maxZoom: 19
 		})
 	});
 
-	// Tooltip de área
-	const tooltip = new ol.Overlay({
-		element: document.getElementById('tooltip') || (() => {
-			const el = document.createElement('div');
-			el.id = 'tooltip';
-			el.className = 'ol-tooltip hidden';
-			document.body.appendChild(el);
-			return el;
-		})(),
+	// Tooltip setup
+	const tooltipElement = document.getElementById('tooltip') || createTooltipElement();
+	MapManager.tooltip = new ol.Overlay({
+		element: tooltipElement,
 		offset: [0, -15],
 		positioning: 'bottom-center',
 		stopEvent: false,
 		insertFirst: false,
 	});
-	map.addOverlay(tooltip);
+	MapManager.map.addOverlay(MapManager.tooltip);
 
-	map.on('pointermove', function (event) {
+	MapManager.map.on('pointermove', function (event) {
 		if (!window.settingsManager?.getSetting('show-area')) return;
 
-		const feature = map.forEachFeatureAtPixel(event.pixel, f => f);
-		const tooltipEl = tooltip.getElement();
+		const feature = MapManager.map.forEachFeatureAtPixel(event.pixel, f => f);
+		const tooltipEl = MapManager.tooltip.getElement();
 
-		if (feature) {
+		if (feature && feature.getGeometry()) {
 			const area = formatArea(feature);
 			if (area) {
-				tooltip.setPosition(event.coordinate);
+				MapManager.tooltip.setPosition(event.coordinate);
 				tooltipEl.innerHTML = area;
 				tooltipEl.className = 'ol-tooltip ol-tooltip-static';
 				return;
@@ -84,5 +104,12 @@ export function setupMap() {
 
 	mapControls.initialize();
 	initWKTListManager();
+}
 
+function createTooltipElement() {
+	const el = document.createElement('div');
+	el.id = 'tooltip';
+	el.className = 'ol-tooltip hidden';
+	document.body.appendChild(el);
+	return el;
 }

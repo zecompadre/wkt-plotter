@@ -1,6 +1,6 @@
 // classes/WKTListManager.js
 
-import { vectorLayer } from '../map/setupMap.js';
+import { MapManager, setupMap } from '../map/setupMap.js';
 import { utilities } from '../utils/utilities.js';
 import { colors } from '../utils/constants.js';
 import { featureUtilities } from '../utils/featureUtilities.js';
@@ -91,7 +91,7 @@ class WKTListManager {
 	}
 
 	updateCopyButton() {
-		const totalFeatures = vectorLayer.getSource().getFeatures().length;     // total no mapa
+		const totalFeatures = MapManager.vectorLayer.getSource().getFeatures().length;     // total no mapa
 		const selectedCount = mapControls.getSelectedFeatures().length;         // selecionadas
 
 		console.log(`Atualizando botão copiar: ${selectedCount} selecionadas de ${totalFeatures} totais`);
