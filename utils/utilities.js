@@ -64,7 +64,7 @@ export const utilities = {
 		if (!feature) return "";
 		const geom = feature.getGeometry().clone();
 		const transformedGeom = geom.transform(projections.mercator, projections.geodetic);
-		return format.writeGeometry(transformedGeom);
+		return MapManager.format.writeGeometry(transformedGeom);
 	},
 
 	// Gera checksum SHA-256

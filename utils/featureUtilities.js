@@ -60,8 +60,8 @@ export const featureUtilities = {
 		const geometry = feature.getGeometry();
 		const extent = geometry.getExtent();
 		const center = ol.extent.getCenter(extent);
-		map.getView().setCenter(center);
-		map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50] });
+		MapManager.map.getView().setCenter(center);
+		MapManager.map.getView().fit(extent, { size: MapManager.map.getSize(), padding: [50, 50, 50, 50] });
 	},
 
 	centerOnVector: () => {
@@ -97,7 +97,7 @@ export const featureUtilities = {
 
 		let newFeature;
 		try {
-			newFeature = format.readFeature(wktString);
+			newFeature = MapManager.format.readFeature(wktString);
 		} catch (err) {
 			console.error('Error reading WKT:', err);
 			return null;
@@ -109,7 +109,7 @@ export const featureUtilities = {
 
 		newFeature.getGeometry().transform(projections.geodetic, projections.mercator);
 		newFeature.setId(id);
-		featureCollection.push(newFeature);
+		MapManager.featureCollection.push(newFeature);
 
 		textarea.value = "";
 		textarea.style.borderColor = "";

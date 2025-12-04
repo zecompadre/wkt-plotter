@@ -20,8 +20,8 @@ export const mapUtilities = {
 
 	reviewLayout: async function (center = true) {
 		const count = mapUtilities.getFeatureCount();
-		const selectBar = map.getControls().getArray().find(c => c.get('className')?.includes('selectbar'));
-		const centerBtn = map.getControls().getArray().find(c => c.get('name') === 'centerObjects');
+		const selectBar = MapManager.map.getControls().getArray().find(c => c.get('className')?.includes('selectbar'));
+		const centerBtn = MapManager.map.getControls().getArray().find(c => c.get('name') === 'centerObjects');
 
 		if (count > 0) {
 			//featureUtilities.createFromAllFeatures();
@@ -32,7 +32,7 @@ export const mapUtilities = {
 		}
 
 		if (center && count > 0) await mapUtilities.center();
-		map.updateSize();
+		MapManager.map.updateSize();
 	},
 
 	center: async function () {
@@ -77,7 +77,7 @@ export const mapUtilities = {
 					if (!exists) {
 						wkts.push({ id: checksum, wkt });
 
-						map.set("wkts", wkts);
+						MapManager.map.set("wkts", wkts);
 
 						wktUtilities.save();
 						const feature = await featureUtilities.addFeature(checksum, wkt);
@@ -88,7 +88,7 @@ export const mapUtilities = {
 				}
 			})();
 
-			map.set("wkts", wkts);
+			MapManager.map.set("wkts", wkts);
 
 			wktUtilities.save();
 

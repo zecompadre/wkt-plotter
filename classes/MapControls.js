@@ -406,7 +406,7 @@ class MapControls {
 
 		await wktUtilities.remove(id);
 		wktListManager.remove(id);
-		vectorLayer.getSource().removeFeature(feature);
+		MapManager.vectorLayer.getSource().removeFeature(feature);
 		features.clear();
 		mapUtilities.reviewLayout(false);
 		this.controls.selectBar.setVisible(false);
@@ -419,8 +419,8 @@ class MapControls {
 		utilities.getLocation()
 			.then(loc => {
 				const coord = ol.proj.fromLonLat([+loc.longitude, +loc.latitude]);
-				map.getView().setCenter(coord);
-				map.getView().setZoom(18);
+				MapManager.map.getView().setCenter(coord);
+				MapManager.map.getView().setZoom(18);
 				this.dispatch('userLocationCentered', { coord });
 			})
 			.catch(console.error);

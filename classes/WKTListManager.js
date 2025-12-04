@@ -187,7 +187,7 @@ class WKTListManager {
 		// Apagar
 		li.querySelector('.delete-btn').addEventListener('click', e => {
 			e.stopPropagation();
-			const f = vectorLayer.getSource().getFeatureById(id);
+			const f = MapManager.vectorLayer.getSource().getFeatureById(id);
 			if (f) {
 				const select = mapControls.interactions.select;
 				select.getFeatures().clear();
