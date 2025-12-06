@@ -1,7 +1,7 @@
 // classes/MapControls.js
 
 import { MapManager, setupMap } from '../map/setupMap.js';
-import { utilities } from '../utils/utilities.js';
+import { loading, utilities } from '../utils/utilities.js';
 import { featureUtilities } from '../utils/featureUtilities.js';
 import { mapUtilities } from '../utils/mapUtilities.js';
 import wktUtilities from './WKTUtilities.js';
@@ -129,7 +129,7 @@ class MapControls {
 				const features = this.interactions.select.getFeatures();
 				const textarea = document.querySelector("#wktdefault textarea");
 				textarea.value = features.getLength() === 1
-					? utilities.getFeatureWKT(features.item(0))
+					? featureUtilities.getFeatureWKT(features.item(0))
 					: "Select only one feature";
 			}
 		});
@@ -139,7 +139,7 @@ class MapControls {
 		const drawInteraction = new ol.interaction.Draw({
 			type: 'Polygon',
 			source: MapManager.vectorLayer.getSource(),
-			style: utilities.drawStyleFunction(colors.create)
+			style: featureUtilities.drawStyleFunction(colors.create)
 		});
 
 		const drawToggle = new ol.control.Toggle({
@@ -298,15 +298,15 @@ class MapControls {
 
 			try {
 				importBtn.disabled = true;
-				importBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> A importar...';
+				loading.show();
 
 				await mapUtilities.loadWKT(text);
 
 				utilities.showToast('WKT importado com sucesso!');
 				setTimeout(() => {
 					importBtn.disabled = false;
-					importBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Importar';
-				}, 1500);
+					loading.hide();
+				}, 500);
 
 				textarea.value = "";
 
@@ -314,7 +314,7 @@ class MapControls {
 				console.error("Erro ao importar WKT:", error);
 				utilities.showToast?.('Erro ao importar WKT. Verifica o formato.', 'error');
 				importBtn.disabled = false;
-				importBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Importar';
+				loading.hide();
 			}
 		});
 	}
@@ -360,9 +360,9 @@ class MapControls {
 				multi = featureUtilities.featuresToMultiPolygonUnion(selected);
 			else
 				multi = featureUtilities.featuresToMultiPolygonJoin(selected);
-			textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
+			textarea.value = multi ? featureUtilities.getFeatureWKT(multi) : "";
 		} else if (selected.length === 1) {
-			textarea.value = utilities.getFeatureWKT(selected[0]);
+			textarea.value = featureUtilities.getFeatureWKT(selected[0]);
 		} else {
 			textarea.value = "";
 		}
@@ -380,7 +380,7 @@ class MapControls {
 				const img = li.querySelector('img');
 				if (img) {
 					img.style.opacity = '0.5';
-					wktListManager.wktToPngBlobUrl(utilities.getFeatureWKT(f))
+					wktListManager.wktToPngBlobUrl(featureUtilities.getFeatureWKT(f))
 						.then(url => { if (url) { img.src = url; img.style.opacity = '1'; } });
 				}
 			}

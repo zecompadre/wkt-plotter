@@ -56,11 +56,25 @@ export const mapUtilities = {
 		try {
 			const wkts = wktUtilities.get() || [];
 
-			let arrWKT = wkt.split("\n");
-			(async () => {
-				for (const wkt of arrWKT) {
+			const arrWKT = (wkt || "")
+				.split(/\r?\n/)                                  // suporta Windows/Mac/Linux
+				.map(line => line.trim())
+				.filter(line => line.length > 0)                 // remove linhas vazias
+				.map(raw => ({
+					original: raw,
+					normalized: utilities.normalizeWKT(raw)     // sua função de normalização
+				}))
+				.filter(item => item.normalized.length > 0)      // ignora WKTs inválidos após normalização
+				.filter((item, index, self) =>
+					index === self.findIndex(i => i.normalized === item.normalized)
+				)                                                // remove duplicatas dentro do mesmo paste
+				.map(item => item.normalized);                     // retorna só o WKT original (para manter aparência natural)
 
-					//console.log('Processing WKT:', wkt);
+			(async () => {
+				for (let wkt of arrWKT) {
+
+					console.log('Processing WKT:', wkt);
+
 					const checksum = await utilities.generateChecksum(wkt);
 					//console.log('Generated checksum:', checksum);
 
@@ -78,6 +92,8 @@ export const mapUtilities = {
 						wkts.push({ id: checksum, wkt });
 
 						MapManager.map.set("wkts", wkts);
+
+						console.log('Processing WKT:', wkt);
 
 						wktUtilities.save();
 						const feature = await featureUtilities.addFeature(checksum, wkt);
@@ -123,9 +139,25 @@ export const mapUtilities = {
 
 			// Ensure wkts is an array
 
-			let arrWKT = wkt.split("\n");
+			const arrWKT = (wkt || "")
+				.split(/\r?\n/)                                  // suporta Windows/Mac/Linux
+				.map(line => line.trim())
+				.filter(line => line.length > 0)                 // remove linhas vazias
+				.map(raw => ({
+					original: raw,
+					normalized: utilities.normalizeWKT(raw)     // sua função de normalização
+				}))
+				.filter(item => item.normalized.length > 0)      // ignora WKTs inválidos após normalização
+				.filter((item, index, self) =>
+					index === self.findIndex(i => i.normalized === item.normalized)
+				)                                                // remove duplicatas dentro do mesmo paste
+				.map(item => item.normalized);                     // retorna só o WKT original (para manter aparência natural)
+
 			(async () => {
-				for (const wkt of arrWKT) {
+				for (let wkt of arrWKT) {
+
+					console.log('Processing WKT:', wkt);
+
 					// Generate checksum for the WKT string
 					const checksum = await utilities.generateChecksum(wkt);
 
@@ -135,6 +167,8 @@ export const mapUtilities = {
 						if (checksum && item.id === checksum) {
 							exists = true;
 						}
+
+						console.log('Processing WKT:', item.wkt);
 						await featureUtilities.addFeature(item.id, item.wkt);
 					});
 
@@ -144,6 +178,7 @@ export const mapUtilities = {
 							id: checksum,
 							wkt
 						});
+						console.log('Processing WKT:', wkt);
 						newfeature = await featureUtilities.addFeature(checksum, wkt);
 					}
 				}

@@ -57,7 +57,7 @@ class WKTUtilities {
 		if (!feature) return;
 
 		try {
-			const wkt = utilities.getFeatureWKT(feature);
+			const wkt = featureUtilities.getFeatureWKT(feature);
 			if (!wkt) throw new Error("WKT inválido");
 
 			const checksum = await utilities.generateChecksum(wkt);

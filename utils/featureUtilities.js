@@ -1,4 +1,4 @@
-import { MapManager, setupMap } from '../map/setupMap.js';
+import { MapManager } from '../map/setupMap.js';
 import { utilities } from './utilities.js';
 import { projections, colors } from './constants.js';
 import wktListManager from '../classes/WKTListManager.js';
@@ -89,7 +89,7 @@ export const featureUtilities = {
 
 	addFeature: async (id, wkt) => {
 		const textarea = document.querySelector("#wktdefault textarea");
-		const wktString = wkt || textarea.value;
+		const wktString = wkt;
 
 		if (!wktString.trim()) {
 			return null;
@@ -182,5 +182,17 @@ export const featureUtilities = {
 		return new ol.Feature({
 			geometry: finalGeom
 		});
-	}
+	},
+
+	// Obtém WKT de uma feature
+	getFeatureWKT: (feature) => {
+		if (!feature) return "";
+		const geom = feature.getGeometry().clone();
+		const transformedGeom = geom.transform(projections.mercator, projections.geodetic);
+
+		let wkt = MapManager.format.writeGeometry(transformedGeom);
+		wkt = utilities.normalizeWKT(wkt);
+		return wkt;
+	},
+
 }

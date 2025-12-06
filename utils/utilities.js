@@ -59,17 +59,10 @@ export const utilities = {
 		return rgba;
 	},
 
-	// Obtém WKT de uma feature
-	getFeatureWKT: (feature) => {
-		if (!feature) return "";
-		const geom = feature.getGeometry().clone();
-		const transformedGeom = geom.transform(projections.mercator, projections.geodetic);
-		return MapManager.format.writeGeometry(transformedGeom);
-	},
-
 	// Gera checksum SHA-256
 	generateChecksum: async (input) => {
 		if (!input) return input;
+
 		const encoder = new TextEncoder();
 		const data = encoder.encode(input);
 		const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -78,6 +71,19 @@ export const utilities = {
 			.join('');
 	},
 
+	normalizeWKT(wkt) {
+		if (!wkt || typeof wkt !== 'string') return '';
+
+		let trimmed = wkt.trim()
+			.replace(/\s+/g, ' ')          // remove quebras de linha e espaços extras
+			.replace(/,\s*/g, ',')         // remove espaços após vírgulas
+			.replace(/\(\s*/g, '(')        // remove espaços após (
+			.replace(/\s*\)/g, ')')        // remove espaços antes )
+			.toUpperCase()                 // WKT é case-insensitive para tipo
+			.replace(/(\d+\.\d{6})\d*/g, '$1'); // Opcional: arredondar coordenadas para 6 casas (evita diferenças mínimas)
+
+		return trimmed;
+	},
 	// Cria a camada vetorial
 
 	// Cria controle de atribuição personalizado

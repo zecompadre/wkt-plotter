@@ -62,7 +62,7 @@ class WKTListManager {
 					return;
 				}
 
-				const wkt = utilities.getFeatureWKT(multi);
+				const wkt = featureUtilities.getFeatureWKT(multi);
 				navigator.clipboard.writeText(wkt).then(() => {
 					utilities.showToast?.('MultiPolygon copiado com sucesso!');
 				});
@@ -178,7 +178,7 @@ class WKTListManager {
 		// Copiar individual
 		li.querySelector('.copy-btn').addEventListener('click', e => {
 			e.stopPropagation();
-			const wkt = utilities.getFeatureWKT(feature);
+			const wkt = featureUtilities.getFeatureWKT(feature);
 			this.copyToClipboard(wkt).then(() => {
 				utilities.showToast?.('WKT copiado!', 'success');
 			});
@@ -236,14 +236,14 @@ class WKTListManager {
 		// Atualiza textarea
 		const selected = select.getFeatures().getArray();
 		if (selected.length === 1) {
-			textarea.value = utilities.getFeatureWKT(selected[0]);
+			textarea.value = featureUtilities.getFeatureWKT(selected[0]);
 		} else if (selected.length > 1 && multiSelect) {
 			let multi = null;
 			if (multiSelectUnion)
 				multi = featureUtilities.featuresToMultiPolygonUnion(selected);
 			else
 				multi = featureUtilities.featuresToMultiPolygonJoin(selected);
-			textarea.value = multi ? utilities.getFeatureWKT(multi) : "";
+			textarea.value = multi ? featureUtilities.getFeatureWKT(multi) : "";
 		} else {
 			textarea.value = "";
 		}
@@ -304,7 +304,7 @@ class WKTListManager {
 
 	async updateIfChanged(feature) {
 		if (!feature) return false;
-		const currentWKT = utilities.getFeatureWKT(feature);
+		const currentWKT = featureUtilities.getFeatureWKT(feature);
 		const savedWKT = wktUtilities.get()?.find(i => i.id === feature.getId())?.wkt;
 		if (currentWKT === savedWKT) return false;
 
