@@ -139,7 +139,7 @@ class MapControls {
 		const drawInteraction = new ol.interaction.Draw({
 			type: 'Polygon',
 			source: MapManager.vectorLayer.getSource(),
-			style: featureUtilities.drawStyleFunction(colors.create)
+			style: utilities.drawStyleFunction(colors.create)
 		});
 
 		const drawToggle = new ol.control.Toggle({

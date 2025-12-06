@@ -200,7 +200,7 @@ class WKTListManager {
 		this.list.appendChild(li);
 
 		// Preview
-		this.wktToPngBlobUrl(utilities.getFeatureWKT(feature))
+		this.wktToPngBlobUrl(featureUtilities.getFeatureWKT(feature))
 			.then(url => {
 				if (url) {
 					img.src = url;
@@ -293,7 +293,7 @@ class WKTListManager {
 		const img = li.querySelector('img');
 		if (img) {
 			img.style.opacity = '0.5';
-			const url = await this.wktToPngBlobUrl(utilities.getFeatureWKT(feature));
+			const url = await this.wktToPngBlobUrl(featureUtilities.getFeatureWKT(feature));
 			if (url) {
 				img.src = url;
 				img.style.opacity = '1';
