@@ -2,7 +2,7 @@
 export default class SettingsManager {
 	#container;
 	#storageKey;
-	#listeners = new Map(); // event → Set de callbacks
+	#listeners = new Map();
 
 	constructor(containerId, storageKey = 'app_settings', initialCallbacks = []) {
 		this.#container = document.getElementById(containerId);
@@ -19,6 +19,9 @@ export default class SettingsManager {
 
 	// === Eventos públicos ===
 	on(event, callback) {
+
+		console.log(`Registering event: ${this.#listeners.has(event)}, ${event}`, `Callback: ${callback}`);
+
 		if (!this.#listeners.has(event)) {
 			this.#listeners.set(event, new Set());
 		}
@@ -34,9 +37,6 @@ export default class SettingsManager {
 	}
 
 	dispatch(event, data) {
-
-		console.log(`Dispatching event: ${event}`, data);
-
 		const callbacks = this.#listeners.get(event);
 		if (callbacks) {
 			callbacks.forEach(cb => {
@@ -76,6 +76,7 @@ export default class SettingsManager {
 			current[id] = value;
 			localStorage.setItem(this.#storageKey, JSON.stringify(current));
 			this.dispatch('settingChanged', { id, value });
+			this.dispatch(id, { value });
 		} catch (err) {
 			console.error('Erro ao salvar configuração:', err);
 		}

@@ -101,14 +101,6 @@ class MapControls {
 		};
 
 		updateSelectInteraction();
-
-		if (window.settingsManager && typeof window.settingsManager.on === 'function') {
-			window.settingsManager.on('settingChanged', (id) => {
-				if (id === 'multi-select') {
-					updateSelectInteraction();
-				}
-			});
-		}
 	}
 
 	_createDeleteButton() {

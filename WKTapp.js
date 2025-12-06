@@ -1,23 +1,21 @@
 // js/main.js  →  ou  WKTapp.js  (o nome que preferires)
 
 import { setupMap } from './map/setupMap.js';
-import LightUI from './classes/LightUI.js';
 import SettingsManager from './classes/SettingsManager.js';
 import TabSystem from './classes/TabSystem.js';
 import Translation from './classes/Translation.js';
-import wktUtilities from './classes/WKTUtilities.js';
 import { loading, utilities } from './utils/utilities.js';
 import { mapUtilities } from './utils/mapUtilities.js';
+import wktUtilities from './classes/WKTUtilities.js';
 
 (async () => {
 	loading.show();
 
-	// 1. UI básica
-	new LightUI();
 	const tabSystem = new TabSystem(document.querySelector('#controls'));
 
 	const settingsManager = new SettingsManager('settingsContainer', 'wkt-settings');
 	window.settingsManager = settingsManager;
+
 
 	// 2. Tradução e configurações
 	const translator = new Translation();
@@ -44,7 +42,7 @@ import { mapUtilities } from './utils/mapUtilities.js';
 	}
 
 	// 4. Carrega WKTs do clipboard + localStorage
-	await mapUtilities.loadWKTs(true);
+	await mapUtilities.loadOnStart();
 
 	// 5. IP (opcional)
 	utilities.getIP()

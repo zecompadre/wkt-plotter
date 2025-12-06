@@ -24,9 +24,9 @@ class WKTListManager {
 		this._initialized = true;
 
 		this.observeSelection();
-		this.observeSettingsChange(); // NOVO: respeita multi-select
+		this.observeSettingsChange();
 		this.updateCopyButton();
-		this.updateListSelectionStyle(); // Atualiza visual inicial
+		this.updateListSelectionStyle();
 
 		// Botão Desselecionar Tudo
 		if (clearSelectionBtn) {
@@ -70,7 +70,6 @@ class WKTListManager {
 		}
 	}
 
-	// Ouve seleção
 	observeSelection() {
 		mapControls.on('selectionChanged', () => {
 			this.updateCopyButton();
@@ -78,14 +77,13 @@ class WKTListManager {
 		});
 	}
 
-	// NOVO: Ouve mudanças na configuração multi-select
 	observeSettingsChange() {
+
+		console.log('Observing settings changes for WKTListManager');
 		if (window.settingsManager?.on) {
-			window.settingsManager.on('settingChanged', (id) => {
-				if (id === 'multi-select') {
-					this.updateListSelectionStyle();
-					console.log('Configuração multi-select alterada → lista atualizada');
-				}
+			window.settingsManager.on('multi-select', (data) => {
+				this.updateListSelectionStyle();
+				console.log('Configuração multi-select alterada → lista atualizada');
 			});
 		}
 	}

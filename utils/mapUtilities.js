@@ -56,28 +56,33 @@ export const mapUtilities = {
 		try {
 			const wkts = wktUtilities.get() || [];
 
+			(async () => {
+				for (let wkt of wkts) {
+					console.log('Processing Memoria WKT:', wkt);
+					await featureUtilities.addFeature(wkt.id, wkt.wkt);
+				}
+			})();
+
 			const arrWKT = (wkt || "")
-				.split(/\r?\n/)                                  // suporta Windows/Mac/Linux
+				.split(/\r?\n/)
 				.map(line => line.trim())
-				.filter(line => line.length > 0)                 // remove linhas vazias
+				.filter(line => line.length > 0)
 				.map(raw => ({
 					original: raw,
-					normalized: utilities.normalizeWKT(raw)     // sua função de normalização
+					normalized: utilities.normalizeWKT(raw)
 				}))
-				.filter(item => item.normalized.length > 0)      // ignora WKTs inválidos após normalização
+				.filter(item => item.normalized.length > 0)
 				.filter((item, index, self) =>
 					index === self.findIndex(i => i.normalized === item.normalized)
-				)                                                // remove duplicatas dentro do mesmo paste
-				.map(item => item.normalized);                     // retorna só o WKT original (para manter aparência natural)
+				)
+				.map(item => item.normalized);
+
+			console.log('Normalized WKTs to load:', arrWKT);
 
 			(async () => {
 				for (let wkt of arrWKT) {
-
-					console.log('Processing WKT:', wkt);
-
+					console.log('Processing Clipboard WKT:', wkt);
 					const checksum = await utilities.generateChecksum(wkt);
-					//console.log('Generated checksum:', checksum);
-
 					let exists = false;
 					for (const item of wkts) {
 						if (checksum && item.id === checksum) {
@@ -85,9 +90,6 @@ export const mapUtilities = {
 							break;
 						}
 					}
-
-					//console.log('WKT exists:', exists);
-
 					if (!exists) {
 						wkts.push({ id: checksum, wkt });
 
@@ -96,10 +98,7 @@ export const mapUtilities = {
 						console.log('Processing WKT:', wkt);
 
 						wktUtilities.save();
-						const feature = await featureUtilities.addFeature(checksum, wkt);
-						await featureUtilities.addVectorLayer();
-						await this.reviewLayout();
-						featureUtilities.centerOnFeature(feature);
+						await featureUtilities.addFeature(checksum, wkt);
 					}
 				}
 			})();
@@ -112,6 +111,8 @@ export const mapUtilities = {
 
 			featureUtilities.centerOnVector();
 
+			await this.reviewLayout();
+
 			wktListManager.updateCopyButton();
 
 		} catch (error) {
@@ -119,88 +120,28 @@ export const mapUtilities = {
 		}
 	},
 
-	loadWKTs: async function (readcb = false) {
-		const self = this; // Capture the correct context
+	loadOnStart: async function () {
+
 		const textarea = document.querySelector("#wktdefault textarea");
-		let newfeature = null;
+
 		try {
 			// Load existing WKT entries from localStorage
 			wktUtilities.load();
 			let wkts = wktUtilities.get();
 
+			console.log('Existing WKTs:', wkts);
+
 			if (!Array.isArray(wkts)) {
 				wkts = [];
 			}
 
-			// Focus on textarea to prepare for possible WKT paste
 			textarea.focus();
 
-			let wkt = readcb ? await utilities.readClipboard() : "";
+			let wktClipboard = await utilities.readClipboard();
 
-			// Ensure wkts is an array
+			console.log('WKT from clipboard:', wktClipboard);
 
-			const arrWKT = (wkt || "")
-				.split(/\r?\n/)                                  // suporta Windows/Mac/Linux
-				.map(line => line.trim())
-				.filter(line => line.length > 0)                 // remove linhas vazias
-				.map(raw => ({
-					original: raw,
-					normalized: utilities.normalizeWKT(raw)     // sua função de normalização
-				}))
-				.filter(item => item.normalized.length > 0)      // ignora WKTs inválidos após normalização
-				.filter((item, index, self) =>
-					index === self.findIndex(i => i.normalized === item.normalized)
-				)                                                // remove duplicatas dentro do mesmo paste
-				.map(item => item.normalized);                     // retorna só o WKT original (para manter aparência natural)
-
-			(async () => {
-				for (let wkt of arrWKT) {
-
-					console.log('Processing WKT:', wkt);
-
-					// Generate checksum for the WKT string
-					const checksum = await utilities.generateChecksum(wkt);
-
-					// Check for existing WKT entries and add them to features
-					let exists = false;
-					for (const item of wkts) await (async () => {
-						if (checksum && item.id === checksum) {
-							exists = true;
-						}
-
-						console.log('Processing WKT:', item.wkt);
-						await featureUtilities.addFeature(item.id, item.wkt);
-					});
-
-					// Add the new WKT if it doesn't exist
-					if (wkt && !exists) {
-						wkts.push({
-							id: checksum,
-							wkt
-						});
-						console.log('Processing WKT:', wkt);
-						newfeature = await featureUtilities.addFeature(checksum, wkt);
-					}
-				}
-
-				// Save the updated WKT list
-				MapManager.map.set("wkts", wkts);
-
-				wktUtilities.save();
-
-				// Add features to the map and review layout
-				await featureUtilities.addVectorLayer();
-
-				//await self.reviewLayout(true);
-
-				if (newfeature) {
-					featureUtilities.centerOnFeature(newfeature);
-				}
-				else if (wkts.length > 0) {
-					featureUtilities.centerOnVector();
-				}
-				wktListManager.updateCopyButton();
-			})();
+			await this.loadWKT(wktClipboard);
 
 		} catch (error) {
 			console.error('Error loading WKTs:', error);

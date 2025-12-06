@@ -206,95 +206,52 @@ export const utilities = {
 			);
 		});
 	},
+
 	readClipboard: async function () {
-		let rawText = "";
+		let returnVal = "";
 		try {
-			const permission = await navigator.permissions.query({ name: "clipboard-read" });
-			if (permission.state === "granted" || permission.state === "prompt") {
-				rawText = await navigator.clipboard.readText();
+			const textarea = document.createElement("textarea");
+			textarea.style.position = "fixed";
+			textarea.style.left = "-9999px";
+			textarea.style.opacity = "0";
+			textarea.style.pointerEvents = "none";
+			document.body.appendChild(textarea);
+
+			// 2. Foca e seleciona (importante!)
+			textarea.focus();
+			textarea.select();
+			const permission = await navigator.permissions.query({
+				name: "clipboard-read"
+			});
+
+			if (permission.state === "denied") {
+				throw new Error("Not allowed to read clipboard.");
 			}
-		} catch (err) {
-			if (!err.message.includes("not focused")) console.error(err);
+
+			const text = await navigator.clipboard.readText();
+
+			const linhasValidas = text
+				.split("\n")
+				.map(l => l.trim())
+				.filter(l => /^((MULTI)?POLYGON|POINT|LINESTRING|GEOMETRYCOLLECTION)\s*\(/i.test(l));
+
+			if (linhasValidas.length === 0) {
+				utilities.showToast?.("Nenhum polígono encontrado no clipboard", "warning");
+				return "";
+			}
+
+			returnVal = linhasValidas.join("\n");
+
+			utilities.showToast?.(`${linhasValidas.length} polígono(s) colado(s)!`, "success");
+
+			// Limpa clipboard (opcional)
+			await navigator.clipboard.writeText("").catch(() => { });
+
+		} catch (error) {
+			console.error("Error reading clipboard:", error.message);
 		}
-
-		// Fallback se falhar
-		if (!rawText) {
-			rawText = await this.fallbackClipboardRead();
-		}
-
-		if (!rawText) return "";
-
-		// Normaliza quebras de linha
-		const text = rawText.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-
-		// Lista de tipos WKT válidos
-		const validTypes = [
-			'POINT', 'MULTIPOINT',
-			'LINESTRING', 'MULTILINESTRING',
-			'POLYGON', 'MULTIPOLYGON',
-			'GEOMETRYCOLLECTION'
-		];
-
-		const typeRegex = new RegExp(`^\\s*(${validTypes.join('|')})\\s*\\(`, 'i');
-
-		// Filtra apenas linhas que COMECEM com um tipo WKT válido
-		const validLines = text
-			.split('\n')
-			.map(line => line.trim())
-			.filter(line => line && typeRegex.test(line));
-
-		if (validLines.length === 0) {
-			console.log("Nenhum WKT válido encontrado (deve começar com POLYGON, POINT, etc.)");
-			return "";
-		}
-
-		// Junta com quebras de linha
-		const finalWKT = validLines.join("\n");
-		console.log(`Encontrados ${validLines.length} WKT(s) válido(s) no clipboard`);
-
-		// Limpa o clipboard
-		try {
-			await navigator.clipboard.writeText("");
-		} catch (err) { /* ignora */ }
-
-		return finalWKT;
+		return returnVal;
 	},
-
-	// Fallback seguro
-	fallbackClipboardRead: async function () {
-		return new Promise(resolve => {
-			const ta = document.createElement('textarea');
-			ta.style.position = 'fixed';
-			ta.style.opacity = '0';
-			document.body.appendChild(ta);
-			ta.focus();
-			document.execCommand('paste');
-			setTimeout(() => {
-				const text = ta.value || "";
-				document.body.removeChild(ta);
-				resolve(text);
-			}, 50);
-		});
-	},
-	// Captura screenshot do mapa
-	// imageCanvas: function (feature) {
-	// 	const mapEl = document.getElementById("map");
-	// 	const width = mapEl.offsetWidth;
-	// 	const height = mapEl.offsetHeight;
-	// 	loading.show();
-	// 	domtoimage.toPng(mapEl, { width, height })
-	// 		.then(dataUrl => {
-	// 			const img = new Image();
-	// 			img.src = dataUrl;
-	// 			document.body.appendChild(img);
-	// 			loading.hide();
-	// 		})
-	// 		.catch(error => {
-	// 			console.error('oops, something went wrong!', error);
-	// 			loading.hide();
-	// 		});
-	// },
-
 	// Cola WKT do clipboard
 	// paste: async () => {
 	// 	try {

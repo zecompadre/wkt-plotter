@@ -15,13 +15,13 @@ class WKTUtilities {
 			console.log("WKTs removidos do localStorage");
 		}
 		if (fromMap) {
-			map.set("wkts", []);
+			MapManager.map.set("wkts", []);
 		}
 		this.wkts = [];
 	}
 
 	load() {
-		const persistent = window.settingsManager?.getSetting('wkt-presistent') === true;
+		const persistent = window.settingsManager?.getSetting('wkt-persistent') === true;
 
 		if (persistent) {
 			try {
@@ -40,10 +40,10 @@ class WKTUtilities {
 	}
 
 	save() {
-		const persistent = window.settingsManager?.getSetting('wkt-presistent') === true;
-
+		const persistent = window.settingsManager?.getSetting('wkt-persistent') === true;
 		if (persistent) {
 			localStorage.setItem(lfkey, JSON.stringify(this.wkts));
+			console.log("WKTs gravados no localStorage");
 		}
 		MapManager.map.set("wkts", this.wkts);
 	}
