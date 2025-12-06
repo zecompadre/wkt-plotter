@@ -2,6 +2,7 @@
 import { lfkey } from '../utils/constants.js';
 import { MapManager, setupMap } from '../map/setupMap.js';
 import { utilities } from '../utils/utilities.js';
+import { featureUtilities } from '../utils/featureUtilities.js';
 
 class WKTUtilities {
 	constructor() {

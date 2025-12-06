@@ -328,7 +328,7 @@ class MapControls {
 					sel.clear();
 					deselected.forEach(f => wktListManager.updateIfChanged(f));
 					this.dispatch('deselectedOutside', { features: deselected });
-					this.dispatch('selectionChanged'); // ADICIONADO
+					this.dispatch('selectionChanged');
 				}
 			}
 		});
@@ -336,13 +336,20 @@ class MapControls {
 
 	// === Handlers ===
 	async _handleDrawEnd(evt) {
-		await wktUtilities.add(evt.feature);
+
+		const feature = evt.feature;
+
+		await wktUtilities.add(feature);
+
+		wktListManager.add(feature);
+
 		mapUtilities.reviewLayout(false);
-		featureUtilities.centerOnFeature(evt.feature);
+		featureUtilities.centerOnFeature(feature);
+
 		this.controls.selectCtrl.setActive(true);
 		featureUtilities.deselectCurrentFeature(false);
-		this.dispatch('featureCreated', { feature: evt.feature });
-		this.dispatch('selectionChanged'); // ADICIONADO
+		this.dispatch('featureCreated', { feature });
+		this.dispatch('selectionChanged');
 	}
 
 	_handleSelect(evt) {

@@ -5,7 +5,7 @@ import wktListManager from '../classes/WKTListManager.js';
 
 export const featureUtilities = {
 	deselectCurrentFeature: (active) => {
-		const selectInteraction = map.getInteractions().getArray()
+		const selectInteraction = MapManager.map.getInteractions().getArray()
 			.find(i => i instanceof ol.interaction.Select);
 		if (!selectInteraction) return;
 
