@@ -351,6 +351,17 @@ class MapControls {
 		const multiSelect = window.settingsManager?.getSetting('multi-select') === true || false;
 		const multiSelectUnion = window.settingsManager?.getSetting('multi-select-union') === true;
 
+		if (!multiSelect) {
+			if (selected.length > 1) {
+				let lastSelected = evt.selected[0];
+				evt.target.getFeatures().forEach(feature => {
+					if (feature !== lastSelected) {
+						evt.target.getFeatures().remove(feature);
+					}
+				});
+			}
+		}
+
 		this._updateListHighlight(evt.selected, evt.deselected, list);
 
 		if (multiSelect && selected.length > 1) {
