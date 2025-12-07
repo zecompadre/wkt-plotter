@@ -182,6 +182,9 @@ class WKTListManager {
 		li.querySelector('.copy-btn').addEventListener('click', e => {
 			e.stopPropagation();
 			const wkt = featureUtilities.getFeatureWKT(feature);
+
+			console.log('Copying WKT to clipboard:', wkt);
+
 			this.copyToClipboard(wkt).then(() => {
 				utilities.showToast?.('WKT copiado!', 'success');
 			});
@@ -317,15 +320,39 @@ class WKTListManager {
 	}
 
 	async copyToClipboard(text) {
+		// Modern Clipboard API (preferred)
+		if (navigator.clipboard && window.isSecureContext) {
+			try {
+				await navigator.clipboard.writeText(text);
+				return; // Success
+			} catch (err) {
+				console.warn('Clipboard API failed, falling back...', err);
+				// Continue to fallback
+			}
+		}
+
+		// Fallback for older browsers or non-HTTPS contexts
+		const textarea = document.createElement('textarea');
+		textarea.value = text;
+
+		// Avoid scrolling to bottom and keyboard popping up on mobile
+		textarea.style.position = 'fixed';
+		textarea.style.left = '-9999px';
+		textarea.style.top = '-9999px';
+		textarea.style.opacity = '0';
+
+		document.body.appendChild(textarea);
+		textarea.focus();
+		textarea.select();
+
 		try {
-			await navigator.clipboard.writeText(text);
-		} catch {
-			const ta = document.createElement('textarea');
-			ta.value = text;
-			document.body.appendChild(ta);
-			ta.select();
-			document.execCommand('copy');
-			document.body.removeChild(ta);
+			const successful = document.execCommand('copy');
+			if (!successful) throw new Error('execCommand failed');
+		} catch (err) {
+			console.error('Fallback copy failed:', err);
+			throw new Error('Copy to clipboard failed');
+		} finally {
+			document.body.removeChild(textarea);
 		}
 	}
 

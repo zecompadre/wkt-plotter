@@ -39,8 +39,8 @@ export default class Translation {
 			},
 			"en": {
 				"import": "Import",
-				"clear-selection": "Clear Selection",
-				"copy-selected": "Copy Selected",
+				"clear-selection": "Clear",
+				"copy-selected": "Copy",
 				"show-area": "Show Area",
 				"persistent-objects": "Keep Objects",
 				"multi-select": "Multi-Selection (Ctrl+Click)",
