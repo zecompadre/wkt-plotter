@@ -39,7 +39,9 @@
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
 
 	<link href="/main.css" version rel="stylesheet">
-	<!-- <link href="/theme1.css" version rel="stylesheet"> -->
+	<link href="/map.css" version rel="stylesheet">
+	<link href="/controls.css" version rel="stylesheet">
+
 	<script type="module">
 		console.log("Iniciando carregamento do WKTapp.js...");
 		const version = new Date().getTime();
@@ -73,18 +75,18 @@
 </head>
 
 <body>
+	<div id="header" class="flex-none grow-0">
+		<img src="logo.svg?v=202412062200" title="WKT Plotter" width="160" height="50">
+		<button id="settings-btn" class="" type="button" title="Settings"><i class="fa-solid fa-gear fa-lg"></i></button>
+	</div>
 	<div id="wrapper">
 		<div id="map" class="map" style="z-index: 0"></div>
 		<div id="tooltip" class="ol-tooltip hidden"></div>
 		<div id="controls">
-			<div id="header" class="flex-none grow-0">
-				<img src="logo.svg?v=202412062200" title="WKT Plotter" width="160" height="50">
-				<button id="settings-btn" class="" type="button" title="Settings"><i class="fa-solid fa-gear fa-lg"></i></button>
-				<div class="tabs" style="display: none">
-					<div class="tab-buttons">
-						<button data-tab="importContainer" class="active">Import</button>
-						<button data-tab="settingsContainer">Settings</button>
-					</div>
+			<div class="tabs" style="display: none">
+				<div class="tab-buttons">
+					<button data-tab="importContainer" class="active">Import</button>
+					<button data-tab="settingsContainer">Settings</button>
 				</div>
 			</div>
 			<div class="tab-content">

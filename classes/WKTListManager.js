@@ -162,8 +162,9 @@ class WKTListManager {
 		li.innerHTML = `
             <img>
 			<div class="wkt-item-buttons">
+				<button class="zoom-btn" type="button" title="Zoom"><i class="fa-solid fa-magnifying-glass"></i></button>
 				<button class="copy-btn" type="button" title="Copiar"><i class="fa-regular fa-copy"></i></button>
-				<button class="delete-btn" type="button" title="Apagar"><i class="fa fa-times fa-lg"></i></button>
+				<button class="delete-btn" type="button" title="Apagar"><i class="fa fa-trash"></i></button>
 			</div>
             <div>
                 <strong>${geom.getType()}</strong>
@@ -173,7 +174,11 @@ class WKTListManager {
         `;
 		li.querySelector('img').replaceWith(img);
 
-		// Copiar individual
+		li.querySelector('.zoom-btn').addEventListener('click', e => {
+			e.stopPropagation();
+			featureUtilities.centerOnFeature(feature);
+		});
+
 		li.querySelector('.copy-btn').addEventListener('click', e => {
 			e.stopPropagation();
 			const wkt = featureUtilities.getFeatureWKT(feature);

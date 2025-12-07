@@ -1,0 +1,307 @@
+:root {
+	--tab-color: #333;
+	--li-thumb-color: #80bdff;
+	--li-color: #fff;
+	--li-selected-color: #9ca3af;
+	--li-border-color: #495057;
+	--li-action-zoom-color: #17a2b8;
+	--li-action-copy-color: #28a745;
+	--li-action-delete-color: #dc3545;
+}
+
+.tab-pane {
+	-ms-flex: 1;
+	-webkit-box-flex: 1;
+	color: var(--tab-color);
+	display: none;
+	flex: 1;
+	margin-right: 0;
+	max-height: 30%;
+	max-width: 100%;
+	overflow-y: auto;
+	padding-top: 0;
+	padding: 0 10px;
+	position: relative;
+	width: 100%;
+}
+
+.tab-pane.active {
+	display: block;
+}
+
+.tabs {
+	font-family: Arial, sans-serif;
+}
+
+/* ========================================= */
+/* WKT ACTIONS – ESCONDE TEXTO SE NÃO COUBER (SÓ ÍCONE) */
+/* Mantém exatamente o teu estilo original */
+/* ========================================= */
+.actions-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+}
+
+.actions-container button {
+	flex: 1;
+	padding: 8px 6px;
+	border: none;
+	border-radius: 5px;
+	font-size: 0.86em !important;
+	font-weight: 500 !important;
+	cursor: pointer;
+	transition: all 0.28s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	letter-spacing: 0.6px;
+	line-height: 1.3;
+	position: relative;
+	overflow: hidden;
+}
+
+/* Ícone – sempre visível */
+.actions-container button i {
+	font-size: 1.15em !important;
+	flex-shrink: 0;
+}
+
+/* Todo o texto dentro do botão (span, contador, etc.) */
+.actions-container button span,
+#selected-count {
+	flex-shrink: 1;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	transition: opacity 0.25s ease, width 0.25s ease, margin 0.25s ease;
+	opacity: 1;
+}
+
+/* IMPORTAR */
+#import-wkt-btn {
+	background: #4299e1;
+	color: white;
+}
+
+#import-wkt-btn:hover {
+	background: #3182ce;
+}
+
+/* DESSELECIONAR TUDO */
+#clear-selection-btn {
+	background: #6c757d;
+	color: white;
+}
+
+#clear-selection-btn:hover {
+	background: #5a6268;
+}
+
+#clear-selection-btn.hidden {
+	display: none !important;
+}
+
+/* COPIAR SELECIONADOS */
+#copy-selected-btn {
+	background: #48bb78;
+	color: white;
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+
+#copy-selected-btn:not(:disabled) {
+	opacity: 1;
+	cursor: pointer;
+	background: #38a169;
+}
+
+#copy-selected-btn:not(:disabled):hover {
+	background: #2d8b57;
+}
+
+#copy-selected-btn.hidden {
+	display: none !important;
+}
+
+/* Contador – estilo mantido */
+#selected-count {
+	background: rgba(255, 255, 255, 0.3);
+	color: white;
+	padding: 3px 8px;
+	border-radius: 20px;
+	font-size: 0.82em;
+	font-weight: 900;
+	min-width: 28px;
+	text-align: center;
+	backdrop-filter: blur(4px);
+}
+
+#wkt-list {
+	border-radius: 12px;
+	font-family: system-ui, -apple-system, sans-serif;
+	list-style: none;
+	margin: 10px 0;
+	max-height: calc(100vh - 285px);
+	overflow-y: auto;
+	padding: 0;
+	scrollbar-color: #4299e1 #2d3748;
+	scrollbar-width: thin;
+}
+
+#wkt-list .wkt-item-buttons {
+	align-items: center;
+	display: flex;
+	gap: 2px;
+	position: absolute;
+	right: 8px;
+	top: 8px;
+	z-index: 10;
+}
+
+#wkt-list .wkt-item-buttons button {
+	align-items: center;
+	backdrop-filter: blur(4px);
+	background: rgba(0, 0, 0, 0.6);
+	border-radius: 5px;
+	border: none;
+	color: white;
+	cursor: pointer;
+	display: flex;
+	font-size: 12px;
+	height: 26px;
+	justify-content: center;
+	transition: all 0.2s ease;
+	width: 26px;
+}
+
+#wkt-list li .copy-btn {
+	background-color: var(--li-action-copy-color);
+	color: white;
+	opacity: 0.75;
+}
+
+#wkt-list li .copy-btn:hover {
+	opacity: 1;
+}
+
+#wkt-list li .delete-btn {
+	background-color: var(--li-action-delete-color);
+	color: white;
+	opacity: 0.75;
+}
+
+#wkt-list li .delete-btn:hover {
+	opacity: 1;
+}
+
+#wkt-list li .zoom-btn {
+	color: white;
+	background: var(--li-action-zoom-color);
+	opacity: 0.75;
+}
+
+#wkt-list li .zoom-btn:hover {
+	opacity: 1;
+}
+
+#wkt-list img {
+	background: var(--li-color);
+	border-radius: 10px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+	flex-shrink: 0;
+	height: 70px;
+	image-rendering: -webkit-optimize-contrast;
+	object-fit: fill;
+	object-position: center;
+	width: 90px;
+}
+
+#wkt-list li {
+	align-items: center;
+	background: var(--tab-color);
+	border-radius: 12px;
+	border: 1px solid var(--li-border-color);
+	color: var(--li-color);
+	cursor: pointer;
+	display: flex;
+	gap: 12px;
+	margin: 0 0 5px 0;
+	overflow: hidden;
+	padding: 14px;
+	position: relative;
+	transition: all 0.3s ease;
+}
+
+#wkt-list li.selected {
+	background: var(--li-selected-color);
+	border: 1px solid var(--tab-color);
+}
+
+#wkt-list li:hover {
+	background: var(--li-border-color);
+}
+
+#wkt-list small {
+	font-size: 0.8em;
+	opacity: 0.7;
+}
+
+#wkt-list strong {
+	font-size: 1.05em;
+	margin-bottom: 4px;
+}
+
+#wkt-list::-webkit-scrollbar {
+	width: 8px;
+}
+
+#wkt-list::-webkit-scrollbar-thumb {
+	background: var(--li-thumb-color);
+	border-radius: 10px;
+}
+
+#wkt-list::-webkit-scrollbar-thumb:hover {
+	background: #63b3ed;
+}
+
+#wkt-list::-webkit-scrollbar-track {
+	background: #2d3748;
+	border-radius: 10px;
+}
+
+.wkt-input-wrapper {
+	align-items: stretch;
+	display: flex;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+.wkt-list li {
+	position: relative;
+}
+
+.wkt-list li:hover .copy-wkt-btn {
+	opacity: 1;
+}
+
+/* Quando o espaço for apertado → esconde todo o texto */
+@media (max-width: 480px) {
+	.actions-container button {
+		min-width: 70px;
+		padding: 10px 8px;
+		gap: 4px;
+	}
+
+	.actions-container button span,
+	#selected-count {
+		width: 0 !important;
+		opacity: 0 !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		overflow: hidden !important;
+	}
+}

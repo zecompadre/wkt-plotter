@@ -209,25 +209,25 @@ export const utilities = {
 
 	readClipboard: async function () {
 		let returnVal = "";
+
+		// Cria a textarea invisível
+		const textarea = document.createElement("textarea");
+		textarea.style.cssText = `
+        position: fixed;
+        left: -9999px;
+        top: -9999px;
+        opacity: 0;
+        pointer-events: none;
+        z-index: -9999;
+    `;
+		document.body.appendChild(textarea);
+
+		// Força foco (ajuda muito no Chrome/Firefox)
+		textarea.focus();
+		textarea.select();
+
 		try {
-			const textarea = document.createElement("textarea");
-			textarea.style.position = "fixed";
-			textarea.style.left = "-9999px";
-			textarea.style.opacity = "0";
-			textarea.style.pointerEvents = "none";
-			document.body.appendChild(textarea);
-
-			// 2. Foca e seleciona (importante!)
-			textarea.focus();
-			textarea.select();
-			const permission = await navigator.permissions.query({
-				name: "clipboard-read"
-			});
-
-			if (permission.state === "denied") {
-				throw new Error("Not allowed to read clipboard.");
-			}
-
+			// Tenta ler com Clipboard API (melhor quando funciona)
 			const text = await navigator.clipboard.readText();
 
 			const linhasValidas = text
@@ -241,15 +241,41 @@ export const utilities = {
 			}
 
 			returnVal = linhasValidas.join("\n");
-
 			utilities.showToast?.(`${linhasValidas.length} polígono(s) colado(s)!`, "success");
 
 			// Limpa clipboard (opcional)
 			await navigator.clipboard.writeText("").catch(() => { });
 
 		} catch (error) {
-			console.error("Error reading clipboard:", error.message);
+			console.warn("Clipboard API falhou (normal), usando fallback com paste manual");
+
+			// Fallback seguro: força o paste com execCommand (ainda funciona em 2025!)
+			const sucesso = document.execCommand("paste");
+
+			setTimeout(() => {
+				const text = textarea.value || "";
+
+				const linhasValidas = text
+					.split("\n")
+					.map(l => l.trim())
+					.filter(l => /^((MULTI)?POLYGON|POINT|LINESTRING|GEOMETRYCOLLECTION)\s*\(/i.test(l));
+
+				if (linhasValidas.length > 0) {
+					returnVal = linhasValidas.join("\n");
+					utilities.showToast?.(`${linhasValidas.length} polígono(s) colado(s)!`, "success");
+					navigator.clipboard.writeText("").catch(() => { });
+				} else {
+					utilities.showToast?.("Nenhum polígono válido no clipboard", "warning");
+				}
+			}, 50);
+
+		} finally {
+			// GARANTE que a textarea é removida SEMPRE (mesmo com erro!)
+			if (document.body.contains(textarea)) {
+				document.body.removeChild(textarea);
+			}
 		}
+
 		return returnVal;
 	},
 	// Cola WKT do clipboard
