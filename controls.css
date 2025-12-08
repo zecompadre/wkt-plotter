@@ -22,6 +22,10 @@
 	font-family: Arial, sans-serif;
 }
 
+#importContainer form {
+	margin-bottom: 10px;
+}
+
 /* ========================================= */
 /* WKT ACTIONS – ESCONDE TEXTO SE NÃO COUBER (SÓ ÍCONE) */
 /* Mantém exatamente o teu estilo original */
@@ -36,11 +40,11 @@
 
 .actions-container button {
 	flex: 1;
-	padding: 8px 6px;
+	padding: 8px 5px;
 	border: none;
 	border-radius: 5px;
-	font-size: 0.86em !important;
-	font-weight: 500 !important;
+	font-size: 0.85em !important;
+	font-weight: 400 !important;
 	cursor: pointer;
 	transition: all 0.28s ease;
 	display: flex;
@@ -230,6 +234,16 @@
 	opacity: 1;
 }
 
+#wkt-list li .visibility-btn {
+	color: var(--color-base-white);
+	background: var(--li-action-visibility-color);
+	opacity: 0.75;
+}
+
+#wkt-list li .visibility-btn:hover {
+	opacity: 1;
+}
+
 #wkt-list img {
 	background: var(--li-color);
 	border-radius: 10px;
@@ -265,6 +279,14 @@
 
 #wkt-list li:hover {
 	background: var(--li-border-color);
+}
+
+#wkt-list li.hidden-feature {
+	opacity: 0.5;
+	background: rgba(0, 0, 0, 0.2);
+	border-style: dashed;
+	filter: grayscale(100%);
+	font-style: italic;
 }
 
 #wkt-list small {

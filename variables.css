@@ -76,4 +76,5 @@
 	--li-action-zoom-color: var(--color-blue-info);
 	--li-action-copy-color: var(--color-green-success);
 	--li-action-delete-color: var(--color-red-danger);
+	--li-action-visibility-color: #8a63e5;
 }

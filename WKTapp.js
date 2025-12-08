@@ -71,4 +71,9 @@ import { mapUtilities } from './utils/mapUtilities.js';
 	const traducao = window.translator?.getCurrentTranslations();
 	console.log(JSON.stringify(traducao, null, 2));
 
+	$("#list-toggle-btn").on("click", function () {
+		$("#wkt-list").toggleClass("controls-hidden");
+		map.updateSize(); // Force map resize
+	});
+
 })();

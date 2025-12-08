@@ -191,6 +191,7 @@ class WKTListManager {
             <img>
 			<div class="wkt-item-buttons">
 				<button class="zoom-btn" type="button" data-i18n-title="zoom-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+				<button class="visibility-btn" type="button" data-i18n-title="hide-feature"><i class="fa-regular fa-eye"></i></button>
 				<button class="copy-btn" type="button" data-i18n-title="copy-btn"><i class="fa-regular fa-copy"></i></button>
 				<button class="delete-btn" type="button" data-i18n-title="delete-btn"><i class="fa fa-trash"></i></button>
 			</div>
@@ -204,7 +205,43 @@ class WKTListManager {
 
 		li.querySelector('.zoom-btn').addEventListener('click', e => {
 			e.stopPropagation();
+			if (feature.get('hidden')) return;
 			featureUtilities.centerOnFeature(feature);
+		});
+
+		// Visibilidade
+		const visibilityBtn = li.querySelector('.visibility-btn');
+		visibilityBtn.addEventListener('click', e => {
+			e.stopPropagation();
+			// ... existing visibility logic ...
+			const isHidden = feature.get('hidden') === true;
+			feature.set('hidden', !isHidden);
+			
+			// Atualiza ícone e título
+			const icon = visibilityBtn.querySelector('i');
+			if (!isHidden) {
+				// FICOU HIDDEN
+				icon.className = 'fa-regular fa-eye-slash';
+				visibilityBtn.setAttribute('data-i18n-title', 'show-feature');
+				window.translator?.set('show-feature', visibilityBtn);
+				li.classList.add('hidden-feature');
+
+				// Deseleciona se estiver selecionada
+				const select = mapControls.interactions.select;
+				if (select && select.getFeatures().getArray().includes(feature)) {
+					select.getFeatures().remove(feature);
+					mapControls.dispatch('selectionChanged');
+				}
+			} else {
+				// FICOU VISIVEL
+				icon.className = 'fa-regular fa-eye';
+				visibilityBtn.setAttribute('data-i18n-title', 'hide-feature');
+				window.translator?.set('hide-feature', visibilityBtn);
+				li.classList.remove('hidden-feature');
+			}
+
+			// Força refresh da layer
+			feature.changed();
 		});
 
 		li.querySelector('.copy-btn').addEventListener('click', e => {
@@ -224,13 +261,12 @@ class WKTListManager {
 			const f = MapManager.vectorLayer.getSource().getFeatureById(id);
 			if (f) {
 				const select = mapControls.interactions.select;
-
-				console.log(mapControls.interactions, select);
-
-				select.getFeatures().clear();
-				select.getFeatures().push(f);
-				mapControls.deleteSelected();
-				utilities.showToast?.(window.translator?.f("wkt-deleted", "WKT deleted!"), 'error')
+				if (select) {
+					select.getFeatures().clear();
+					select.getFeatures().push(f);
+					mapControls.deleteSelected();
+					utilities.showToast?.(window.translator?.f("wkt-deleted", "WKT deleted!"), 'error')
+				}
 			}
 		});
 
@@ -245,7 +281,10 @@ class WKTListManager {
 				}
 			});
 
-		li.addEventListener('click', () => this.selectFeature(feature));
+		li.addEventListener('click', () => {
+			if (feature.get('hidden')) return;
+			this.selectFeature(feature);
+		});
 		li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
 		this.updateCopyButton();

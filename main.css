@@ -121,6 +121,40 @@ textarea {
 	z-index: 1100 !important;
 }
 
+#list-toggle-btn {
+	background-color: transparent;
+	background: var(--color-base-white) !important;
+	border-radius: 0;
+	border: 0;
+	box-sizing: border-box;
+	cursor: pointer;
+	display: none; /* Hidden by default (desktop) */
+	height: var(--button-size);
+	margin: 0;
+	outline: none;
+	padding: 0;
+	pointer-events: auto;
+	position: absolute !important;
+	left: 12px !important;
+	top: 12px !important;
+	width: var(--button-size);
+	z-index: 1100 !important;
+}
+
+#list-toggle-btn:hover {
+	background: var(--color-hover-transparent) !important;
+}
+
+@media (max-width: 800px) {
+	#list-toggle-btn {
+		display: block;
+	}
+	
+	.controls-hidden {
+		display: none !important;
+	}
+}
+
 #settings-btn:hover {
 	background: var(--color-hover-transparent) !important;
 }

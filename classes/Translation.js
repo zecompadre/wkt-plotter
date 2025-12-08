@@ -55,7 +55,10 @@ export default class Translation {
 				"import-tab": "Import",
 				"settings-tab": "Settings",
 				"layer-satellite": "Satellite",
-				"layer-streets": "Streets"
+				"layer-streets": "Streets",
+				"hide-feature": "Hide feature",
+				"show-feature": "Show feature",
+				"toggle-list": "Toggle list"
 			},
 			"pt": {
 				"import": "Importar",
@@ -100,7 +103,10 @@ export default class Translation {
 				"import-tab": "Importar",
 				"settings-tab": "Definições",
 				"layer-satellite": "Satélite",
-				"layer-streets": "Ruas"
+				"layer-streets": "Ruas",
+				"hide-feature": "Ocultar elemento",
+				"show-feature": "Mostrar elemento",
+				"toggle-list": "Alternar lista"
 			},
 			"es": {
 				"import": "Importar",
@@ -145,7 +151,10 @@ export default class Translation {
 				"import-tab": "Importar",
 				"settings-tab": "Ajustes",
 				"layer-satellite": "Satélite",
-				"layer-streets": "Calles"
+				"layer-streets": "Calles",
+				"hide-feature": "Ocultar elemento",
+				"show-feature": "Mostrar elemento",
+				"toggle-list": "Alternar lista"
 			},
 			"fr": {
 				"import": "Importer",
@@ -190,7 +199,10 @@ export default class Translation {
 				"import-tab": "Importer",
 				"settings-tab": "Paramètres",
 				"layer-satellite": "Satellite",
-				"layer-streets": "Rues"
+				"layer-streets": "Rues",
+				"hide-feature": "Masquer l'élément",
+				"show-feature": "Afficher l'élément",
+				"toggle-list": "Basculer la liste"
 			}
 		};
 

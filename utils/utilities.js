@@ -80,7 +80,7 @@ export const utilities = {
 			.replace(/\(\s*/g, '(')        // remove espaços após (
 			.replace(/\s*\)/g, ')')        // remove espaços antes )
 			.toUpperCase()                 // WKT é case-insensitive para tipo
-			.replace(/(\d+\.\d{6})\d*/g, '$1'); // Opcional: arredondar coordenadas para 6 casas (evita diferenças mínimas)
+			.replace(/(\d+\.\d{15})\d*/g, '$1'); // Opcional: arredondar coordenadas para 6 casas (evita diferenças mínimas)
 
 		return trimmed;
 	},
@@ -99,28 +99,36 @@ export const utilities = {
 	},
 
 	// Estilo de modificação (vértices)
+	// Estilo de modificação (vértices)
 	modifyStyleFunction: (color) => {
-		return (feature, segments) => {
-			const styles = utilities.genericStyleFunction(color);
-			return styles;
+		const styleFn = utilities.genericStyleFunction(color);
+		return (feature, resolution) => {
+			return styleFn(feature, resolution);
 		};
 	},
 
 	// Estilo genérico (quadrados nos vértices)
-	genericStyleFunction: (color) => [
-		new ol.style.Style({
-			image: new ol.style.RegularShape({
-				fill: new ol.style.Fill({ color: colors.normal }),
-				stroke: new ol.style.Stroke({ color: colors.normal, width: 3 }),
-				points: 4,
-				radius: 10,
-				radius2: 0,
-				angle: 0,
+	genericStyleFunction: (color) => {
+		const styles = [
+			new ol.style.Style({
+				image: new ol.style.RegularShape({
+					fill: new ol.style.Fill({ color: colors.normal }),
+					stroke: new ol.style.Stroke({ color: colors.normal, width: 3 }),
+					points: 4,
+					radius: 10,
+					radius2: 0,
+					angle: 0,
+				}),
+				fill: new ol.style.Fill({ color: utilities.hexToRgbA(color, '0.3') }),
+				stroke: new ol.style.Stroke({ color, width: 2 }),
 			}),
-			fill: new ol.style.Fill({ color: utilities.hexToRgbA(color, '0.3') }),
-			stroke: new ol.style.Stroke({ color, width: 2 }),
-		}),
-	],
+		];
+		
+		return (feature, resolution) => {
+			if (feature && feature.get('hidden')) return null;
+			return styles;
+		};
+	},
 
 	// Estilo durante desenho
 	drawStyleFunction: (color) => {

@@ -67,8 +67,19 @@ export const featureUtilities = {
 	},
 
 	centerOnVector: () => {
-		if (MapManager.vectorLayer.getSource().getFeatures().length === 0) return;
-		const extent = MapManager.vectorLayer.getSource().getExtent();
+		const source = MapManager.vectorLayer.getSource();
+		const features = source.getFeatures().filter(f => !f.get('hidden'));
+		
+		if (features.length === 0) return;
+
+		const extent = ol.extent.createEmpty();
+		features.forEach(f => {
+			const geom = f.getGeometry();
+			if (geom) {
+				ol.extent.extend(extent, geom.getExtent());
+			}
+		});
+
 		MapManager.map.getView().fit(extent, { size: MapManager.map.getSize(), padding: [50, 50, 50, 50] });
 	},
 
