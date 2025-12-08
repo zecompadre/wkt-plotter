@@ -111,6 +111,12 @@ class MapControls {
 		});
 		this.controls.selectBar.addControl(btn);
 		this.controls.deleteBtn = btn;
+
+		// Update UI when selection changes (from map OR list)
+		this.on('selectionChanged', () => {
+			const hasSelection = this.interactions.select.getFeatures().getLength() > 0;
+			this.controls.selectBar.setVisible(hasSelection);
+		});
 	}
 
 	_createInfoButton() {
@@ -413,20 +419,26 @@ class MapControls {
 
 	async deleteSelected() {
 		const features = this.interactions.select.getFeatures();
-		if (features.getLength() === 0) return;
+		const featuresArray = features.getArray().slice(); // Clone array to avoid issues while removing
 
-		const feature = features.item(0);
-		const id = feature.getId();
+		if (featuresArray.length === 0) return;
 
-		await wktUtilities.remove(id);
-		wktListManager.remove(id);
-		MapManager.vectorLayer.getSource().removeFeature(feature);
+		for (const feature of featuresArray) {
+			const id = feature.getId();
+			if (id) {
+				await wktUtilities.remove(id);
+				wktListManager.remove(id);
+			}
+			MapManager.vectorLayer.getSource().removeFeature(feature);
+		}
+
 		features.clear();
 		mapUtilities.reviewLayout(false);
 		this.controls.selectBar.setVisible(false);
 
-		this.dispatch('featureDeleted', { feature, id });
+		// Dispatch generic event (can contain list of IDs if needed, but for now generic is fine)
 		this.dispatch('selectionChanged');
+		utilities.showToast?.(window.translator?.f("wkt-deleted", "Features deleted!"), 'error');
 	}
 
 	centerOnMyLocation() {

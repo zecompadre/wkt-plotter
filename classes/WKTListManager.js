@@ -297,6 +297,10 @@ class WKTListManager {
 
 		const multiSelect = window.settingsManager?.getSetting('multi-select') === true || false;
 		const multiSelectUnion = window.settingsManager?.getSetting('multi-select-union') === true;
+
+		// Ensure Select Tool is active
+		mapControls.activateSelect();
+
 		const already = select.getFeatures().getArray().includes(feature);
 
 		if (!multiSelect && !already) {
