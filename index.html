@@ -33,7 +33,8 @@
 	<!-- Openlayers -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css" />
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
-	<script src="https://unpkg.com/@babel/polyfill@7.12.1/dist/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL">		</script>
+	<script
+		src="https://unpkg.com/@babel/polyfill@7.12.1/dist/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL">		</script>
 
 	<!-- ol-ext -->
 	<link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
@@ -78,7 +79,8 @@
 <body>
 	<div id="header" class="flex-none grow-0">
 		<img src="logo.svg?v=202412062200" title="WKT Plotter" width="160" height="50">
-		<button id="settings-btn" class="" type="button" title="Settings"><i class="fa-solid fa-gear fa-lg"></i></button>
+		<button id="settings-btn" class="" type="button" title="Settings"><i
+				class="fa-solid fa-gear fa-lg"></i></button>
 	</div>
 	<div id="wrapper">
 		<div id="map" class="map" style="z-index: 0"></div>
@@ -95,23 +97,29 @@
 					<form>
 						<div id="wktdefault" class='wkt-container'>
 							<div class="wkt-input-wrapper">
-								<textarea placeholder="Cole ou importe um WKT aqui..." rows="6" data-i18n-placeholder="textarea-placeholder"></textarea>
+								<textarea placeholder="Cole ou importe um WKT aqui..." rows="6"
+									data-i18n-placeholder="textarea-placeholder"></textarea>
 							</div>
 							<div class="actions-container">
 								<button id="import-wkt-btn" type="button">
 									<i class="fa-solid fa-paste"></i>
-									<span data-i18n="import">Importar</span>
+									<span data-i18n="import"></span>
 								</button>
 
 								<button id="clear-selection-btn" type="button" class="hidden">
 									<i class="fa-solid fa-ban"></i>
-									<span data-i18n="clear-selection">Desselecionar</span>
+									<span data-i18n="clear-selection"></span>
 								</button>
 
 								<button id="copy-selected-btn" type="button" class="hidden">
 									<i class="fa-regular fa-copy"></i>
-									<span data-i18n="copy-selected">Copiar</span>
+									<span data-i18n="copy-selected"></span>
 									<span class="button-count"><span id="selected-count">0</span></span>
+								</button>
+
+								<button id="delete-all-btn" type="button" class="hidden">
+									<i class="fa-solid fa-trash"></i>
+									<span data-i18n="delete-all"></span>
 								</button>
 							</div>
 						</div>

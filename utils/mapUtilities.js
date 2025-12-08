@@ -58,7 +58,7 @@ export const mapUtilities = {
 
 			(async () => {
 				for (let wkt of wkts) {
-					console.log('Processing Memoria WKT:', wkt);
+					//console.log('Processing Memoria WKT:', wkt);
 					await featureUtilities.addFeature(wkt.id, wkt.wkt);
 				}
 			})();
@@ -77,11 +77,11 @@ export const mapUtilities = {
 				)
 				.map(item => item.normalized);
 
-			console.log('Normalized WKTs to load:', arrWKT);
+			//console.log('Normalized WKTs to load:', arrWKT);
 
 			(async () => {
 				for (let wkt of arrWKT) {
-					console.log('Processing Clipboard WKT:', wkt);
+					//console.log('Processing Clipboard WKT:', wkt);
 					const checksum = await utilities.generateChecksum(wkt);
 					let exists = false;
 					for (const item of wkts) {
@@ -109,11 +109,10 @@ export const mapUtilities = {
 
 			await featureUtilities.addVectorLayer();
 
-			featureUtilities.centerOnVector();
-
 			await this.reviewLayout();
 
-			wktListManager.updateCopyButton();
+			featureUtilities.centerOnVector();
+
 
 		} catch (error) {
 			console.error('Error loading WKT:', error);
@@ -125,11 +124,11 @@ export const mapUtilities = {
 		const textarea = document.querySelector("#wktdefault textarea");
 
 		try {
-			// Load existing WKT entries from localStorage
+
 			wktUtilities.load();
 			let wkts = wktUtilities.get();
 
-			console.log('Existing WKTs:', wkts);
+			//console.log('Existing WKTs:', wkts);
 
 			if (!Array.isArray(wkts)) {
 				wkts = [];
@@ -139,7 +138,7 @@ export const mapUtilities = {
 
 			let wktClipboard = await utilities.readClipboard();
 
-			console.log('WKT from clipboard:', wktClipboard);
+			//console.log('WKT from clipboard:', wktClipboard);
 
 			await this.loadWKT(wktClipboard);
 

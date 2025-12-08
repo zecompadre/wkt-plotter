@@ -74,17 +74,15 @@ export const featureUtilities = {
 		if (MapManager.vectorLayer) MapManager.map.removeLayer(MapManager.vectorLayer);
 		MapManager.vectorLayer = featureUtilities.createVectorLayer();
 		MapManager.map.addLayer(MapManager.vectorLayer);
-		//featureUtilities.createFromAllFeatures();
 	},
 
 	createVectorLayer: () => {
-		// Cria uma camada nova e retorna
 		const layer = new ol.layer.Vector({
 			source: new ol.source.Vector({ features: MapManager.featureCollection }),
 			style: utilities.genericStyleFunction(colors.normal)
 		});
 		layer.set('displayInLayerSwitcher', false);
-		return layer; // Retorna a camada!
+		return layer;
 	},
 
 	addFeature: async (id, wkt) => {
