@@ -58,7 +58,10 @@ export default class Translation {
 				"layer-streets": "Streets",
 				"hide-feature": "Hide feature",
 				"show-feature": "Show feature",
-				"toggle-list": "Toggle list"
+				"toggle-list": "Toggle list",
+				"theme": "Theme",
+				"theme-light": "Light",
+				"theme-dark": "Dark"
 			},
 			"pt": {
 				"import": "Importar",
@@ -106,7 +109,10 @@ export default class Translation {
 				"layer-streets": "Ruas",
 				"hide-feature": "Ocultar elemento",
 				"show-feature": "Mostrar elemento",
-				"toggle-list": "Alternar lista"
+				"toggle-list": "Alternar lista",
+				"theme": "Tema",
+				"theme-light": "Claro",
+				"theme-dark": "Escuro"
 			},
 			"es": {
 				"import": "Importar",
@@ -154,7 +160,10 @@ export default class Translation {
 				"layer-streets": "Calles",
 				"hide-feature": "Ocultar elemento",
 				"show-feature": "Mostrar elemento",
-				"toggle-list": "Alternar lista"
+				"toggle-list": "Alternar lista",
+				"theme": "Tema",
+				"theme-light": "Claro",
+				"theme-dark": "Oscuro"
 			},
 			"fr": {
 				"import": "Importer",
@@ -202,7 +211,10 @@ export default class Translation {
 				"layer-streets": "Rues",
 				"hide-feature": "Masquer l'élément",
 				"show-feature": "Afficher l'élément",
-				"toggle-list": "Basculer la liste"
+				"toggle-list": "Basculer la liste",
+				"theme": "Thème",
+				"theme-light": "Clair",
+				"theme-dark": "Sombre"
 			}
 		};
 

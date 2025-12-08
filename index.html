@@ -63,8 +63,6 @@
 		<img src="logo.svg?v=202412062200" title="WKT Plotter" width="160" height="50">
 		<button id="settings-btn" class="" type="button" title="Settings" data-i18n-title="settings"><i
 				class="fa-solid fa-gear fa-lg"></i></button>
-		<button id="list-toggle-btn" class="" type="button" title="Toggle List" data-i18n-title="toggle-list"><i
-				class="fa-solid fa-list fa-lg"></i></button>
 	</div>
 	<div id="wrapper">
 		<div id="map" class="map" style="z-index: 0"></div>
@@ -81,8 +79,8 @@
 					<form>
 						<div id="wktdefault" class='wkt-container'>
 							<div class="wkt-input-wrapper">
-								<textarea placeholder="Paste or import a WKT here..." rows="6"
-									data-i18n-placeholder="textarea-placeholder"></textarea>
+								<textarea placeholder="Paste or import a WKT here..." rows="6" data-i18n-placeholder="textarea-placeholder"></textarea>
+								<button id="list-toggle-btn" class="" type="button" title="Toggle List" data-i18n-title="toggle-list"><i class="fa-solid fa-list fa-lg"></i></button>
 							</div>
 							<div class="actions-container">
 								<button id="import-wkt-btn" type="button">
@@ -116,6 +114,13 @@
 								<option value="en">English</option>
 								<option value="es">Español</option>
 								<option value="fr">Français</option>
+							</select>
+						</div>
+						<div class="settings-item">
+							<label for="theme" data-i18n="theme">Theme</label>
+							<select id="theme">
+								<option value="light" data-i18n="theme-light">Light</option>
+								<option value="dark" data-i18n="theme-dark">Dark</option>
 							</select>
 						</div>
 						<div class="settings-item">

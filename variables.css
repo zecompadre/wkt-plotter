@@ -5,6 +5,7 @@
 	--color-hover-transparent: rgb(0 0 0 / 5%);
 	--button-size: 36px;
 	--color-base-white: #fff;
+	--color-white-fixed: #fff;
 	--color-blue-550: #007bff;
 	--controls-width: 450px;
 	--controls-max-width: 400px;
@@ -77,4 +78,39 @@
 	--li-action-copy-color: var(--color-green-success);
 	--li-action-delete-color: var(--color-red-danger);
 	--li-action-visibility-color: #8a63e5;
+
+	--text-area-color: var(--color-gray-800);
+}
+
+[data-theme="dark"] {
+	--color-base-white: #1e1e1e;
+	--color-gray-50: #252526;
+	--color-gray-100: #2d2d2d;
+	--color-gray-250: #333333;
+	--color-gray-300: #3e3e42;
+	--color-gray-350: #4a4a4f;
+	--color-gray-400: #6e6e73;
+	--color-gray-500: #858585;
+	--color-gray-600: #cccccc;
+	--color-gray-800: #f0f0f0;
+	
+	--color-dark-overlay: rgba(0, 0, 0, 0.8);
+	--color-overlay-light: rgba(255, 255, 255, 0.1);
+
+	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+
+	/* Controls Overrides */
+	--tab-color: #252526; /* Less transparent, more solid dark */
+	--li-thumb-color: var(--color-blue-500);
+	--li-color: #e0e0e0;
+	--li-border-color: #444;
+	--li-selected-color: #444;
+	
+	/* Tweak blues for dark mode (saturate/lighten slightly for visibility if needed) */
+	--color-blue-400: #63b3ed;
+	--color-blue-500: #4299e1;
+
+	/* Overrides for generic UI elements */
+	--color-divider-transparent: rgba(255, 255, 255, 0.2);
+	--color-hover-transparent: rgba(255, 255, 255, 0.2);
 }

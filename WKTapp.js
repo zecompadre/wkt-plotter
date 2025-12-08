@@ -41,6 +41,23 @@ import { mapUtilities } from './utils/mapUtilities.js';
 		});
 	}
 
+	// 2.1 Theme Logic
+	const themeSelect = document.getElementById('theme');
+	const applyTheme = (theme) => {
+		document.documentElement.setAttribute('data-theme', theme);
+	};
+
+	if (themeSelect) {
+		const savedTheme = settingsManager.getSetting('theme') || 'light';
+		applyTheme(savedTheme);
+		themeSelect.value = savedTheme;
+
+		// Listen for changes from SettingsManager (which handles the input change)
+		settingsManager.on('theme', ({ value }) => {
+			applyTheme(value);
+		});
+	}
+
 	// 3. INICIA O MAPA (agora com await!)
 	try {
 		await setupMap();

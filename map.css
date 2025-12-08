@@ -84,6 +84,7 @@
 
 .ol-control.ol-bar .ol-control button:hover {
 	background-color: var(--color-hover-transparent);
+	color: var(--color-blue-400) !important;
 }
 
 .ol-control.ol-bar .ol-control.ol-option-bar {
@@ -119,12 +120,20 @@
 
 .ol-toggle.ol-active>button {
 	border-radius: 3px;
+	background-color: var(--color-blue-500) !important;
+	color: var(--color-white-fixed) !important;
+}
+
+.ol-control.ol-bar .ol-toggle.ol-active button:hover,
+.ol-control.ol-bar .ol-toggle.ol-active>button:hover {
+	background-color: var(--color-blue-600) !important;
+	color: var(--color-white-fixed) !important;
 }
 
 .ol-tooltip {
 	background: var(--color-overlay-medium);
 	border-radius: 4px;
-	color: white;
+	color: var(--color-white-fixed);
 	cursor: default;
 	font-size: 12px;
 	opacity: 0.7;

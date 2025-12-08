@@ -103,9 +103,10 @@ textarea {
 
 #settings-btn {
 	background-color: transparent;
-	background: var(--color-base-white) !important;
+	background: transparent !important;
 	border-radius: 0;
 	border: 0;
+	color: var(--color-gray-800);
 	box-sizing: border-box;
 	cursor: pointer;
 	display: block;
@@ -122,27 +123,33 @@ textarea {
 }
 
 #list-toggle-btn {
-	background-color: transparent;
-	background: var(--color-base-white) !important;
-	border-radius: 0;
-	border: 0;
-	box-sizing: border-box;
-	cursor: pointer;
-	display: none; /* Hidden by default (desktop) */
-	height: var(--button-size);
-	margin: 0;
-	outline: none;
-	padding: 0;
-	pointer-events: auto;
-	position: absolute !important;
-	left: 12px !important;
-	top: 12px !important;
-	width: var(--button-size);
-	z-index: 1100 !important;
+    background-color: transparent;
+    background: transparent !important;
+    border-radius: 0;
+    border: 0;
+    color: var(--color-gray-800);
+    box-sizing: border-box;
+    cursor: pointer;
+    display: none;
+    height: var(--button-size);
+    margin: 0;
+    outline: none;
+    padding: 0;
+    pointer-events: auto;
+    position: absolute !important;
+    right: 12px !important;
+    top: 3px !important;
+    width: var(--button-size);
+    z-index: 1100 !important;
 }
 
 #list-toggle-btn:hover {
 	background: var(--color-hover-transparent) !important;
+}
+
+[data-theme="dark"] #settings-btn,
+[data-theme="dark"] #list-toggle-btn {
+	color: var(--color-white-fixed) !important;
 }
 
 @media (max-width: 800px) {
