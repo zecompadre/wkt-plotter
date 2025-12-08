@@ -205,6 +205,11 @@ export default class Translation {
 		return this.get(key, element, fallback);
 	}
 
+	set(key, element) {
+		element.setAttribute('data-i18n', key);
+		element.setAttribute('data-i18n-title', key);
+	}
+
 	setLanguage(lang) {
 		if (!this.#translations[lang]) {
 			console.warn(`Idioma "${lang}" não encontrado. Usando ${this.#defaultLang}`);

@@ -20,7 +20,7 @@
 
 .ol-attribution button:focus,
 .ol-attribution button:hover {
-	background-color: var(--button-hover-background);
+	background-color: var(--color-hover-transparent);
 	outline: none;
 }
 
@@ -38,7 +38,7 @@
 }
 
 .ol-control button {
-	color: var(--gray);
+	color: var(--color-gray-600);
 }
 
 .ol-control.ol-bar .ol-bar.editbar {
@@ -63,7 +63,7 @@
 .ol-control.ol-bar .ol-control button {
 	background-color: transparent;
 	border-radius: 0;
-	border-right: 1px solid var(--button-divider-color);
+	border-right: 1px solid var(--color-divider-transparent);
 	border: 0;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -83,7 +83,7 @@
 }
 
 .ol-control.ol-bar .ol-control button:hover {
-	background-color: var(--button-hover-background);
+	background-color: var(--color-hover-transparent);
 }
 
 .ol-control.ol-bar .ol-control.ol-option-bar {
@@ -122,7 +122,7 @@
 }
 
 .ol-tooltip {
-	background: rgba(0, 0, 0, 0.5);
+	background: var(--color-overlay-medium);
 	border-radius: 4px;
 	color: white;
 	cursor: default;
@@ -143,7 +143,7 @@
 .ol-tooltip-static:before {
 	border-left: 6px solid transparent;
 	border-right: 6px solid transparent;
-	border-top: 6px solid rgba(0, 0, 0, 0.5);
+	border-top: 6px solid var(--color-overlay-medium);
 	bottom: -6px;
 	content: "";
 	left: 50%;
@@ -152,16 +152,16 @@
 }
 
 .ol-tooltip-static {
-	background-color: #ffcc33;
-	color: black;
+	background-color: var(--color-tooltip-yellow);
+	color: var(--color-black);
 }
 
 .ol-tooltip-static:before {
-	border-top-color: #ffcc33;
+	border-top-color: var(--color-tooltip-yellow);
 }
 
 .ol-zoom .ol-zoom-in {
-	border-bottom: 1px solid var(--button-divider-color);
+	border-bottom: 1px solid var(--color-divider-transparent);
 }
 
 .ol-zoom .ol-zoom-in,
@@ -182,7 +182,7 @@
 
 .ol-zoom .ol-zoom-in:hover,
 .ol-zoom .ol-zoom-out:hover {
-	background-color: rgb(0 0 0 / 5%);
+	background-color: var(--color-hover-transparent);
 	outline: none;
 }
 

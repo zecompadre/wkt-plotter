@@ -1,14 +1,3 @@
-:root {
-	--tab-color: #333;
-	--li-thumb-color: #80bdff;
-	--li-color: #fff;
-	--li-selected-color: #9ca3af;
-	--li-border-color: #495057;
-	--li-action-zoom-color: #17a2b8;
-	--li-action-copy-color: #28a745;
-	--li-action-delete-color: #dc3545;
-}
-
 .tab-pane {
 	-ms-flex: 1;
 	-webkit-box-flex: 1;
@@ -83,22 +72,22 @@
 
 /* IMPORTAR */
 #import-wkt-btn {
-	background: #4299e1;
-	color: white;
+	background: var(--color-blue-400);
+	color: var(--color-base-white);
 }
 
 #import-wkt-btn:hover {
-	background: #3182ce;
+	background: var(--color-blue-500);
 }
 
 /* DESSELECIONAR TUDO */
 #clear-selection-btn {
-	background: #6c757d;
-	color: white;
+	background: var(--color-secondary);
+	color: var(--color-base-white);
 }
 
 #clear-selection-btn:hover {
-	background: #5a6268;
+	background: var(--color-secondary-dark);
 }
 
 #clear-selection-btn.hidden {
@@ -106,8 +95,8 @@
 }
 
 #copy-selected-btn {
-	background: #48bb78;
-	color: white;
+	background: var(--color-green-450);
+	color: var(--color-base-white);
 	opacity: 0.65;
 	cursor: not-allowed;
 }
@@ -115,11 +104,11 @@
 #copy-selected-btn:not(:disabled) {
 	opacity: 1;
 	cursor: pointer;
-	background: #38a169;
+	background: var(--color-green-600);
 }
 
 #copy-selected-btn:not(:disabled):hover {
-	background: #2d8b57;
+	background: var(--color-green-700);
 }
 
 #copy-selected-btn.hidden {
@@ -127,8 +116,8 @@
 }
 
 #selected-count {
-	background: rgba(255, 255, 255, 0.3);
-	color: white;
+	background: var(--color-overlay-light);
+	color: var(--color-base-white);
 	padding: 3px 8px;
 	border-radius: 20px;
 	font-size: 0.82em;
@@ -139,8 +128,8 @@
 }
 
 #delete-all-btn {
-	background: #e43c36;
-	color: white;
+	background: var(--color-red-custom);
+	color: var(--color-base-white);
 	opacity: 0.65;
 	cursor: not-allowed;
 }
@@ -148,11 +137,11 @@
 #delete-all-btn:not(:disabled) {
 	opacity: 1;
 	cursor: pointer;
-	background: #dc3545;
+	background: var(--color-red-danger);
 }
 
 #delete-all-btn:not(:disabled):hover {
-	background: #c82333;
+	background: var(--color-red-danger-dark);
 }
 
 #delete-all-btn.hidden {
@@ -198,10 +187,10 @@
 #wkt-list .wkt-item-buttons button {
 	align-items: center;
 	backdrop-filter: blur(4px);
-	background: rgba(0, 0, 0, 0.6);
+	background: var(--color-overlay-dark);
 	border-radius: 5px;
 	border: none;
-	color: white;
+	color: var(--color-base-white);
 	cursor: pointer;
 	display: flex;
 	font-size: 12px;
@@ -213,7 +202,7 @@
 
 #wkt-list li .copy-btn {
 	background-color: var(--li-action-copy-color);
-	color: white;
+	color: var(--color-base-white);
 	opacity: 0.75;
 }
 
@@ -223,7 +212,7 @@
 
 #wkt-list li .delete-btn {
 	background-color: var(--li-action-delete-color);
-	color: white;
+	color: var(--color-base-white);
 	opacity: 0.75;
 }
 
@@ -232,7 +221,7 @@
 }
 
 #wkt-list li .zoom-btn {
-	color: white;
+	color: var(--color-base-white);
 	background: var(--li-action-zoom-color);
 	opacity: 0.75;
 }
@@ -298,11 +287,11 @@
 }
 
 #wkt-list::-webkit-scrollbar-thumb:hover {
-	background: #63b3ed;
+	background: var(--color-blue-300);
 }
 
 #wkt-list::-webkit-scrollbar-track {
-	background: #2d3748;
+	background: var(--color-gray-800);
 	border-radius: 10px;
 }
 

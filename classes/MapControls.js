@@ -144,8 +144,7 @@ class MapControls {
 		this.controls.drawCtrl = drawToggle;
 		this.interactions.draw = drawInteraction;
 
-		this.controls.drawCtrl.button_.setAttribute('data-i18n', 'polygon');
-		this.controls.drawCtrl.button_.setAttribute('data-i18n-title', 'polygon');
+		window.translator?.set('polygon', this.controls.drawCtrl.button_);
 
 		drawInteraction.on('drawend', (e) => this._handleDrawEnd(e));
 		drawInteraction.on('change:active', () => featureUtilities.deselectCurrentFeature(false));
@@ -209,16 +208,14 @@ class MapControls {
 			title: window.translator?.f("undo", "Undo"),
 			handleClick: () => undoRedo.undo()
 		});
-		this.controls.undoBtn.button_.setAttribute('data-i18n', 'undo');
-		this.controls.undoBtn.button_.setAttribute('data-i18n-title', 'undo');
+		window.translator?.set('undo', this.controls.undoBtn.button_);
 
 		this.controls.redoBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-rotate-right fa-lg"></i>',
 			title: window.translator?.f("redo", "Redo"),
 			handleClick: () => undoRedo.redo()
 		});
-		this.controls.redoBtn.button_.setAttribute('data-i18n', 'redo');
-		this.controls.redoBtn.button_.setAttribute('data-i18n-title', 'redo');
+		window.translator?.set('redo', this.controls.redoBtn.button_);
 
 		this.controls.editBar.addControl(this.controls.undoBtn);
 		this.controls.editBar.addControl(this.controls.redoBtn);
@@ -233,6 +230,7 @@ class MapControls {
 			title: window.translator?.f("center-location", "Center on my location"),
 			handleClick: () => this.centerOnMyLocation()
 		});
+		window.translator?.set('center-location', this.controls.locationBtn.button_);
 		locationBar.addControl(this.controls.locationBtn);
 
 		this.controls.centerObjectsBtn = new ol.control.Button({
@@ -240,6 +238,7 @@ class MapControls {
 			title: window.translator?.f("center-objects", "Center on objects"),
 			handleClick: () => featureUtilities.centerOnVector()
 		});
+		window.translator?.set('center-objects', this.controls.centerObjectsBtn.button_);
 		locationBar.addControl(this.controls.centerObjectsBtn);
 	}
 
@@ -252,6 +251,7 @@ class MapControls {
 			title: window.translator?.f("change-layer", "Change layer..."),
 			handleClick: mapUtilities.toggleLayers
 		});
+		window.translator?.set('change-layer', this.controls.layerChangeBtn.button_);
 		layerBar.addControl(this.controls.layerChangeBtn);
 	}
 
