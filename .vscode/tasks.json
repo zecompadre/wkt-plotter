@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Extract translator.f calls to JSON",
+			"type": "shell",
+			"command": "rg -o 'window\\.translator\\?\\.f\\(\"([^\"]+)\"\\s*,\\s*\"([^\"]+)\"\\)' -r '{\"$1\": \"$2\"}' . | jq -s 'add' > translations.json",
+			"problemMatcher": [],
+			"group": "none",
+			"detail": "Requires ripgrep (rg) and jq installed"
+		}
+	]
+}

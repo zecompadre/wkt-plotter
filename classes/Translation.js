@@ -12,31 +12,6 @@ export default class Translation {
 		console.log(`Idioma detectado: ${this.#currentLang}`);
 
 		this.#translations = {
-			"pt": {
-				"import": "Importar",
-				"clear-selection": "Desselecionar Tudo",
-				"copy-selected": "Copiar Selecionados",
-				"show-area": "Mostrar Área",
-				"persistent-objects": "Reter Objectos",
-				"multi-select": "Multi-Seleção (Ctrl+Click)",
-				"union-multi-select": "Unir Multi-Seleção",
-				"close": "Fechar",
-				"textarea-placeholder": "Cole ou importe um WKT aqui...",
-				"wkt-imported": "WKT importado com sucesso!",
-				"no-common-area": "Não há área comum entre as features selecionadas",
-				"copied": "Copiado!",
-				"all-deselected": "Todas as features desselecionadas",
-				"change-layer": "Alterar camada...",
-				"center-objects": "Centralizar nos objetos do mapa...",
-				"center-location": "Centralizar na minha localização...",
-				"undo": "Desfazer",
-				"redo": "Refazer",
-				"polygon": "Polígono",
-				"showinfo": "Mostrar informações",
-				"delete": "Excluir",
-				"select": "Selecionar",
-				"language": "Idioma"
-			},
 			"en": {
 				"import": "Import",
 				"clear-selection": "Clear",
@@ -60,12 +35,47 @@ export default class Translation {
 				"showinfo": "Show information",
 				"delete": "Delete",
 				"select": "Select",
-				"language": "Language"
+				"language": "Language",
+				"zoom-btn": "Zoom",
+				"copy-btn": "Copy",
+				"delete-btn": "Delete",
+				"wkt-copied": "WKT copied!",
+				"wkt-deleted": "WKT deleted!"
+			},
+			"pt": {
+				"import": "Importar",
+				"clear-selection": "Desselecionar",
+				"copy-selected": "Copiar",
+				"show-area": "Mostrar Área",
+				"persistent-objects": "Reter Objectos",
+				"multi-select": "Multi-Seleção (Ctrl+Click)",
+				"union-multi-select": "Unir Multi-Seleção",
+				"close": "Fechar",
+				"textarea-placeholder": "Cole ou importe um WKT aqui...",
+				"wkt-imported": "WKT importado com sucesso!",
+				"no-common-area": "Não há área comum entre as features selecionadas",
+				"copied": "Copiado!",
+				"all-deselected": "Todas as features desselecionadas",
+				"change-layer": "Alterar camada...",
+				"center-objects": "Centralizar nos objetos do mapa...",
+				"center-location": "Centralizar na minha localização...",
+				"undo": "Desfazer",
+				"redo": "Refazer",
+				"polygon": "Polígono",
+				"showinfo": "Mostrar informações",
+				"delete": "Excluir",
+				"select": "Selecionar",
+				"language": "Idioma",
+				"zoom-btn": "Zoom",
+				"copy-btn": "Copiar",
+				"delete-btn": "Excluir",
+				"wkt-copied": "WKT copiado!",
+				"wkt-deleted": "WKT excluído!"
 			},
 			"es": {
 				"import": "Importar",
-				"clear-selection": "Deseleccionar Todo",
-				"copy-selected": "Copiar Seleccionados",
+				"clear-selection": "Deseleccionar",
+				"copy-selected": "Copiar",
 				"show-area": "Mostrar Área",
 				"persistent-objects": "Mantener Objetos",
 				"multi-select": "Multi-Selección (Ctrl+Click)",
@@ -85,12 +95,17 @@ export default class Translation {
 				"showinfo": "Mostrar información",
 				"delete": "Eliminar",
 				"select": "Seleccionar",
-				"language": "Idioma"
+				"language": "Idioma",
+				"zoom-btn": "Zoom",
+				"copy-btn": "Copiar",
+				"delete-btn": "Eliminar",
+				"wkt-copied": "¡WKT copiado!",
+				"wkt-deleted": "¡WKT eliminado!"
 			},
 			"fr": {
 				"import": "Importer",
-				"clear-selection": "Tout désélectionner",
-				"copy-selected": "Copier la sélection",
+				"clear-selection": "Désélectionner",
+				"copy-selected": "Copier",
 				"show-area": "Afficher l'aire",
 				"persistent-objects": "Conserver les objets",
 				"multi-select": "Multi-sélection (Ctrl+Clic)",
@@ -110,11 +125,18 @@ export default class Translation {
 				"showinfo": "Afficher les informations",
 				"delete": "Supprimer",
 				"select": "Sélectionner",
-				"language": "Langue"
+				"language": "Langue",
+				"zoom-btn": "Zoom",
+				"copy-btn": "Copier",
+				"delete-btn": "Supprimer",
+				"wkt-copied": "WKT copié !",
+				"wkt-deleted": "WKT supprimé !"
 			}
 		};
 
 		this.setLanguage(this.#currentLang);
+
+		this.#startDomObserver();
 	}
 
 	#detectLanguage() {
@@ -126,20 +148,38 @@ export default class Translation {
 		return this.#defaultLang;
 	}
 
-	// Traduz e regista elemento dinâmico
 	get(key, element = null, fallback = key) {
-		const text = this.#translations[this.#currentLang]?.[key]
-			?? this.#translations[this.#defaultLang]?.[key]
-			?? fallback;
+		let text =
+			this.#translations[this.#currentLang]?.[key] ??
+			this.#translations[this.#defaultLang]?.[key];
 
+		// If missing → use fallback and auto-register it
+		if (text === undefined) {
+			text = fallback;
+
+			// Ensure default language object exists
+			this.#translations[this.#defaultLang] ??= {};
+
+			// Add only if not already present
+			if (!(key in this.#translations[this.#defaultLang])) {
+				this.#translations[this.#defaultLang][key] = text;
+			}
+
+			// Optional: also add to current language (faster next time)
+			if (this.#currentLang !== this.#defaultLang) {
+				this.#translations[this.#currentLang] ??= {};
+				this.#translations[this.#currentLang][key] = text;
+			}
+		}
+
+		// DOM element auto-update
 		if (element && element instanceof Element) {
 			if (!element.hasAttribute('data-i18n')) {
 				element.setAttribute('data-i18n', key);
 			}
 			this.#trackedElements.set(element, key);
 
-			// Atualiza imediatamente
-			if (element.tagName === 'INPUT' || element.tagName === 'BUTTON' || element.tagName === 'TEXTAREA') {
+			if (['INPUT', 'TEXTAREA', 'BUTTON'].includes(element.tagName)) {
 				element.value = text;
 			} else if (element.hasAttribute('placeholder')) {
 				element.placeholder = text;
@@ -151,6 +191,10 @@ export default class Translation {
 		}
 
 		return text;
+	}
+
+	f(k, def) {
+		return this.get(k, null, def);
 	}
 
 	t(key, element = null, fallback = key) {
@@ -215,4 +259,69 @@ export default class Translation {
 		Object.assign(this.#translations[lang], dict);
 		if (this.#currentLang === lang) this.updateAll();
 	}
+
+	getCurrentTranslations() {
+		return this.#translations[this.#currentLang];
+	}
+
+	scanAndTranslateNewElements() {
+		// 1. Elementos com data-i18n (texto, value, etc)
+		document.querySelectorAll('[data-i18n]:not([data-i18n-translated])').forEach(el => {
+			const key = el.getAttribute('data-i18n');
+			if (key) {
+				const text = this.get(key);
+				if (['INPUT', 'BUTTON', 'TEXTAREA'].includes(el.tagName)) {
+					el.value = text;
+				} else {
+					el.textContent = text;
+				}
+				el.setAttribute('data-i18n-translated', 'true'); // marca como já traduzido
+			}
+		});
+
+		// 2. Placeholder
+		document.querySelectorAll('[data-i18n-placeholder]:not([data-i18n-ph-translated])').forEach(el => {
+			const key = el.getAttribute('data-i18n-placeholder');
+			if (key) {
+				el.placeholder = this.get(key);
+				el.setAttribute('data-i18n-ph-translated', 'true');
+			}
+		});
+
+		// 3. Title / tooltip
+		document.querySelectorAll('[data-i18n-title]:not([data-i18n-title-translated])').forEach(el => {
+			const key = el.getAttribute('data-i18n-title');
+			if (key) {
+				el.title = this.get(key);
+				el.setAttribute('data-i18n-title-translated', 'true');
+			}
+		});
+	}
+
+	#startDomObserver() {
+		const observer = new MutationObserver((mutations) => {
+			let needsScan = false;
+			for (const mutation of mutations) {
+				if (mutation.addedNodes.length > 0) {
+					needsScan = true;
+					break;
+				}
+			}
+			if (needsScan) {
+				// Pequeno delay pra dar tempo do elemento ser renderizado
+				requestAnimationFrame(() => {
+					this.scanAndTranslateNewElements();
+				});
+			}
+		});
+
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+
+		// Também roda uma vez no início (caso já tenha elementos)
+		requestAnimationFrame(() => this.scanAndTranslateNewElements());
+	}
+
 }

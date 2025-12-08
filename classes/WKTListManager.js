@@ -36,7 +36,7 @@ class WKTListManager {
 				mapControls.clearSelection();
 				this.clearSelection();
 				this.updateCopyButton();
-				utilities.showToast?.('Todas as features desselecionadas');
+				utilities.showToast?.(window.translator?.f("all-deselected", "All features deselected"));
 			});
 		}
 		if (copyMultiButton) {
@@ -49,23 +49,26 @@ class WKTListManager {
 				const features = mapControls.getSelectedFeatures();
 				if (features.length < 1) return;
 
-				const multiSelectUnion = window.settingsManager?.getSetting('multi-select-union') === true;
+				const multiSelectUnion = window.settingsManager?.getSetting('multi-select-union') === true || false;
 
 				let multi = null;
 				if (multiSelectUnion)
-					multi = featureUtilities.featuresToMultiPolygonUnion(selected);
+					multi = featureUtilities.featuresToMultiPolygonUnion(features);
 				else
-					multi = featureUtilities.featuresToMultiPolygonJoin(selected);
+					multi = featureUtilities.featuresToMultiPolygonJoin(features);
 
 				if (!multi) {
-					utilities.showToast?.('Erro ao combinar polígonos', 'error');
+					console.log("REsultado multi é nulo", multi);
+					utilities.showToast?.(window.translator?.f("error-combining-polygons", "Error combining polygons"), 'error');
 					return;
 				}
 
 				const wkt = featureUtilities.getFeatureWKT(multi);
-				navigator.clipboard.writeText(wkt).then(() => {
-					utilities.showToast?.('MultiPolygon copiado com sucesso!');
+
+				this.copyToClipboard(wkt).then(() => {
+					utilities.showToast?.(window.translator?.f("multi-polygon-copied", "MultiPolygon copied successfully!"));
 				});
+
 			});
 		}
 	}
@@ -162,9 +165,9 @@ class WKTListManager {
 		li.innerHTML = `
             <img>
 			<div class="wkt-item-buttons">
-				<button class="zoom-btn" type="button" title="Zoom"><i class="fa-solid fa-magnifying-glass"></i></button>
-				<button class="copy-btn" type="button" title="Copiar"><i class="fa-regular fa-copy"></i></button>
-				<button class="delete-btn" type="button" title="Apagar"><i class="fa fa-trash"></i></button>
+				<button class="zoom-btn" type="button" data-i18n-title="zoom-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+				<button class="copy-btn" type="button" data-i18n-title="copy-btn"><i class="fa-regular fa-copy"></i></button>
+				<button class="delete-btn" type="button" data-i18n-title="delete-btn"><i class="fa fa-trash"></i></button>
 			</div>
             <div>
                 <strong>${geom.getType()}</strong>
@@ -186,7 +189,7 @@ class WKTListManager {
 			console.log('Copying WKT to clipboard:', wkt);
 
 			this.copyToClipboard(wkt).then(() => {
-				utilities.showToast?.('WKT copiado!', 'success');
+				utilities.showToast?.(window.translator?.f("wkt-copied", "WKT copied!"), 'success');
 			});
 		});
 
@@ -196,10 +199,13 @@ class WKTListManager {
 			const f = MapManager.vectorLayer.getSource().getFeatureById(id);
 			if (f) {
 				const select = mapControls.interactions.select;
+
+				console.log(mapControls.interactions, select);
+
 				select.getFeatures().clear();
 				select.getFeatures().push(f);
 				mapControls.deleteSelected();
-				utilities.showToast?.('WKT apagado!', 'error')
+				utilities.showToast?.(window.translator?.f("wkt-deleted", "WKT deleted!"), 'error')
 			}
 		});
 

@@ -6,7 +6,6 @@ import TabSystem from './classes/TabSystem.js';
 import Translation from './classes/Translation.js';
 import { loading, utilities } from './utils/utilities.js';
 import { mapUtilities } from './utils/mapUtilities.js';
-import wktUtilities from './classes/WKTUtilities.js';
 
 (async () => {
 	loading.show();
@@ -15,7 +14,6 @@ import wktUtilities from './classes/WKTUtilities.js';
 
 	const settingsManager = new SettingsManager('settingsContainer', 'wkt-settings');
 	window.settingsManager = settingsManager;
-
 
 	// 2. Tradução e configurações
 	const translator = new Translation();
@@ -59,4 +57,8 @@ import wktUtilities from './classes/WKTUtilities.js';
 		tabSystem.showTabById('importContainer');
 		$("#settings-btn").show();
 	});
+
+	const traducao = window.translator?.getCurrentTranslations();
+	console.log(JSON.stringify(traducao, null, 2));
+
 })();

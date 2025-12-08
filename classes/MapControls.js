@@ -86,7 +86,7 @@ class MapControls {
 
 			const selectToggle = new ol.control.Toggle({
 				html: '<i class="fa-solid fa-arrow-pointer fa-lg"></i>',
-				title: window.translator?.get("select") || "Select",
+				title: window.translator?.f("select", "Select"),
 				interaction: selectInteraction,
 				bar: this.controls.selectBar,
 				autoActivate: true,
@@ -106,7 +106,7 @@ class MapControls {
 	_createDeleteButton() {
 		const btn = new ol.control.Button({
 			html: '<i class="fa fa-times fa-lg"></i>',
-			title: window.translator?.get("delete") || "Delete",
+			title: window.translator?.f("delete", "Delete"),
 			handleClick: () => this.deleteSelected()
 		});
 		this.controls.selectBar.addControl(btn);
@@ -116,13 +116,13 @@ class MapControls {
 	_createInfoButton() {
 		this.controls.infoBtn = new ol.control.Button({
 			html: '<i class="fa fa-info fa-lg"></i>',
-			title: window.translator?.get("showinfo") || "Show information",
+			title: window.translator?.f("showinfo", "Show information"),
 			handleClick: () => {
 				const features = this.interactions.select.getFeatures();
 				const textarea = document.querySelector("#wktdefault textarea");
 				textarea.value = features.getLength() === 1
 					? featureUtilities.getFeatureWKT(features.item(0))
-					: "Select only one feature";
+					: window.translator?.f("select-only-one", "Select only one feature");
 			}
 		});
 	}
@@ -136,13 +136,16 @@ class MapControls {
 
 		const drawToggle = new ol.control.Toggle({
 			html: '<i class="fa-solid fa-draw-polygon fa-lg"></i>',
-			title: window.translator?.get("polygon") || "Polygon",
+			title: window.translator?.f("polygon", "Polygon"),
 			interaction: drawInteraction
 		});
 
 		this.controls.editBar.addControl(drawToggle);
 		this.controls.drawCtrl = drawToggle;
 		this.interactions.draw = drawInteraction;
+
+		this.controls.drawCtrl.button_.setAttribute('data-i18n', 'polygon');
+		this.controls.drawCtrl.button_.setAttribute('data-i18n-title', 'polygon');
 
 		drawInteraction.on('drawend', (e) => this._handleDrawEnd(e));
 		drawInteraction.on('change:active', () => featureUtilities.deselectCurrentFeature(false));
@@ -203,18 +206,19 @@ class MapControls {
 
 		this.controls.undoBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-rotate-left fa-lg"></i>',
-			title: window.translator?.get("undo") || "Undo",
+			title: window.translator?.f("undo", "Undo"),
 			handleClick: () => undoRedo.undo()
 		});
-		console.log(this.controls.undoBtn);
 		this.controls.undoBtn.button_.setAttribute('data-i18n', 'undo');
 		this.controls.undoBtn.button_.setAttribute('data-i18n-title', 'undo');
 
 		this.controls.redoBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-rotate-right fa-lg"></i>',
-			title: window.translator?.get("redo") || "Redo",
+			title: window.translator?.f("redo", "Redo"),
 			handleClick: () => undoRedo.redo()
 		});
+		this.controls.redoBtn.button_.setAttribute('data-i18n', 'redo');
+		this.controls.redoBtn.button_.setAttribute('data-i18n-title', 'redo');
 
 		this.controls.editBar.addControl(this.controls.undoBtn);
 		this.controls.editBar.addControl(this.controls.redoBtn);
@@ -226,14 +230,14 @@ class MapControls {
 
 		this.controls.locationBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-location-crosshairs fa-lg"></i>',
-			title: window.translator?.get("center-location") || "Center on my location",
+			title: window.translator?.f("center-location", "Center on my location"),
 			handleClick: () => this.centerOnMyLocation()
 		});
 		locationBar.addControl(this.controls.locationBtn);
 
 		this.controls.centerObjectsBtn = new ol.control.Button({
 			html: '<i class="fa-solid fa-arrows-to-dot fa-lg"></i>',
-			title: window.translator?.get("center-objects") || "Center on objects",
+			title: window.translator?.f("center-objects", "Center on objects"),
 			handleClick: () => featureUtilities.centerOnVector()
 		});
 		locationBar.addControl(this.controls.centerObjectsBtn);
@@ -245,7 +249,7 @@ class MapControls {
 
 		this.controls.layerChangeBtn = new ol.control.Button({
 			html: utilities.layerChangeBtnHtml(),
-			title: window.translator?.get("change-layer") || "Change layer...",
+			title: window.translator?.f("change-layer", "Change layer..."),
 			handleClick: mapUtilities.toggleLayers
 		});
 		layerBar.addControl(this.controls.layerChangeBtn);
@@ -283,7 +287,7 @@ class MapControls {
 			const text = textarea.value.trim();
 
 			if (!text) {
-				utilities.showToast?.('Por favor, cola ou escreve um WKT válido.', 'error');
+				utilities.showToast?.(window.translator?.f("invalid-wkt", "Please paste or write a valid WKT."), 'error');
 				textarea.focus();
 				return;
 			}
@@ -294,7 +298,7 @@ class MapControls {
 
 				await mapUtilities.loadWKT(text);
 
-				utilities.showToast('WKT importado com sucesso!');
+				utilities.showToast(window.translator?.f("wkt-imported", "WKT imported successfully!"));
 				setTimeout(() => {
 					importBtn.disabled = false;
 					loading.hide();
@@ -304,7 +308,7 @@ class MapControls {
 
 			} catch (error) {
 				console.error("Erro ao importar WKT:", error);
-				utilities.showToast?.('Erro ao importar WKT. Verifica o formato.', 'error');
+				utilities.showToast?.(window.translator?.f("wkt-import-error", "Error importing WKT. Please check the format."), 'error');
 				importBtn.disabled = false;
 				loading.hide();
 			}
