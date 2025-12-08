@@ -159,6 +159,20 @@
 	display: none !important;
 }
 
+/* ================================================= */
+/*  LAYOUT DINÂMICO 2x2 SE TIVER 4 BOTÕES VISÍVEIS   */
+/* ================================================= */
+.actions-container[data-visible-count="4"] {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 6px;
+}
+
+.actions-container[data-visible-count="4"] button {
+	width: 100%;
+	margin: 0;
+}
+
 #wkt-list {
 	border-radius: 12px;
 	font-family: system-ui, -apple-system, sans-serif;

@@ -1,53 +1,38 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<title>WKT Plotter</title>
 	<meta charset="UTF-8">
-
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 	<link rel="manifest" href="/site.webmanifest">
-
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
-
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.14.1/themes/base/jquery-ui.css"
 		type="text/css" media="all" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js" type="text/javascript"></script>
-
 	<script src="https://cdn.jsdelivr.net/npm/js-md5@2.5.0/build/md5.min.js"></script>
-
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-
 	<script src="https://unpkg.com/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
-
 	<script src="https://unpkg.com/terraformer@1.0.12/terraformer.js"></script>
 	<script src="https://unpkg.com/terraformer-wkt-parser@1.2.0/terraformer-wkt-parser.js"></script>
-
 	<script src="https://cdn.jsdelivr.net/npm/jsts@2.11.0/dist/jsts.min.js"></script>
 	<!-- <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script> -->
-
 	<!-- Openlayers -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css" />
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
 	<script
 		src="https://unpkg.com/@babel/polyfill@7.12.1/dist/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL">		</script>
-
 	<!-- ol-ext -->
 	<link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
 	<script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
-
 	<link href="/main.css" version rel="stylesheet">
 	<link href="/map.css" version rel="stylesheet">
 	<link href="/controls.css" version rel="stylesheet">
-
 	<script type="module">
 		console.log("Iniciando carregamento do WKTapp.js...");
 		const version = new Date().getTime();
-
 		document.querySelectorAll('link[version]').forEach(el => {
 			const url = new URL(el.href || el.src, location.href);
 			url.searchParams.set('v', version);
@@ -55,7 +40,6 @@
 			if (el.src) el.src = url;
 			el.removeAttribute('version');
 		});
-
 		import(`./WKTapp.js?v=${version}`)
 			.then(module => {
 				console.log("WKTapp.js carregado com sucesso às", new Date().toLocaleTimeString());
@@ -63,9 +47,7 @@
 			.catch(err => {
 				console.error("Erro ao carregar WKTapp.js:", err);
 			});
-
 	</script>
-
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-HQWSTRZMSN"></script>
 	<script>
@@ -75,7 +57,6 @@
 		gtag('config', 'G-HQWSTRZMSN');
 	</script>
 </head>
-
 <body>
 	<div id="header" class="flex-none grow-0">
 		<img src="logo.svg?v=202412062200" title="WKT Plotter" width="160" height="50">
@@ -105,18 +86,15 @@
 									<i class="fa-solid fa-paste"></i>
 									<span data-i18n="import">Import</span>
 								</button>
-
-								<button id="clear-selection-btn" type="button" class="hidden">
-									<i class="fa-solid fa-ban"></i>
-									<span data-i18n="clear-selection">Clear Selection</span>
-								</button>
-
 								<button id="copy-selected-btn" type="button" class="hidden">
 									<i class="fa-regular fa-copy"></i>
 									<span data-i18n="copy-selected">Copy Selected</span>
 									<span class="button-count"><span id="selected-count">0</span></span>
 								</button>
-
+								<button id="clear-selection-btn" type="button" class="hidden">
+									<i class="fa-solid fa-ban"></i>
+									<span data-i18n="clear-selection">Clear Selection</span>
+								</button>
 								<button id="delete-all-btn" type="button" class="hidden">
 									<i class="fa-solid fa-trash"></i>
 									<span data-i18n="delete-all">Delete All</span>
@@ -165,5 +143,4 @@
 		</div>
 	</div>
 </body>
-
 </html>

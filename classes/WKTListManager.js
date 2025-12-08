@@ -12,7 +12,6 @@ const copyMultiButton = document.getElementById('copy-selected-btn');
 const selectedCountSpan = document.getElementById('selected-count');
 const clearSelectionBtn = document.getElementById('clear-selection-btn');
 const deleteAllBtn = document.getElementById('delete-all-btn');
-
 const textarea = document.querySelector("#wktdefault textarea");
 
 class WKTListManager {
@@ -145,6 +144,14 @@ class WKTListManager {
 		// === BOTÃO "APAGAR TUDO" ===
 		if (deleteAllBtn) {
 			deleteAllBtn.classList.toggle('hidden', totalFeatures === 0);
+		}
+
+		// === ATUALIZA CONTADOR DE VISÍVEIS PARA CSS ===
+		const container = document.querySelector('.actions-container');
+		if (container) {
+			const visibleButtons = Array.from(container.querySelectorAll('button'))
+				.filter(btn => !btn.classList.contains('hidden')).length;
+			container.dataset.visibleCount = visibleButtons;
 		}
 	}
 
