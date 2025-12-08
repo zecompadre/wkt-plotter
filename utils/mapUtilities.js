@@ -1,6 +1,6 @@
 // js/utils/mapUtilities.js
 
-import { MapManager, setupMap } from '../map/setupMap.js';
+import { MapManager } from '../map/setupMap.js';
 import { featureUtilities } from './featureUtilities.js';
 import { utilities } from './utilities.js';
 import wktUtilities from '../classes/WKTUtilities.js';
