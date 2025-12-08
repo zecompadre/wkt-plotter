@@ -43,6 +43,7 @@ export const utilities = {
 		const arcgisImg = arcgisLayer.getPreview?.() || '';
 
 		const isOsmVisible = osmLayer.getVisible();
+
 		const imgSrc = isOsmVisible ? arcgisImg : osmImg;
 		const imgAlt = isOsmVisible ? arcgisTitle : osmTitle;
 
@@ -109,24 +110,34 @@ export const utilities = {
 
 	// Estilo genérico (quadrados nos vértices)
 	genericStyleFunction: (color) => {
-		const styles = [
-			new ol.style.Style({
-				image: new ol.style.RegularShape({
-					fill: new ol.style.Fill({ color: colors.normal }),
-					stroke: new ol.style.Stroke({ color: colors.normal, width: 3 }),
-					points: 4,
-					radius: 10,
-					radius2: 0,
-					angle: 0,
-				}),
-				fill: new ol.style.Fill({ color: utilities.hexToRgbA(color, '0.3') }),
-				stroke: new ol.style.Stroke({ color, width: 2 }),
-			}),
-		];
-		
 		return (feature, resolution) => {
 			if (feature && feature.get('hidden')) return null;
-			return styles;
+
+			// Check for Dark Mode
+			const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+			// Override color if in Dark Mode and using default 'normal' color
+			// (Assuming 'color' passed is usually colors.normal for base layer)
+			// You might want a specific check, but generally forcing white/light on dark map is good.
+			// Let's swap #141414 for #FFFFFF in dark mode
+			let renderColor = color;
+			if (isDarkMode && color === colors.normal) {
+				renderColor = '#e0e0e0';
+			}
+
+			return [
+				new ol.style.Style({
+					image: new ol.style.RegularShape({
+						fill: new ol.style.Fill({ color: renderColor }),
+						stroke: new ol.style.Stroke({ color: renderColor, width: 3 }),
+						points: 4,
+						radius: 10,
+						radius2: 0,
+						angle: 0,
+					}),
+					fill: new ol.style.Fill({ color: utilities.hexToRgbA(renderColor, '0.3') }),
+					stroke: new ol.style.Stroke({ color: renderColor, width: 2 }),
+				})
+			];
 		};
 	},
 

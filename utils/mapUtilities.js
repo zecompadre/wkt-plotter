@@ -4,8 +4,8 @@ import { MapManager } from '../map/setupMap.js';
 import { featureUtilities } from './featureUtilities.js';
 import { utilities } from './utilities.js';
 import wktUtilities from '../classes/WKTUtilities.js';
-import wktListManager from '../classes/WKTListManager.js';
 import { osmLayer, arcgisLayer } from '../map/layers.js';
+import mapControls from '../classes/MapControls.js';
 
 export const mapUtilities = {
 	toggleLayers: function () {
@@ -13,8 +13,8 @@ export const mapUtilities = {
 		osmLayer.setVisible(!osmVisible);
 		arcgisLayer.setVisible(osmVisible);
 
-		const btn = map.getControls().getArray()
-			.find(c => c instanceof ol.control.Button && c.get('name') === 'layerChange');
+		const btn = mapControls.controls.layerChangeBtn;
+
 		if (btn) btn.setHtml(utilities.layerChangeBtnHtml());
 	},
 
@@ -112,7 +112,6 @@ export const mapUtilities = {
 			await this.reviewLayout();
 
 			featureUtilities.centerOnVector();
-
 
 		} catch (error) {
 			console.error('Error loading WKT:', error);

@@ -79,7 +79,14 @@
 	--li-action-delete-color: var(--color-red-danger);
 	--li-action-visibility-color: #8a63e5;
 
+	--li-action-visibility-color: #8a63e5;
+
 	--text-area-color: var(--color-gray-800);
+}
+
+/* Dark Mode Map Filter - Fiord Color Style */
+[data-theme="dark"] .osm-layer {
+	filter: invert(1) sepia(0.5) hue-rotate(195deg) brightness(0.85) contrast(1.1) saturate(0.6) grayscale(0.2) !important;
 }
 
 [data-theme="dark"] {

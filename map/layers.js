@@ -14,5 +14,6 @@ export const osmLayer = new ol.layer.Tile({
 	name: 'Streets',
 	title: 'Streets',
 	source: new ol.source.OSM(),
-	visible: true
+	visible: true,
+	className: 'osm-layer'
 });

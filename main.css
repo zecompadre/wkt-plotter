@@ -251,7 +251,7 @@ textarea {
 	font-weight: 600;
 	color: var(--color-gray-800);
 	cursor: pointer;
-	flex: 1;
+	min-width: 75px;
 }
 
 .settings-item small {
@@ -269,8 +269,10 @@ textarea {
 	background: var(--color-blue-500);
 }
 
+#theme,
 #language {
-	width: 100%;
+	min-width: 150px;
+	width: auto;
 	padding: 5px 6px;
 	margin-top: 6px;
 	border: 1px solid var(--color-gray-300);
@@ -283,10 +285,12 @@ textarea {
 	transition: all 0.2s ease;
 }
 
+#theme:hover,
 #language:hover {
 	border-color: var(--color-blue-400);
 }
 
+#theme:focus,
 #language:focus {
 	outline: none;
 	border-color: var(--color-blue-400);

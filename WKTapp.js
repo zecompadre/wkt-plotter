@@ -1,6 +1,6 @@
 // js/main.js  →  ou  WKTapp.js  (o nome que preferires)
 
-import { setupMap } from './map/setupMap.js';
+import { setupMap, MapManager } from './map/setupMap.js';
 import SettingsManager from './classes/SettingsManager.js';
 import TabSystem from './classes/TabSystem.js';
 import Translation from './classes/Translation.js';
@@ -45,6 +45,8 @@ import { mapUtilities } from './utils/mapUtilities.js';
 	const themeSelect = document.getElementById('theme');
 	const applyTheme = (theme) => {
 		document.documentElement.setAttribute('data-theme', theme);
+		// Force vector layer re-render to pick up style changes (light vs dark colors)
+		MapManager.vectorLayer?.changed();
 	};
 
 	if (themeSelect) {
@@ -84,9 +86,6 @@ import { mapUtilities } from './utils/mapUtilities.js';
 		tabSystem.showTabById('importContainer');
 		$("#settings-btn").show();
 	});
-
-	const traducao = window.translator?.getCurrentTranslations();
-	console.log(JSON.stringify(traducao, null, 2));
 
 	$("#list-toggle-btn").on("click", function () {
 		$("#wkt-list").toggleClass("controls-hidden");

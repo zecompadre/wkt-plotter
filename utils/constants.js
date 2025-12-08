@@ -6,6 +6,7 @@ export const projections = {
 
 export const colors = {
 	normal: '#141414',
+	normalDark: '#e0e0e0',
 	create: '#00AAFF',
 	edit: '#ec7063',
 	snap: '#34495e',
