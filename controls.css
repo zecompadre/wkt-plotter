@@ -105,7 +105,6 @@
 	display: none !important;
 }
 
-/* COPIAR SELECIONADOS */
 #copy-selected-btn {
 	background: #48bb78;
 	color: white;
@@ -127,7 +126,6 @@
 	display: none !important;
 }
 
-/* Contador – estilo mantido */
 #selected-count {
 	background: rgba(255, 255, 255, 0.3);
 	color: white;
@@ -138,6 +136,27 @@
 	min-width: 28px;
 	text-align: center;
 	backdrop-filter: blur(4px);
+}
+
+#delete-all-btn {
+	background: #e43c36;
+	color: white;
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+
+#delete-all-btn:not(:disabled) {
+	opacity: 1;
+	cursor: pointer;
+	background: #dc3545;
+}
+
+#delete-all-btn:not(:disabled):hover {
+	background: #c82333;
+}
+
+#delete-all-btn.hidden {
+	display: none !important;
 }
 
 #wkt-list {

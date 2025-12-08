@@ -12,6 +12,7 @@ const copyMultiButton = document.getElementById('copy-selected-btn');
 const selectedCountSpan = document.getElementById('selected-count');
 const clearSelectionBtn = document.getElementById('clear-selection-btn');
 const deleteAllBtn = document.getElementById('delete-all-btn');
+
 const textarea = document.querySelector("#wktdefault textarea");
 
 class WKTListManager {
@@ -45,9 +46,8 @@ class WKTListManager {
 			deleteAllBtn.addEventListener('click', (e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				mapControls.clearSelection();
-				this.clearSelection();
-				this.updateCopyButton();
+				mapControls.clearSelection(); // Limpa seleção visual
+				featureUtilities.removeAllFeatures(); // Remove tudo
 				utilities.showToast?.(window.translator?.f("all-deleted", "All features deleted"));
 			});
 		}
@@ -140,6 +140,11 @@ class WKTListManager {
 		// === BOTÃO "DESSELECIONAR TUDO" ===
 		if (clearSelectionBtn) {
 			clearSelectionBtn.classList.toggle('hidden', selectedCount === 0);
+		}
+
+		// === BOTÃO "APAGAR TUDO" ===
+		if (deleteAllBtn) {
+			deleteAllBtn.classList.toggle('hidden', totalFeatures === 0);
 		}
 	}
 
@@ -235,6 +240,8 @@ class WKTListManager {
 
 		li.addEventListener('click', () => this.selectFeature(feature));
 		li.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+		this.updateCopyButton();
 	}
 
 	// Seleção com suporte total a multi-select
@@ -296,6 +303,7 @@ class WKTListManager {
 	clear() {
 		if (this.list) this.list.innerHTML = '';
 		textarea.value = "";
+		this.updateCopyButton();
 	}
 
 	async update(feature) {

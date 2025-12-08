@@ -128,8 +128,6 @@ export const mapUtilities = {
 			wktUtilities.load();
 			let wkts = wktUtilities.get();
 
-			//console.log('Existing WKTs:', wkts);
-
 			if (!Array.isArray(wkts)) {
 				wkts = [];
 			}
@@ -137,8 +135,6 @@ export const mapUtilities = {
 			textarea.focus();
 
 			let wktClipboard = await utilities.readClipboard();
-
-			//console.log('WKT from clipboard:', wktClipboard);
 
 			await this.loadWKT(wktClipboard);
 

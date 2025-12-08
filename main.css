@@ -272,6 +272,10 @@ textarea {
 	border-color: #4299e1;
 }
 
+.hidden {
+	display: none;
+}
+
 #wktdefault textarea {
 	background: #fdfdfe;
 	border-radius: 10px;
@@ -317,10 +321,6 @@ textarea {
 
 .copy-wkt-btn:hover {
 	background: rgba(0, 0, 0, 0.9);
-}
-
-.hidden {
-	display: none;
 }
 
 .wkt-copy-toast {

@@ -40,7 +40,8 @@ export default class Translation {
 				"copy-btn": "Copy",
 				"delete-btn": "Delete",
 				"wkt-copied": "WKT copied!",
-				"wkt-deleted": "WKT deleted!"
+				"wkt-deleted": "WKT deleted!",
+				"delete-all": "Delete All",
 			},
 			"pt": {
 				"import": "Importar",
@@ -70,7 +71,8 @@ export default class Translation {
 				"copy-btn": "Copiar",
 				"delete-btn": "Excluir",
 				"wkt-copied": "WKT copiado!",
-				"wkt-deleted": "WKT excluído!"
+				"wkt-deleted": "WKT excluído!",
+				"delete-all": "Remover tudo",
 			},
 			"es": {
 				"import": "Importar",
@@ -100,7 +102,8 @@ export default class Translation {
 				"copy-btn": "Copiar",
 				"delete-btn": "Eliminar",
 				"wkt-copied": "¡WKT copiado!",
-				"wkt-deleted": "¡WKT eliminado!"
+				"wkt-deleted": "¡WKT eliminado!",
+				"delete-all": "Eliminar todo"
 			},
 			"fr": {
 				"import": "Importer",
@@ -130,7 +133,8 @@ export default class Translation {
 				"copy-btn": "Copier",
 				"delete-btn": "Supprimer",
 				"wkt-copied": "WKT copié !",
-				"wkt-deleted": "WKT supprimé !"
+				"wkt-deleted": "WKT supprimé !",
+				"delete-all": "Supprimer tout"
 			}
 		};
 

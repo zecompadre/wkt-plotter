@@ -2,6 +2,8 @@ import { MapManager } from '../map/setupMap.js';
 import { utilities } from './utilities.js';
 import { projections, colors } from './constants.js';
 import wktListManager from '../classes/WKTListManager.js';
+import wktUtilities from '../classes/WKTUtilities.js';
+import { mapUtilities } from './mapUtilities.js';
 
 export const featureUtilities = {
 	deselectCurrentFeature: (active) => {
@@ -192,5 +194,27 @@ export const featureUtilities = {
 		wkt = utilities.normalizeWKT(wkt);
 		return wkt;
 	},
+
+	removeAllFeatures: () => {
+		// 1. Limpa a layer do mapa
+		if (MapManager.vectorLayer) {
+			MapManager.vectorLayer.getSource().clear();
+		}
+
+		// 2. Limpa a coleção de features
+		MapManager.featureCollection.clear();
+
+		// 3. Limpa a lista lateral
+		wktListManager.clear();
+
+		// 4. Limpa a persistência
+		if (wktUtilities) wktUtilities.clear();
+
+		// 5. Atualiza layout (botões)
+		if (mapUtilities && mapUtilities.reviewLayout) {
+			mapUtilities.reviewLayout(false);
+		}
+	},
+
 
 }
