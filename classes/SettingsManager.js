@@ -9,7 +9,7 @@ export default class SettingsManager {
 		this.#storageKey = storageKey;
 
 		if (!this.#container) {
-			throw new Error(`SettingsManager: Container #${containerId} não encontrado`);
+			throw new Error(`SettingsManager: Container #${containerId} not found`);
 		}
 
 		this.#loadSettings();

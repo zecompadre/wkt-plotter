@@ -61,7 +61,7 @@
 <body>
 	<div id="header" class="flex-none grow-0">
 		<img src="logo.svg?v=202412062200" title="WKT Plotter" width="160" height="50">
-		<button id="settings-btn" class="" type="button" title="Settings"><i
+		<button id="settings-btn" class="" type="button" title="Settings" data-i18n-title="settings"><i
 				class="fa-solid fa-gear fa-lg"></i></button>
 	</div>
 	<div id="wrapper">
@@ -70,8 +70,8 @@
 		<div id="controls">
 			<div class="tabs" style="display: none">
 				<div class="tab-buttons">
-					<button data-tab="importContainer" class="active">Import</button>
-					<button data-tab="settingsContainer">Settings</button>
+					<button data-tab="importContainer" class="active" data-i18n="import-tab">Import</button>
+					<button data-tab="settingsContainer" data-i18n="settings-tab">Settings</button>
 				</div>
 			</div>
 			<div class="tab-content">
@@ -79,7 +79,7 @@
 					<form>
 						<div id="wktdefault" class='wkt-container'>
 							<div class="wkt-input-wrapper">
-								<textarea placeholder="Cole ou importe um WKT aqui..." rows="6"
+								<textarea placeholder="Paste or import a WKT here..." rows="6"
 									data-i18n-placeholder="textarea-placeholder"></textarea>
 							</div>
 							<div class="actions-container">
@@ -108,7 +108,7 @@
 				<div id="settingsContainer" class="settings tab-pane">
 					<form id="light-form">
 						<div class="settings-item">
-							<label for="language" data-i18n="language">Idioma</label>
+							<label for="language" data-i18n="language">Language</label>
 							<select id="language">
 								<option value="pt">Português</option>
 								<option value="en">English</option>
@@ -118,25 +118,25 @@
 						</div>
 						<div class="settings-item">
 							<input type="checkbox" id="show-area">
-							<label for="show-area" data-i18n="show-area">Mostrar Área</label>
+							<label for="show-area" data-i18n="show-area">Show Area</label>
 						</div>
 						<div class="settings-item">
 							<input type="checkbox" id="wkt-persistent">
-							<label for="wkt-persistent" data-i18n="persistent-objects">Reter Objectos</label>
+							<label for="wkt-persistent" data-i18n="persistent-objects">Keep Objects</label>
 						</div>
 						<div class="settings-item">
 							<input type="checkbox" id="multi-select">
-							<label for="multi-select" data-i18n="multi-select">Multi-Seleção (Ctrl+Click)</label>
+							<label for="multi-select" data-i18n="multi-select">Multi-Selection (Ctrl+Click)</label>
 						</div>
 						<div class="settings-item">
 							<input type="checkbox" id="multi-select-union">
-							<label for="multi-select-union" data-i18n="union-multi-select">Unir Multi-Seleção</label>
+							<label for="multi-select-union" data-i18n="union-multi-select">Union Multi-Selection</label>
 						</div>
 					</form>
 					<div class="actions-container">
 						<button id="settings-close-btn" type="button">
 							<i class="fa-solid fa-xmark"></i>
-							<span data-i18n="close">Fechar</span>
+							<span data-i18n="close">Close</span>
 						</button>
 					</div>
 				</div>

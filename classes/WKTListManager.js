@@ -17,7 +17,7 @@ const textarea = document.querySelector("#wktdefault textarea");
 class WKTListManager {
 	constructor() {
 		this.list = document.getElementById('wkt-list');
-		if (!this.list) throw new Error("Elemento #wkt-list não encontrado");
+		if (!this.list) throw new Error("Element #wkt-list not found");
 	}
 
 	initAfterMapReady() {
@@ -70,7 +70,7 @@ class WKTListManager {
 					multi = featureUtilities.featuresToMultiPolygonJoin(features);
 
 				if (!multi) {
-					console.log("REsultado multi é nulo", multi);
+					console.log("Multi result is null", multi);
 					utilities.showToast?.(window.translator?.f("error-combining-polygons", "Error combining polygons"), 'error');
 					return;
 				}
@@ -98,7 +98,7 @@ class WKTListManager {
 		if (window.settingsManager?.on) {
 			window.settingsManager.on('multi-select', (data) => {
 				this.updateListSelectionStyle();
-				console.log('Configuração multi-select alterada → lista atualizada');
+				console.log('Multi-select setting changed -> list updated');
 			});
 		}
 	}
@@ -107,7 +107,7 @@ class WKTListManager {
 		const totalFeatures = MapManager.vectorLayer.getSource().getFeatures().length;     // total no mapa
 		const selectedCount = mapControls.getSelectedFeatures().length;         // selecionadas
 
-		console.log(`Atualizando botão copiar: ${selectedCount} selecionadas de ${totalFeatures} totais`);
+		console.log(`Updating copy button: ${selectedCount} selected of ${totalFeatures} total`);
 
 		// Atualiza o contador
 		if (selectedCountSpan) {
@@ -406,7 +406,7 @@ class WKTListManager {
 		try {
 			geojson = Terraformer.WKT.parse(wkt);
 		} catch (e) {
-			console.warn('WKT inválido', e);
+			console.warn('Invalid WKT', e);
 			return null;
 		}
 

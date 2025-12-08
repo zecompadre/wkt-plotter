@@ -21,13 +21,23 @@ import { mapUtilities } from './utils/mapUtilities.js';
 
 	const langSelect = document.getElementById('language');
 	if (langSelect) {
-		// Define idioma atual
-		langSelect.value = translator.getCurrentLanguage();
+		// Reads saving form SettingsManager (loaded first)
+		// If SettingsManager restored a value, use it. 
+		// Otherwise, use browser default (and SettingsManager will pick it up on next change)
+		const savedLang = settingsManager.getSetting('language');
+		
+		if (savedLang) {
+			translator.setLanguage(savedLang);
+			langSelect.value = savedLang; 
+		} else {
+			// No saved setting? Use translator's auto-detected
+			langSelect.value = translator.getCurrentLanguage();
+		}
 
 		langSelect.addEventListener('change', () => {
 			const newLang = langSelect.value;
 			translator.setLanguage(newLang);
-			console.log('Idioma alterado para:', newLang);
+			console.log('Language changed to:', newLang);
 		});
 	}
 

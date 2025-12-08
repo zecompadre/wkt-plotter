@@ -37,9 +37,9 @@ export const utilities = {
 
 	// HTML do botão de troca de camada
 	layerChangeBtnHtml: () => {
-		const osmTitle = osmLayer.get("title") || osmLayer.get("name");
+		const osmTitle = window.translator?.f("layer-streets", "Streets");
 		const osmImg = osmLayer.getPreview?.() || '';
-		const arcgisTitle = arcgisLayer.get("title") || arcgisLayer.get("name");
+		const arcgisTitle = window.translator?.f("layer-satellite", "Satellite");
 		const arcgisImg = arcgisLayer.getPreview?.() || '';
 
 		const isOsmVisible = osmLayer.getVisible();
@@ -236,18 +236,18 @@ export const utilities = {
 				.filter(l => /^((MULTI)?POLYGON|POINT|LINESTRING|GEOMETRYCOLLECTION)\s*\(/i.test(l));
 
 			if (linhasValidas.length === 0) {
-				utilities.showToast?.("Nenhum polígono encontrado no clipboard", "warning");
+				utilities.showToast?.(window.translator?.f("clipboard-empty", "No polygons found in clipboard"), "warning");
 				return "";
 			}
 
 			returnVal = linhasValidas.join("\n");
-			utilities.showToast?.(`${linhasValidas.length} polígono(s) colado(s)!`, "success");
+			utilities.showToast?.(`${linhasValidas.length} ${window.translator?.f("clipboard-paste-success", "polygons pasted!")}`, "success");
 
 			// Limpa clipboard (opcional)
 			await navigator.clipboard.writeText("").catch(() => { });
 
 		} catch (error) {
-			console.warn("Clipboard API falhou (normal), usando fallback com paste manual");
+			console.warn("Clipboard API failed (normal), using fallback with manual paste");
 
 			// Fallback seguro: força o paste com execCommand (ainda funciona em 2025!)
 			const sucesso = document.execCommand("paste");
@@ -262,10 +262,10 @@ export const utilities = {
 
 				if (linhasValidas.length > 0) {
 					returnVal = linhasValidas.join("\n");
-					utilities.showToast?.(`${linhasValidas.length} polígono(s) colado(s)!`, "success");
+					utilities.showToast?.(`${linhasValidas.length} ${window.translator?.f("clipboard-paste-success", "polygons pasted!")}`, "success");
 					navigator.clipboard.writeText("").catch(() => { });
 				} else {
-					utilities.showToast?.("Nenhum polígono válido no clipboard", "warning");
+					utilities.showToast?.(window.translator?.f("clipboard-invalid", "No valid polygons in clipboard"), "warning");
 				}
 			}, 50);
 

@@ -9,7 +9,7 @@ export default class Translation {
 		this.#defaultLang = defaultLang;
 		this.#currentLang = this.#detectLanguage();
 
-		console.log(`Idioma detectado: ${this.#currentLang}`);
+		console.log(`Detected language: ${this.#currentLang}`);
 
 		this.#translations = {
 			"en": {
@@ -42,37 +42,65 @@ export default class Translation {
 				"wkt-copied": "WKT copied!",
 				"wkt-deleted": "WKT deleted!",
 				"delete-all": "Delete All",
+				"error-combining-polygons": "Error combining polygons",
+				"multi-polygon-copied": "MultiPolygon copied successfully!",
+				"clipboard-empty": "No polygons found in clipboard",
+				"clipboard-paste-success": "polygons pasted!",
+				"clipboard-invalid": "No valid polygons in clipboard",
+				"select-only-one": "Select only one feature",
+				"wkt-import-error": "Error importing WKT. Please check the format.",
+				"invalid-wkt": "Please paste or write a valid WKT.",
+				"all-deleted": "All features deleted",
+				"settings": "Settings",
+				"import-tab": "Import",
+				"settings-tab": "Settings",
+				"layer-satellite": "Satellite",
+				"layer-streets": "Streets"
 			},
 			"pt": {
 				"import": "Importar",
-				"clear-selection": "Desselecionar",
+				"clear-selection": "Limpar seleção",
 				"copy-selected": "Copiar",
-				"show-area": "Mostrar Área",
-				"persistent-objects": "Reter Objectos",
-				"multi-select": "Multi-Seleção (Ctrl+Click)",
-				"union-multi-select": "Unir Multi-Seleção",
+				"show-area": "Mostrar área",
+				"persistent-objects": "Manter objetos",
+				"multi-select": "Multi-seleção (Ctrl+Clique)",
+				"union-multi-select": "Unir multi-seleção",
 				"close": "Fechar",
 				"textarea-placeholder": "Cole ou importe um WKT aqui...",
 				"wkt-imported": "WKT importado com sucesso!",
-				"no-common-area": "Não há área comum entre as features selecionadas",
+				"no-common-area": "Não há área comum entre os elementos selecionados",
 				"copied": "Copiado!",
-				"all-deselected": "Todas as features desselecionadas",
+				"all-deselected": "Todos os elementos desmarcados",
 				"change-layer": "Alterar camada...",
-				"center-objects": "Centralizar nos objetos do mapa...",
-				"center-location": "Centralizar na minha localização...",
+				"center-objects": "Centrar nos objetos do mapa...",
+				"center-location": "Centrar na minha localização...",
 				"undo": "Desfazer",
 				"redo": "Refazer",
 				"polygon": "Polígono",
 				"showinfo": "Mostrar informações",
-				"delete": "Excluir",
+				"delete": "Eliminar",
 				"select": "Selecionar",
 				"language": "Idioma",
 				"zoom-btn": "Zoom",
 				"copy-btn": "Copiar",
-				"delete-btn": "Excluir",
+				"delete-btn": "Eliminar",
 				"wkt-copied": "WKT copiado!",
-				"wkt-deleted": "WKT excluído!",
-				"delete-all": "Remover tudo",
+				"wkt-deleted": "WKT eliminado!",
+				"delete-all": "Eliminar tudo",
+				"error-combining-polygons": "Erro ao combinar polígonos",
+				"multi-polygon-copied": "MultiPolígono copiado com sucesso!",
+				"clipboard-empty": "Nenhum polígono encontrado",
+				"clipboard-paste-success": "polígonos colados!",
+				"clipboard-invalid": "Nenhum polígono válido",
+				"select-only-one": "Selecione apenas um elemento",
+				"wkt-import-error": "Erro ao importar WKT. Verifique o formato.",
+				"invalid-wkt": "Por favor, cole ou escreva um WKT válido.",
+				"all-deleted": "Todos os elementos eliminados",
+				"settings": "Definições",
+				"import-tab": "Importar",
+				"settings-tab": "Definições",
+				"layer-satellite": "Satélite",
+				"layer-streets": "Ruas"
 			},
 			"es": {
 				"import": "Importar",
@@ -103,7 +131,21 @@ export default class Translation {
 				"delete-btn": "Eliminar",
 				"wkt-copied": "¡WKT copiado!",
 				"wkt-deleted": "¡WKT eliminado!",
-				"delete-all": "Eliminar todo"
+				"delete-all": "Eliminar todo",
+				"error-combining-polygons": "Error al combinar polígonos",
+				"multi-polygon-copied": "¡MultiPolígono copiado con éxito!",
+				"clipboard-empty": "Ningún polígono encontrado",
+				"clipboard-paste-success": "polígonos pegados!",
+				"clipboard-invalid": "Ningún polígono válido",
+				"select-only-one": "Selecciona solo una feature",
+				"wkt-import-error": "Error al importar WKT. Verifique el formato.",
+				"invalid-wkt": "Por favor, pega o escribe un WKT válido.",
+				"all-deleted": "Todas las features eliminadas",
+				"settings": "Ajustes",
+				"import-tab": "Importar",
+				"settings-tab": "Ajustes",
+				"layer-satellite": "Satélite",
+				"layer-streets": "Calles"
 			},
 			"fr": {
 				"import": "Importer",
@@ -134,7 +176,21 @@ export default class Translation {
 				"delete-btn": "Supprimer",
 				"wkt-copied": "WKT copié !",
 				"wkt-deleted": "WKT supprimé !",
-				"delete-all": "Supprimer tout"
+				"delete-all": "Supprimer tout",
+				"error-combining-polygons": "Erreur lors de la combinaison des polygones",
+				"multi-polygon-copied": "MultiPolygone copié avec succès !",
+				"clipboard-empty": "Aucun polygone trouvé",
+				"clipboard-paste-success": "polygones collés !",
+				"clipboard-invalid": "Aucun polygone valide",
+				"select-only-one": "Sélectionnez une seule feature",
+				"wkt-import-error": "Erreur lors de l'importation WKT. Vérifiez le format.",
+				"invalid-wkt": "Veuillez coller ou écrire un WKT valide.",
+				"all-deleted": "Toutes les features supprimées",
+				"settings": "Paramètres",
+				"import-tab": "Importer",
+				"settings-tab": "Paramètres",
+				"layer-satellite": "Satellite",
+				"layer-streets": "Rues"
 			}
 		};
 
@@ -149,6 +205,7 @@ export default class Translation {
 		if (lang.startsWith('es')) return 'es';
 		if (lang.startsWith('fr')) return 'fr';
 		if (lang.startsWith('en')) return 'en';
+		
 		return this.#defaultLang;
 	}
 
@@ -212,7 +269,7 @@ export default class Translation {
 
 	setLanguage(lang) {
 		if (!this.#translations[lang]) {
-			console.warn(`Idioma "${lang}" não encontrado. Usando ${this.#defaultLang}`);
+			console.warn(`Language "${lang}" not found. Using ${this.#defaultLang}`);
 			lang = this.#defaultLang;
 		}
 		this.#currentLang = lang;
